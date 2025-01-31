@@ -1,0 +1,8 @@
+dash
+dash-mantine-components
+
+pandas
+polars
+
+scikit-learn
+torch
