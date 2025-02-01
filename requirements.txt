@@ -1,8 +1,9 @@
 dash
+dash_extensions
+dash_iconify
 dash-mantine-components
 
 pandas
 polars
 
 scikit-learn
-torch
