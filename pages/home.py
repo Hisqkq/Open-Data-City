@@ -7,8 +7,8 @@ dash.register_page(__name__, path="/")
 
 layout = dmc.Container(
     children=[
-        dmc.Title("Bienvenue sur Mon Open Data App", order=1),
-        dmc.Text("Cette application affiche des données open data."),
+        dmc.Title("Welcome to the Singapore's Open Data application.", order=1),
+        dmc.Text("The goal of this application is to provide a simple and user-friendly interface to explore Singapore's open data."),
         Lottie(
             options=dict(loop=True, autoplay=True, rendererSettings=dict(preserveAspectRatio='xMidYMid slice')),
             width="35%", url="https://lottie.host/55f711be-705a-45f2-8f35-08456dcf6db0/8J4gG2IGrO.json"

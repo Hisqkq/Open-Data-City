@@ -8,7 +8,7 @@ from utils.icon import get_icon
 
 _dash_renderer._set_react_version("18.2.0")
 
-app = dash.Dash(__name__, use_pages=True)
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=dmc.styles.ALL)
 
 # 🟢 Layout principal avec MantineProvider mis à jour dynamiquement
 app.layout = html.Div(
@@ -51,15 +51,6 @@ clientside_callback(
     [Input("theme-toggle", "n_clicks")],  # Bouton du header
     [State("theme-store", "data")],  # État actuel du thème
 )
-
-# 🔄 Callback Python pour mettre à jour l'icône du bouton (Lune 🌙 / Soleil ☀)
-@app.callback(
-    Output("theme-toggle", "children"),
-    Input("theme-store", "data"),
-    prevent_initial_call=True
-)
-def update_icon(theme):
-    return get_icon("radix-icons:sun", height=25) if theme == "dark" else get_icon("radix-icons:moon", height=25)
 
 if __name__ == "__main__":
     app.run_server(debug=True)

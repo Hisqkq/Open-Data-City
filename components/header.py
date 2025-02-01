@@ -1,5 +1,5 @@
 import dash_mantine_components as dmc
-from dash import html, dcc, clientside_callback, Output, Input
+from dash import html, dcc, clientside_callback, callback, Output, Input
 from utils.icon import get_icon
 from utils.config import GITHUB_LINK
 
@@ -118,3 +118,12 @@ clientside_callback(
     Output("toggle-sidebar", "style"),
     Input("theme-store", "data"),
 )
+
+# 🔄 Callback Python pour mettre à jour l'icône du bouton (Lune 🌙 / Soleil ☀)
+@callback(
+    Output("theme-toggle", "children"),
+    Input("theme-store", "data"),
+    prevent_initial_call=True
+)
+def update_icon(theme):
+    return get_icon("radix-icons:sun", height=25) if theme == "dark" else get_icon("radix-icons:moon", height=25)

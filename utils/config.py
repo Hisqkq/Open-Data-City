@@ -1,9 +1,10 @@
 GITHUB_LINK = "https://github.com/Hisqkq/Open-Data-City"  
 
 NAV_LINKS = {
-    "Accueil": ["/", "bi:house-door-fill"],
-    "Données": ["/data", "tabler:gauge"],
+    "Home": ["/", "bi:house-door-fill"],
+    "Data": ["/data", "tabler:gauge"],
+    "Visualisations": ["/visualisation", "tabler:chart-pie"],
     "Notifications": ["/notifications", "tabler:bell"],
-    "Paramètres": ["/settings", "tabler:settings"],
-    "Profil": ["/profile", "tabler:user"]
+    "Settings": ["/settings", "tabler:settings"],
+    "About Us": ["/about-us", "tabler:user"]
 }
