@@ -59,7 +59,7 @@ clientside_callback(
     prevent_initial_call=True
 )
 def update_icon(theme):
-    return get_icon("radix-icons:sun") if theme == "dark" else get_icon("radix-icons:moon")
+    return get_icon("radix-icons:sun", height=25) if theme == "dark" else get_icon("radix-icons:moon", height=25)
 
 if __name__ == "__main__":
     app.run_server(debug=True)
