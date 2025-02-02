@@ -26,20 +26,28 @@ def header_component():
                     dmc.Group(
                         [
                             # 🔵 Logo de Singapour avec inversion en mode sombre
-                            html.Img(
-                                id="header-logo",
-                                src="/assets/img/lion-logo.png",
-                                style={"height": "40px"},  # Ajustement de la taille du logo
+                            dcc.Link(
+                                html.Img(
+                                    id="header-logo",
+                                    src="/assets/img/lion-logo.png",
+                                    style={"height": "40px"},  # Ajustement de la taille du logo
+                                ),
+                                href="/",  # Redirige vers la page d'accueil
+                                style={"textDecoration": "none"},  # Supprime le style de lien par défaut
                             ),
 
                             # 🔵 Titre stylisé avec ID pour mise à jour dynamique
-                            html.Span(
-                                [
-                                    html.Span("Singapore", id="title-singapore", style={"fontWeight": "bold", "color": "#212529"}),
-                                    html.Span("’s Open Data", id="title-open-data", style={"fontWeight": "lighter", "color": "#868e96"}),
-                                ],
-                                id="header-title",
-                                style={"fontSize": "1.5rem", "display": "flex", "alignItems": "center"},
+                            dcc.Link(
+                                html.Span(
+                                    [
+                                        html.Span("Singapore", id="title-singapore", style={"fontWeight": "bold", "color": "#212529"}),
+                                        html.Span("’s Open Data", id="title-open-data", style={"fontWeight": "lighter", "color": "#868e96"}),
+                                    ],
+                                    id="header-title",
+                                    style={"fontSize": "1.5rem", "display": "flex", "alignItems": "center"},
+                                ),
+                                href="/",  # Redirige vers la page d'accueil
+                                style={"textDecoration": "none"},  # Supprime le style de lien par défaut
                             ),
                         ],
                         align="center",
