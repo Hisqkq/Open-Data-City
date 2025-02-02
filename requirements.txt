@@ -1,9 +1,11 @@
 dash
 dash_extensions
 dash_iconify
+dash-leaflet
 dash-mantine-components
 
 pandas
 polars
+shapely
 
 scikit-learn

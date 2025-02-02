@@ -24,6 +24,7 @@ def sidebar_component():
             )
             for name, values in NAV_LINKS.items()
         ],
+        style={"zIndex": 1000},
     )
 
 # 🔄 Callback pour ouvrir/fermer la sidebar

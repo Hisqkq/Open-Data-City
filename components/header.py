@@ -29,7 +29,7 @@ def header_component():
                             html.Img(
                                 id="header-logo",
                                 src="/assets/img/lion-logo.png",
-                                style={"height": "3px"},  # 🔥 Réduction de la taille
+                                style={"height": "40px"},  # Ajustement de la taille du logo
                             ),
 
                             # 🔵 Titre stylisé avec ID pour mise à jour dynamique
@@ -72,7 +72,13 @@ def header_component():
         ],
         shadow="sm",
         withBorder=True,
-        style={"padding": "0.5rem 1rem"},
+        style={
+            "padding": "0.5rem 1rem",
+            "position": "sticky",
+            "top": "0",
+            "zIndex": "100",
+            "width": "100%"
+        },
     )
 
 # 🔄 Clientside Callback pour changer la couleur du logo en fonction du thème
