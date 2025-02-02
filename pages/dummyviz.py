@@ -66,8 +66,6 @@ layout = dmc.Container(
             ],
             cols=2,
         ),
-        dcc.Store(id="theme-store", data="light"),
-
         # 📌 Loader pour la carte Mapbox (évite un ralentissement au démarrage)
         dcc.Loading(
             id="loading-map",

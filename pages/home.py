@@ -10,22 +10,27 @@ layout = dmc.Container(
     p="xl",
     children=[
         # Section d'introduction avec titre et description dans un Paper
-        dmc.Paper(
-            withBorder=True,
-            shadow="md",
-            radius="md",
-            p="lg",
-            mb="xl",
-            children=[
-                dmc.Title("Welcome to Singapore's Open Data Application", order=1),
-                dmc.Space(h="sm"),
-                dmc.Text(
-                    "This application provides a simple and user-friendly interface to explore Singapore's open data. "
-                    "Discover a variety of cool components and designs with Dash Mantine Components!",
-                    size="lg",
-                ),
-            ],
+        html.Div(
+            dmc.Paper(
+                withBorder=True,
+                shadow="md",
+                radius="md",
+                p="lg",
+                mb="xl",
+                children=[
+                    dmc.Title("Welcome to Singapore's Open Data Application", order=1),
+                    dmc.Space(h="sm"),
+                    dmc.Text(
+                        "This application provides a simple and user-friendly interface to explore Singapore's open data. "
+                        "Discover a variety of cool components and designs with Dash Mantine Components!",
+                        size="lg",
+                    ),
+                ],
+            ),
+            className="fade-in",
         ),
+
+        html.Div([
 
         # Titre de la section Lotties
         dmc.Text("Cool Lotties we could use:", size="xl", mb="md"),
@@ -104,6 +109,8 @@ layout = dmc.Container(
             "Showcasing the possibilities of Dash Mantine Components",
             size="lg",
             style={"textAlign": "center"},
+        ),],
+        className="fade-in",
         ),
     ],
 )

@@ -7,9 +7,7 @@ from components.sidebar import sidebar_component
 
 _dash_renderer._set_react_version("18.2.0")
 
-external_scripts = ["https://cdn.plot.ly/plotly-latest.min.js"]
-
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=dmc.styles.ALL, external_scripts=external_scripts)
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=dmc.styles.ALL)
 
 # 🟢 Layout principal avec MantineProvider mis à jour dynamiquement
 app.layout = html.Div(
