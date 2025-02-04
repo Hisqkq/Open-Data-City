@@ -4,6 +4,7 @@ NAV_LINKS = {
     "Home": ["/", "bi:house-door-fill"],
     "Data": ["/data", "tabler:gauge"],
     "Visualisations": ["/visualisation", "tabler:chart-pie"],
+    "Education": ["/education", "tabler:book"],
     "Notifications": ["/notifications", "tabler:bell"],
     "Settings": ["/settings", "tabler:settings"],
     "About Us": ["/about-us", "tabler:user"]
