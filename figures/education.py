@@ -1,43 +1,37 @@
-import dash_mantine_components as dmc
-from dash import html
+import plotly.express as px
+from services.data.process_education_data import get_aggregated_data
 
-def education_bar_chart():
-    chart = dmc.BarChart(
-        id="education-bar-chart",
-        h=450,
-        data=[],  # sera mis à jour via le callback
-        dataKey="university",
-        series=[{"name": "gross_salary"}],
-        withLegend=False,
-        unit=" S$",
-        withTooltip=True,
-        withXAxis=True,
-        withYAxis=True,
-        yAxisLabel="Gross Salary",
-        xAxisProps={
-            "tickMargin": 10,
-            "interval": 0,    # Affiche tous les ticks
-            "angle": -7      # Rotation des labels pour une meilleure lisibilité
+def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
+    """
+    Crée une figure Plotly Express (bar chart) en fonction du niveau de détail.
+    Les barres sont coloriées en fonction de la moyenne du taux d'emploi overall (entre 70 et 100).
+    """
+    df_agg = get_aggregated_data(detail_level, parent_value, year)
+    
+    # Définir la colonne x selon le niveau
+    if detail_level == "global":
+        x_col = "university"
+    elif detail_level == "university":
+        x_col = "school"
+    elif detail_level == "school":
+        x_col = "degree"
+    else:
+        x_col = "university"
+    
+    fig = px.bar(
+        df_agg,
+        x=x_col,
+        y="gross_monthly_median",
+        color="employment_rate_overall",
+        color_continuous_scale=px.colors.sequential.deep_r,
+        range_color=[70, 100],
+        labels={
+            x_col: x_col.capitalize(),
+            "gross_monthly_median": "Gross Salary (S$)",
+            "employment_rate_overall": "Employment Rate (%)"
         },
-        barProps={
-            "radius": 5,                # Applique un arrondi aux barres
-            "isAnimationActive": True,  # Active l'animation
-            "animationDuration": 800    # Durée de l'animation en ms
-        },
-        style={"marginTop": "1rem", "marginBottom": "1rem"}
+        title=f"Median Gross Salary by {x_col.capitalize()}",
+        template=template  # Utilise le template fourni
     )
-    
-    reset_button = dmc.Button(
-                    "Reset",
-                    id="reset-btn",
-                    variant="outline",
-                    style={"position": "absolute", "top": "1px", "right": "1px"}
-                )
-    
-    # Conteneur parent en position relative pour que le bouton soit positionné correctement
-    container = html.Div(
-        children=[chart, reset_button],
-        style={"position": "relative"}
-    )
-    
-    return container
+    fig.update_layout(xaxis_tickangle=-7)
+    return fig

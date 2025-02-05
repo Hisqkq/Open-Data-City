@@ -1,12 +1,11 @@
 import dash
 import dash_mantine_components as dmc
 import json
-from dash import dcc, html, callback, Output, Input, ctx
+from dash import dcc, html, callback, Output, Input, State, ctx
 from dash_extensions import Lottie
 import plotly.express as px
 
-from services.data.process_education_data import create_bar_chart_data
-from figures.education import education_bar_chart
+from figures.education import create_bar_chart_figure
 
 dash.register_page(__name__, path="/education")
 
@@ -14,6 +13,10 @@ layout = dmc.Container(
     fluid=True,
     p="xl",
     children=[
+        # Stores pour suivre le niveau et le parent courant
+        dcc.Store(id="current-level", data="global"),
+        dcc.Store(id="current-parent", data=None),
+        
         # ----------------------
         # En-tête avec titre et animation Lottie
         # ----------------------
@@ -34,7 +37,7 @@ layout = dmc.Container(
                             "Gain insights from interactive charts and detailed data analysis.",
                             size="lg"
                         ),
-                        ]
+                    ]
                 ),
                 html.Div(
                     style={"width": "25%"},
@@ -57,16 +60,13 @@ layout = dmc.Container(
         # ----------------------
         # Section : Graphique interactif
         # ----------------------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
-            style={"position": "relative"},
+        html.Div(
+            style={"position": "relative", "padding": "1rem"},
             children=[
-                
-                # Intégration du BarChart interactif
-                dmc.Title("Graduate Employment Survey, per University, School and degree", order=3, style={"textAlign": "center"}),
-                education_bar_chart(),
+                dmc.Title("Graduate Employment Survey, per University, School and Degree", order=3, style={"textAlign": "center"}),
+                dmc.Space(h="md"),
+                html.Button("Reset Graph", id="reset-btn", n_clicks=0, style={"position": "absolute", "top": "20px", "right": "20px"}),
+                dcc.Graph(id="education-bar-chart", figure=create_bar_chart_figure(detail_level="global", year=2022, template="mantine_light")),
                 dmc.Space(h="md"),
                 dmc.Text("Click on a bar to drill down (e.g. view schools in the university).", size="sm", style={"textAlign": "center"})
             ]
@@ -104,51 +104,60 @@ layout = dmc.Container(
             ]
         ),
         dmc.Space(h="xl"),
-        
-        # ... (vous pouvez ajouter d'autres sections ici)
     ]
 )
 
 @callback(
-    Output("education-bar-chart", "data"),
-    Output("education-bar-chart", "dataKey"),
-    Output("education-bar-chart", "series"),
+    Output("education-bar-chart", "figure"),
+    Output("current-level", "data"),
+    Output("current-parent", "data"),
+    Output("clickdata-debug", "children"),
     Input("education-bar-chart", "clickData"),
-    Input("reset-btn", "n_clicks")
+    Input("reset-btn", "n_clicks"),
+    Input("theme-store", "data"),
+    State("current-level", "data"),
+    State("current-parent", "data")
 )
-def update_education_barchart(clickData, reset_n_clicks):
-    """
-    Met à jour le BarChart interactif de la page Education.
+def update_education_chart(clickData, reset_n_clicks, theme, current_level, current_parent):
+    # Détermine le template en fonction du thème
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+    triggered = ctx.triggered_id
+    debug_info = ""
     
-    - Si le bouton "Reset" est cliqué ou si aucun clic n'est détecté, on affiche la vue globale (agrégation par université).
-    - Sinon, si un clic sur une barre est détecté, on passe au niveau de détail correspondant.
-      * Si le clickData contient la clé "university", on affiche la vue 'university' (agrégation par école).
-      * Si le clickData contient la clé "school", on affiche la vue 'school' (agrégation par degree).
-    """
-    triggered = ctx.triggered_id  # ID du composant déclencheur
-
-    if triggered == "reset-btn" or clickData is None:
-        result = create_bar_chart_data(detail_level="global", year=2022)
+    # Si le bouton Reset a été cliqué ou qu'aucun clic n'est détecté,
+    # on réinitialise le graphique en vue globale et on vide le parent.
+    if triggered == "reset-btn" or clickData is None or triggered == "theme-store":
+        new_level = "global"
+        new_parent = None
+        fig = create_bar_chart_figure(detail_level="global", year=2022, template=template)
+        debug_info = "Reset to global view."
     else:
         try:
-            if "university" in clickData:
-                university = clickData["university"]
-                result = create_bar_chart_data(detail_level="university", parent_value=university, year=2022)
-            elif "school" in clickData:
-                school = clickData["school"]
-                result = create_bar_chart_data(detail_level="school", parent_value=school, year=2022)
+            # Extraction du label cliqué dans l'axe x
+            clicked_value = clickData["points"][0]["x"]
+            debug_info = json.dumps(clickData, indent=2, ensure_ascii=False)
+            
+            if current_level == "global":
+                new_level = "university"
+                new_parent = clicked_value  # le parent est le nom de l'université
+                fig = create_bar_chart_figure(detail_level="university", parent_value=clicked_value, year=2022, template=template)
+            elif current_level == "university":
+                new_level = "school"
+                new_parent = clicked_value  # le parent est le nom de l'école
+                fig = create_bar_chart_figure(detail_level="school", parent_value=clicked_value, year=2022, template=template)
+            elif current_level == "school":
+                # Si on est déjà au niveau le plus profond, on réinitialise vers global.
+                new_level = "global"
+                new_parent = None
+                fig = create_bar_chart_figure(detail_level="global", year=2022, template=template)
             else:
-                result = create_bar_chart_data(detail_level="global", year=2022)
+                new_level = "global"
+                new_parent = None
+                fig = create_bar_chart_figure(detail_level="global", year=2022, template=template)
         except Exception as e:
-            result = create_bar_chart_data(detail_level="global", year=2022)
+            new_level = "global"
+            new_parent = None
+            fig = create_bar_chart_figure(detail_level="global", year=2022, template=template)
+            debug_info = f"Erreur: {e}. Retour à la vue globale."
     
-    return result["data"], result["dataKey"], result["series"]
-
-@callback(
-    Output("clickdata-debug", "children"),
-    Input("education-bar-chart", "clickData")
-)
-def debug_clickdata(clickData):
-    if clickData is None:
-        return "No click detected."
-    return json.dumps(clickData, indent=2, ensure_ascii=False)
+    return fig, new_level, new_parent, debug_info
