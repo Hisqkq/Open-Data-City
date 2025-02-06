@@ -5,7 +5,7 @@ from dash import dcc, html, callback, Output, Input, State, ctx
 from dash_extensions import Lottie
 import plotly.express as px
 
-from figures.education import create_bar_chart_figure
+from figures.education import create_bar_chart_figure, create_line_chart_figure
 
 dash.register_page(__name__, path="/education")
 
@@ -104,6 +104,41 @@ layout = dmc.Container(
             ]
         ),
         dmc.Space(h="xl"),
+
+        # ----------------------
+
+        dmc.Title("Courses Evolution", order=1),
+        dmc.Text("Select a metric and gender to see the evolution of courses over the years."),
+        dmc.Group(
+            children=[
+                dmc.Select(
+                    id="metric-dropdown",
+                    data=[
+                        {"value": "intake", "label": "Intake"},
+                        {"value": "enrolment", "label": "Enrolment"},
+                        {"value": "graduates", "label": "Graduates"},
+                        {"value": "intake_rate", "label": "Intake Rate"}
+                    ],
+                    placeholder="Select a metric"
+                ),
+                dmc.Select(
+                    id="gender-dropdown",
+                    data=[
+                        {"value": "both", "label": "Both"},
+                        {"value": "women", "label": "Women"},
+                        {"value": "men", "label": "Men"}
+                    ],
+                    placeholder="Select a gender"
+                ),
+                dmc.Switch(
+                    id="hover-switch",
+                    label="Year-by-year hover",
+                    checked=False  # par défaut : mode 'closest'
+                ),
+            ]
+        ),
+        dmc.Space(h="md"),
+        dcc.Graph(id="courses-line-chart"),
     ]
 )
 
@@ -161,3 +196,25 @@ def update_education_chart(clickData, reset_n_clicks, theme, current_level, curr
             debug_info = f"Erreur: {e}. Retour à la vue globale."
     
     return fig, new_level, new_parent, debug_info
+
+ 
+
+@callback(
+    Output("courses-line-chart", "figure"),
+    Input("metric-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+    Input("theme-store", "data"),
+    Input("hover-switch", "checked"),
+)
+def update_courses_line_chart(metric, gender, theme, hover_switch):
+    # Choix du template Plotly en fonction du switch
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+    hover_mode = "x unified" if hover_switch else "closest"
+
+    # Valeurs par défaut
+    if metric is None:
+        metric = "intake"
+    if gender is None:
+        gender = "both"
+    fig = create_line_chart_figure(metric=metric, gender=gender, template=template, hover_mode=hover_mode)
+    return fig
