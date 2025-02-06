@@ -9,10 +9,6 @@ from figures.immobilier_fig import create_line_chart_figure_introduction
 
 dash.register_page(__name__, path="/immobilier")
 
-# Charger le fichier JSON
-# with open("assets/img/Animation - 1738836928686.json", "r") as f:
-#     lottie_animation = json.load(f)
-
 layout = dmc.Container(
     fluid=True,
     p="xl",
@@ -52,7 +48,7 @@ layout = dmc.Container(
                                 rendererSettings=dict(preserveAspectRatio='xMidYMid slice')
                             ),
                             width="100%",
-                            # animationData=lottie_animation
+                            url= "assets/img/Animation - 1738836928686.json"
                         )
                     ]
                 ),
@@ -66,7 +62,7 @@ layout = dmc.Container(
         html.Div(
             style={"position": "relative", "padding": "1rem"},
             children=[
-                dmc.Title("price per square metre over the last 8 years", order=3, style={"textAlign": "center"}),
+                dmc.Title("Price per square metre over the last 8 years", order=3, style={"textAlign": "center"}),
                 dmc.Space(h="md"),
                 html.Button("Reset Graph", id="reset-btn", n_clicks=0, style={"position": "absolute", "top": "20px", "right": "20px"}),
                 dcc.Graph(id="immo1-line-chart", figure=create_line_chart_figure_introduction()),

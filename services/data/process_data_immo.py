@@ -17,12 +17,14 @@ def process_data_immo():
     df_grouped = df.groupby(["Year", "Month"])["price_m2"].mean().reset_index()
     df_grouped['Date'] = pd.to_datetime(df_grouped[['Year', 'Month']].assign(Day=1))
 
-    # Sauvegarder le fichier
-    PROCESSED_DATA_PATH = "services/data/processed/immo.csv"
+    return df_grouped
 
-    df_grouped.to_csv(PROCESSED_DATA_PATH, index=False)
+    # # Sauvegarder le fichier
+    # PROCESSED_DATA_PATH = "services/data/processed/immo.csv"
 
-    print(f"✅ Fichier traité et sauvegardé dans {PROCESSED_DATA_PATH}")
+    # df_grouped.to_csv(PROCESSED_DATA_PATH, index=False)
 
-if __name__ == "__main__":
-    process_data_immo()
+    # print(f"✅ Fichier traité et sauvegardé dans {PROCESSED_DATA_PATH}")
+
+# if __name__ == "__main__":
+#     process_data_immo()
