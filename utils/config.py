@@ -3,6 +3,7 @@ GITHUB_LINK = "https://github.com/Hisqkq/Open-Data-City"
 NAV_LINKS = {
     "Home": ["/", "bi:house-door-fill"],
     "Data": ["/data", "tabler:gauge"],
+    "Immobilier": ["/immobilier", "icon-park-outline:building-one"],
     "Visualisations": ["/visualisation", "tabler:chart-pie"],
     "Education": ["/education", "tabler:book"],
     "Notifications": ["/notifications", "tabler:bell"],
