@@ -28,3 +28,20 @@ def process_data_immo():
 
 # if __name__ == "__main__":
 #     process_data_immo()
+
+
+def process_data_table_intro():
+    #chemin des fichiers
+    RAW_DATA_PATH = "services/data/raw/immo.csv"
+
+    #charger le fichier
+    df = pd.read_csv(RAW_DATA_PATH)
+
+    # Convertir 'Month' en datetime et extraire l'année
+    df['month'] = pd.to_datetime(df['month'])
+    df['Year'] = df['month'].dt.year
+
+    scd_grap_data = df[df["resale_price"] > 1000000]
+    df_scd_graph = scd_grap_data.groupby("Year").size().reset_index(name="count")
+
+    return df_scd_graph
