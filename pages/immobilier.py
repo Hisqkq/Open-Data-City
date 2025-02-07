@@ -7,9 +7,14 @@ import dash_leaflet as dl
 from dash import Output, Input, dcc
 import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction
-from services.maps.map_immo import load_geojson 
+from services.maps.map_immo import load_geojson
+import json
 
 dash.register_page(__name__, path="/immobilier")
+
+# Charger les données GeoJSON des quartiers
+with open("services/data/raw/areazone.geojson", "r") as f:
+    areazone_data = json.load(f)
 
 layout = dmc.Container(
     fluid=True,
@@ -133,15 +138,16 @@ layout = dmc.Container(
         # ----------------------
 
         html.Div(
-            style={"height": "100vh", "width": "100%"},
+            style={"height": "100vh", "width": "100%", "display": "flex", "flexDirection": "column"},
             children=[
+                # Carte Leaflet
                 dl.Map(
                     center=[1.3521, 103.8198],  # Centrer la carte sur Singapour
                     zoom=11,  # Niveau de zoom initial
                     children=[
                         dl.TileLayer(),  # Ajouter une couche de tuiles (fond de carte)
                         dl.GeoJSON(
-                            data=load_geojson,  # Données des quartiers
+                            data=areazone_data,  # Données des quartiers
                             id="areazone-geojson",
                             style={
                                 "color": "blue",  # Couleur des contours des quartiers
@@ -153,21 +159,8 @@ layout = dmc.Container(
                                 "weight": 3,
                             },
                         ),
-                        dl.GeoJSON(
-                            data=[],  # Sous-quartiers (masqués au départ)
-                            id="areasubzone-geojson",
-                            style={
-                                "color": "green",  # Couleur des contours des sous-quartiers
-                                "weight": 1,
-                                "fillOpacity": 0.05,
-                            },
-                            hoverStyle={
-                                "color": "orange",  # Couleur au survol
-                                "weight": 2,
-                            },
-                        ),
                     ],
-                    style={"height": "100%", "width": "100%"},
+                    style={"height": "50%", "width": "100%"},
                 ),
             ],
             className="scroll-section",
