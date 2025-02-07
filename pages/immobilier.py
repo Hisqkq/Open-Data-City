@@ -3,7 +3,11 @@ import dash_mantine_components as dmc
 from dash import dcc, html
 from dash_extensions import Lottie
 import plotly.express as px
+import dash_leaflet as dl
+from dash import Output, Input, dcc
+import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction
+from services.maps.map_immo import load_geojson 
 
 dash.register_page(__name__, path="/immobilier")
 
@@ -128,7 +132,46 @@ layout = dmc.Container(
         # Section : Carte interactive
         # ----------------------
 
-
+        html.Div(
+            style={"height": "100vh", "width": "100%"},
+            children=[
+                dl.Map(
+                    center=[1.3521, 103.8198],  # Centrer la carte sur Singapour
+                    zoom=11,  # Niveau de zoom initial
+                    children=[
+                        dl.TileLayer(),  # Ajouter une couche de tuiles (fond de carte)
+                        dl.GeoJSON(
+                            data=load_geojson,  # Données des quartiers
+                            id="areazone-geojson",
+                            style={
+                                "color": "blue",  # Couleur des contours des quartiers
+                                "weight": 2,  # Épaisseur des contours
+                                "fillOpacity": 0.1,  # Opacité de remplissage
+                            },
+                            hoverStyle={
+                                "color": "red",  # Couleur au survol
+                                "weight": 3,
+                            },
+                        ),
+                        dl.GeoJSON(
+                            data=[],  # Sous-quartiers (masqués au départ)
+                            id="areasubzone-geojson",
+                            style={
+                                "color": "green",  # Couleur des contours des sous-quartiers
+                                "weight": 1,
+                                "fillOpacity": 0.05,
+                            },
+                            hoverStyle={
+                                "color": "orange",  # Couleur au survol
+                                "weight": 2,
+                            },
+                        ),
+                    ],
+                    style={"height": "100%", "width": "100%"},
+                ),
+            ],
+            className="scroll-section",
+        ),
 
         # ----------------------
         # Section d'information complémentaire
