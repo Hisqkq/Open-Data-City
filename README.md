@@ -72,3 +72,6 @@ On peut aussi essayer de prédire le prix de l'immobilier en fonction de la prox
 
 On peut aussi essayer de prédire le nombre d'élèves dans une école en fonction de sa localisation, de sa taille, de son niveau d'étude, etc. Prédire les inscriptions dans une école par exemple (série temporelle).
 
+
+
+https://www.singstat.gov.sg/find-data/search-by-theme/population/geographic-distribution/latest-data
