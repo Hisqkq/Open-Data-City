@@ -125,6 +125,44 @@ def get_admission_trade_data(csv_path="services/data/processed/annual_student_in
 
     return df
 
+import pandas as pd
+
+def get_institution_trends_data(metric="enrolment", institutions=None, csv_path="services/data/processed/institution_data.csv"):
+    """
+    Charge et agrège les données d'admission par institution sur plusieurs années.
+    
+    Paramètres:
+      - metric : Indicateur à utiliser, parmi "enrolment", "intake" ou "intake_rate".
+      - institutions : Liste des noms d'institutions à inclure. Si None, on prend toutes les institutions ayant une valeur non nulle pour la métrique.
+      - csv_path : Chemin vers le fichier CSV contenant les colonnes :
+            year, institution, enrolment, intake, intake_rate
+       
+    Retourne:
+      Un DataFrame agrégé avec pour chaque (year, institution) la moyenne (ou valeur unique) de la métrique.
+    """
+    # Charger le CSV
+    df = pd.read_csv(csv_path)
+    
+    # Conversion des colonnes numériques
+    df["year"] = pd.to_numeric(df["year"], errors="coerce")
+    for col in ["enrolment", "intake"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    # Pour intake_rate, si c'est déjà en pourcentage, on convertit en nombre (en gardant les décimales)
+    df["intake_rate"] = pd.to_numeric(df["intake_rate"], errors="coerce")
+    
+    # Filtrer par institutions si une liste est fournie
+    if institutions is not None and len(institutions) > 0:
+        df = df[df["institution"].isin(institutions)]
+    else:
+        # On retire les lignes où la métrique est nulle pour éviter des traces vides
+        df = df[df[metric].notnull()]
+    
+    # Agrégation : si pour une même institution et la même année plusieurs lignes existent,
+    # on calcule la moyenne de la métrique.
+    df_grouped = df.groupby(["year", "institution"], as_index=False)[metric].mean()
+    df_grouped = df_grouped.sort_values(by="year")
+    return df_grouped
+
 
 
 ## Preprocessing functions for the education data

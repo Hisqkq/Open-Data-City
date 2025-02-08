@@ -4,6 +4,7 @@ from dash import dcc, html, Input, Output, State, clientside_callback, _dash_ren
 
 from components.header import header_component
 from components.sidebar import sidebar_component
+from components.footer import footer_component
 
 _dash_renderer._set_react_version("18.2.0")
 
@@ -23,6 +24,7 @@ app.layout = html.Div(
                 header_component(),  # Header
                 sidebar_component(),  # Sidebar
                 dash.page_container,  # Contenu des pages
+                footer_component(),  # Footer
             ]
         )
     ]

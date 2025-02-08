@@ -5,7 +5,7 @@ from dash import dcc, html, callback, Output, Input, State, ctx
 from dash_extensions import Lottie
 import plotly.express as px
 
-from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure
+from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure, create_institution_trends_figure
 
 dash.register_page(__name__, path="/education")
 
@@ -19,7 +19,8 @@ layout = dmc.Container(
 
         html.Div(
             dmc.Title("Universities in Singapore", order=1, style={"marginBottom": "1rem", "textAlign": "center"}),
-            style={"width": "100%"}
+            style={"width": "100%"},
+            className="scroll-section",
         ),
         
         # ---------- En-tête ----------
@@ -30,6 +31,7 @@ layout = dmc.Container(
                 "alignItems": "top",
                 "marginBottom": "1rem"
             },
+            className="scroll-section",
             children=[
                 html.Div(
                     style={"width": "75%"},
@@ -69,38 +71,71 @@ layout = dmc.Container(
         ),
         dmc.Space(h="xl"),
         
-        # ---------- Section 1 : Overall University Admissions Trends (Placeholder) ----------
+        # ---------- Section 1 : Overall University Admissions Trends ----------
         dmc.Card(
             shadow="sm",
             withBorder=True,
             padding="lg",
+            className="scroll-section",
+            style={
+                "borderRadius": "10px",
+                "padding": "2rem"
+            },
             children=[
-                dmc.Title("Overall University Admissions Trends", order=2),
+                dmc.Title("Overall University Admissions Trends", order=2, style={"textAlign": "center"}),
+                dmc.Space(h="md"),
                 dmc.Text(
-                    "This chart will display the evolution of key university admission metrics—enrolment, intake, and admission rates—over the years. "
-                    "It provides a global overview of the increasing competition for university places in Singapore.",
-                    size="md"
+                    "This comprehensive chart displays the evolution of key university admission metrics – including total enrolment, intake numbers, and overall admission rates – over the past two decades. "
+                    "It vividly illustrates the rapid growth in university applications while highlighting the increasing competition for limited places. "
+                    "Notably, the intake rate has dropped by approximately 2% since 2005, reaching as low as 22.5% in 2022. This decline underscores the mounting pressure on prospective students to secure admission.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
                 ),
+                dmc.Space(h="md"),
                 dcc.Graph(
                     id="admissions-trends-chart",
-                )
+                ),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "These trends not only reflect the soaring number of applications but also signal a tightening admission process, making competition fiercer than ever. "
+                    "Up next, we will explore which fields of study are the most competitive, shedding light on course demand dynamics and access challenges at a more granular level.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
             ]
         ),
         dmc.Space(h="xl"),
+
         
         # ---------- Section 2 : Course Demand Trends ----------
         dmc.Card(
             shadow="sm",
             withBorder=True,
             padding="lg",
+            className="scroll-section",
             children=[
                 dmc.Title("Course Demand Trends", order=2),
+                dmc.Space(h="md"),
                 dmc.Text(
-                    "This interactive line chart shows the evolution of student interest in various courses over the years. "
-                    "By selecting a specific metric (intake, enrolment, graduates, or intake rate) and filtering by gender (both, women, or men), "
-                    "you can analyze which courses are experiencing increased demand and becoming more competitive.",
-                    size="md"
+                    "This interactive line chart displays the evolution of student interest in various courses over the years. "
+                    "By selecting a specific metric from the dropdown—such as intake, enrolment, graduates, or intake rate—you can examine "
+                    "dynamic trends in course demand.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
                 ),
+                dmc.Space(h="md"),
+                
+                dmc.Space(h="md"),
                 dmc.Group(
                     children=[
                         dmc.Select(
@@ -126,66 +161,235 @@ layout = dmc.Container(
                             id="hover-switch",
                             label="Year-by-year hover",
                             checked=False  # Default mode: "closest"
-                        ),
-                        dmc.Button("Update Chart", id="update-chart-btn")
+                        )
                     ]
                 ),
                 dmc.Space(h="md"),
-                dcc.Graph(id="courses-line-chart")
+                dcc.Graph(id="courses-line-chart"),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "For instance, engineering studies are consistently among the most popular overall, and "
+                    "especially among male students. In contrast, for female students, courses in Humanities & Social Sciences tend to lead in popularity."
+                    "Moreover, when focusing on the intake rate (the percentage of admitted students relative to total enrolment), you’ll notice that "
+                    "fields such as Architecture and Medicine register much lower rates. For example, Architecture typically appears at the bottom of "
+                    "the intake rate rankings, with Medicine just above it. In the Dentistry field, there is also a marked difference between genders—men "
+                    "exhibit an intake rate of approximately 34.5%, compared to around 21% for women. However, given the overall low number of students "
+                    "in Dentistry, these percentage differences can be highly variable, and in some cases, women may even have a higher rate than men. "
+                    "This chart provides nuanced insights into course competitiveness and helps to understand how demand shifts across disciplines over time.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
+                ),
             ]
         ),
         dmc.Space(h="xl"),
+
         
-        # ---------- Section 3 : Institutional Trends (Placeholder) ----------
+        # ---------- Section 3: Institutional Trends (Placeholder) ----------
         dmc.Card(
             shadow="sm",
             withBorder=True,
             padding="lg",
+            className="scroll-section",
             children=[
                 dmc.Title("Institutional Trends", order=2),
+                dmc.Space(h="md"),
+                # Texte explicatif au-dessus de la figure
                 dmc.Text(
-                    "This section will present a multi-line chart comparing selected institutions over the years. "
-                    "A multi-select dropdown (coming soon) will allow you to choose several institutions, enabling you to compare how their metrics evolve and to gauge institutional competitiveness.",
-                    size="md"
-                ),
-                dmc.Paper(
+                    "Overview: This section presents an interactive multi-line chart that compares the evolution of key admission metrics over the years across various higher education institutions. "
+                    "By using the multi-select dropdown, you can choose one or more institutions to compare their trends. The chart displays metrics such as enrolment, intake, and intake rate side by side, "
+                    "allowing you to explore differences in institutional competitiveness. For example, while universities dominate the scene, the dropdown also enables comparisons with other types of "
+                    "higher education providers.",
+                    size="md",
                     style={
-                        "height": "300px",
-                        "display": "flex",
-                        "alignItems": "center",
-                        "justifyContent": "center",
-                        "backgroundColor": "#f1f3f5",
-                        "border": "2px dashed #adb5bd"
-                    },
-                    children=dmc.Text("Institutional Trends Chart Coming Soon", size="xl", style={"textAlign": "center"})
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
+                ),
+                dmc.Group(
+                    children=[
+                        dmc.MultiSelect(
+                            id="institution-multiselect",
+                            value=["ntu", "nus", "smu", "sutd", "suss"],
+                            data=[
+                                {"value": "ite", "label": "ITE"},
+                                {"value": "lasalle_degree", "label": "La Salle Degree"},
+                                {"value": "lasalle_diploma", "label": "La Salle Diploma"},
+                                {"value": "nafa_degree", "label": "NAFA Degree"},
+                                {"value": "nafa_diploma", "label": "NAFA Diploma"},
+                                {"value": "nanyang_polytechnic", "label": "Nanyang Polytechnic"},
+                                {"value": "ngee_ann_polytechnic", "label": "NGEE Ann Polytechnic"},
+                                {"value": "nie", "label": "NIE"},
+                                {"value": "ntu", "label": "NTU"},
+                                {"value": "nus", "label": "NUS"},
+                                {"value": "republic_polytechnic", "label": "Republic Polytechnic"},
+                                {"value": "singapore_polytechnic", "label": "Singapore Polytechnic"},
+                                {"value": "sit", "label": "SIT"},
+                                {"value": "smu", "label": "SMU"},
+                                {"value": "suss", "label": "SUSS"},
+                                {"value": "sutd", "label": "SUTD"},
+                                {"value": "temasek_polytechnic", "label": "Temasek Polytechnic"}
+                            ],
+                            placeholder="Select institutions",
+                            label="Institutions"
+                        ),
+                        dmc.Select(
+                            id="institution-metric-dropdown",
+                            data=[
+                                {"value": "enrolment", "label": "Enrolment"},
+                                {"value": "intake", "label": "Intake"},
+                                {"value": "intake_rate", "label": "Intake Rate"}
+                            ],
+                            placeholder="Select a metric",
+                            label="Metric"
+                        )
+                    ]
+                ),
+                dmc.Space(h="md"),
+                dcc.Graph(
+                    id="institution-trends-chart",
+                ),
+                dmc.Space(h="md"),
+                # Texte d'observations en dessous de la figure
+                dmc.Text(
+                    "Observations: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. "
+                    "In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, "
+                    "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education in Singapore and offer valuable insights into how "
+                    "admission strategies evolve over the years.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginTop": "1rem"
+                    }
                 )
             ]
         ),
         dmc.Space(h="xl"),
+
         
         # ---------- Section 4 : Graduate Salary Outcomes (Bar Chart) ----------
         dmc.Card(
             shadow="sm",
             withBorder=True,
             padding="lg",
+            className="scroll-section",
             style={"position": "relative"},
             children=[
+                # Titre de la section
                 dmc.Title("Graduate Salary Outcomes", order=2, style={"textAlign": "center"}),
-                html.Button("Reset Graph", id="reset-btn", n_clicks=0, style={"position": "absolute", "top": "20px", "right": "20px"}),
+                dmc.Space(h="md"),
+                # Texte explicatif au-dessus du graphique
+                dmc.Text(
+                    "While gaining admission to Singapore's universities is extremely competitive, the outcomes in terms of graduate salaries and employment rates reveal further insights into the system. "
+                    "Based on 2022 data, the chart below illustrates the median gross salaries across universities. Notice that these bars are colored according to the employment rate, "
+                    "providing an additional perspective on how easy or challenging it is to secure a job after graduation.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
+                ),
+                # Bouton Reset positionné en haut à droite
+                html.Button(
+                    "Reset Graph",
+                    id="reset-btn",
+                    n_clicks=0,
+                    style={"position": "absolute", "top": "20px", "right": "20px"}
+                ),
+                # Graphique interactif
                 dcc.Graph(
                     id="education-bar-chart",
                     figure=create_bar_chart_figure(detail_level="global", year=2022, template="mantine_light")
                 ),
                 dmc.Space(h="md"),
+                # Texte explicatif en dessous du graphique
                 dmc.Text(
-                    "This bar chart presents the median gross salary of graduates by university. By clicking on a bar, you can drill down to see details at the school and degree level. "
-                    "This detailed view helps illustrate the economic outcomes of different educational pathways.",
-                    size="sm",
-                    style={"textAlign": "center"}
+                    "By clicking on a bar, you can drill down into more detailed views: first by university, then by school, and finally by degree. "
+                    "This interactive functionality allows you to uncover which educational pathways yield the highest starting salaries. "
+                    "For instance, programs in Law, Medicine, and Engineering typically offer higher salaries upon graduation, while courses in the social sciences, such as early childhood education, tend to pay less. "
+                    "The color of each bar represents the employment rate for that category, offering insights into post-graduation job prospects.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginTop": "1rem"
+                    }
                 )
             ]
         ),
         dmc.Space(h="xl"),
+
+        html.Div(
+            children=[
+                dmc.Title("References", order=3, style={"textAlign": "center", "marginBottom": "1rem"}),
+                
+                dmc.Text(
+                    "Ministry of Education. (2022). Graduate Employment Survey - NTU, NUS, SIT, SMU, SUSS & SUTD (2024) [Dataset]. "
+                    "data.gov.sg. Retrieved February 8, 2025 from ",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Anchor(
+                    "https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view",
+                    href="https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view",
+                    target="_blank",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Space(h="sm"),
+                
+                dmc.Text(
+                    "Ministry of Education. (2019). Intake, Enrolment and Graduates of Universities by Course (2024) [Dataset]. "
+                    "data.gov.sg. Retrieved February 8, 2025 from ",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Anchor(
+                    "https://data.gov.sg/datasets/d_6b264092cd066c55d8e2db9e68e7ffdb/view",
+                    href="https://data.gov.sg/datasets/d_6b264092cd066c55d8e2db9e68e7ffdb/view",
+                    target="_blank",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Space(h="sm"),
+                
+                dmc.Text(
+                    "Ministry of Education. (2019). Enrolment by Institutions (2024) [Dataset]. "
+                    "data.gov.sg. Retrieved February 8, 2025 from ",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Anchor(
+                    "https://data.gov.sg/datasets/d_ec8a16e11a050f11880fb6d4a0e6f93f/view",
+                    href="https://data.gov.sg/datasets/d_ec8a16e11a050f11880fb6d4a0e6f93f/view",
+                    target="_blank",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Space(h="sm"),
+                
+                dmc.Text(
+                    "Ministry of Education. (2019). Intake by Institutions (2024) [Dataset]. "
+                    "data.gov.sg. Retrieved February 8, 2025 from ",
+                    size="xs",
+                    style={"textAlign": "center"}
+                ),
+                dmc.Anchor(
+                    "https://data.gov.sg/datasets/d_437e089ba21c5221b0d42e3b2636b7f0/view",
+                    href="https://data.gov.sg/datasets/d_437e089ba21c5221b0d42e3b2636b7f0/view",
+                    target="_blank",
+                    size="xs",
+                    style={"textAlign": "center"}
+                )
+            ],
+            style={"marginTop": "2rem", "textAlign": "center"}
+        )
 
     ]
 )
@@ -270,4 +474,25 @@ def update_courses_line_chart(metric, gender, theme, hover_switch):
 def update_admissions_trends_chart(theme):
     template = "mantine_dark" if theme == "dark" else "mantine_light"
     fig = create_admission_trends_figure(template=template)
+    return fig
+
+
+@callback(
+    Output("institution-trends-chart", "figure"),
+    Input("institution-multiselect", "value"),
+    Input("institution-metric-dropdown", "value"),
+    Input("theme-store", "data")
+)
+def update_institution_trends(selected_institutions, metric, theme):
+    # Choix du template Plotly en fonction du switch de thème
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+    
+    # Valeurs par défaut
+    if metric is None:
+        metric = "enrolment"
+    # Si aucune institution n'est sélectionnée, on peut choisir d'afficher toutes.
+    if selected_institutions is None or len(selected_institutions) == 0:
+        selected_institutions = None
+    
+    fig = create_institution_trends_figure(metric=metric, institutions=selected_institutions, template=template)
     return fig

@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data
+from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data, get_institution_trends_data
 
 def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
     """
@@ -89,6 +89,9 @@ def create_line_chart_figure(metric="intake", gender="both", template="mantine_l
         hovermode=hover_mode  # On choisit le mode de survol passé en paramètre
     )
 
+    # On augmente la hauteur du graphique pour laisser de la place à la légende
+    fig.update_layout(height=450)
+
     if hover_mode == "closest":
         fig.update_xaxes(showspikes=True)
         fig.update_yaxes(showspikes=True)
@@ -149,5 +152,67 @@ def create_admission_trends_figure(template="mantine_light"):
     
     fig.update_yaxes(title_text="Absolute Numbers", secondary_y=False)
     fig.update_yaxes(title_text="Intake Rate (%)", secondary_y=True)
+    
+    return fig
+
+
+def create_institution_trends_figure(metric="enrolment", institutions=None, template="mantine_light", csv_path="services/data/processed/institution_data.csv", hover_mode="closest"):
+    """
+    Crée un graphique linéaire interactif avec Plotly Graph Objects pour l'évolution de la métrique sélectionnée par institution.
+    
+    Paramètres:
+      - metric : "enrolment", "intake" ou "intake_rate".
+      - institutions : Liste d'institutions à afficher (pour un multiselect). Si None, on affiche toutes.
+      - template : Template Plotly, par exemple "plotly_white" ou "plotly_dark".
+      - csv_path : Chemin vers le fichier CSV.
+      
+    Retourne:
+      Une figure Plotly avec une trace par institution et la légende positionnée en bas.
+    """
+    # Récupérer les données agrégées
+    df = get_institution_trends_data(metric=metric, institutions=institutions, csv_path=csv_path)
+    
+    # Obtenir la liste des institutions présentes
+    institutions_list = sorted(df["institution"].unique())
+    
+    # Définir une palette de couleurs étendue (par exemple, "Plotly" qualitative ou une autre)
+    color_palette = px.colors.qualitative.Plotly
+    color_dict = {inst: color_palette[i % len(color_palette)] for i, inst in enumerate(institutions_list)}
+    
+    fig = go.Figure()
+    
+    # Pour chaque institution, ajouter une trace avec ses données (triées par année)
+    for inst in institutions_list:
+        df_inst = df[df["institution"] == inst]
+        fig.add_trace(
+            go.Scatter(
+                x=df_inst["year"],
+                y=df_inst[metric],
+                mode="lines+markers",
+                name=inst,
+                line=dict(color=color_dict[inst])
+            )
+        )
+    
+    # Mettre à jour le layout
+    fig.update_layout(
+        template=template,
+        title=f"Evolution of {metric.capitalize()} by Institution",
+        xaxis_title="Year",
+        yaxis_title=metric.capitalize(),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.3,
+            xanchor="center",
+            x=0.5
+        ),
+        margin=dict(l=60, r=60, t=80, b=120)
+    )
+    fig.update_xaxes(tickangle=-45)
+
+    if hover_mode == "closest":
+        fig.update_xaxes(showspikes=True)
+        fig.update_yaxes(showspikes=True)
     
     return fig

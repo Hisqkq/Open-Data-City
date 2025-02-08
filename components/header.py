@@ -1,68 +1,89 @@
 import dash_mantine_components as dmc
 from dash import html, dcc, clientside_callback, callback, Output, Input
 from utils.icon import get_icon
-from utils.config import GITHUB_LINK
+from utils.config import GITHUB_LINK, NAV_LINKS
+from dash_iconify import DashIconify
+from dash_mantine_components import Select
 
-# 🟢 Header Component
+# Construction de la liste des options à partir de NAV_LINKS
+options = [{"value": values[0], "label": name} for name, values in NAV_LINKS.items()]
+
+search_select = Select(
+    id="nav-search-select",
+    data=options,
+    placeholder="Search for a page...",
+    searchable=True,
+    nothingFoundMessage="Nothing found...",
+    leftSection=DashIconify(icon="tabler:search"),
+    rightSection=dmc.Kbd("⌘ + k", style={"display": "inline-block", "whiteSpace": "nowrap"}),
+    rightSectionWidth=60,
+    style={"minWidth": "300px"}
+)
+
 def header_component():
     return dmc.Paper(
         children=[
             dmc.Group(
-                [
-                    # 📌 Bouton pour ouvrir/fermer la Sidebar
-                    dmc.ActionIcon(
-                        id="toggle-sidebar",
-                        children=get_icon("tabler:menu-2", height=22),
-                        variant="filled",  # 🔥 Amélioration : Bouton rempli
-                        color="gray",  # 🔥 Amélioration : Couleur neutre
-                        size="lg",
-                        style={
-                            "margin": "0.5rem",
-                            "transition": "0.3s ease-in-out",
-                        },
-                    ),
-
-                    # 📌 Logo + Titre
+                children=[
+                    # Left side group: Sidebar toggle, search select, and logo + title
                     dmc.Group(
-                        [
-                            # 🔵 Logo de Singapour avec inversion en mode sombre
-                            dcc.Link(
-                                html.Img(
-                                    id="header-logo",
-                                    src="/assets/img/lion-logo.png",
-                                    style={"height": "40px"},  # Ajustement de la taille du logo
-                                ),
-                                href="/",  # Redirige vers la page d'accueil
-                                style={"textDecoration": "none"},  # Supprime le style de lien par défaut
+                        children=[
+                            dmc.ActionIcon(
+                                id="toggle-sidebar",
+                                children=get_icon("tabler:menu-2", height=22),
+                                variant="filled",
+                                color="gray",
+                                size="lg",
+                                style={
+                                    "margin": "0.5rem",
+                                    "transition": "0.3s ease-in-out",
+                                },
                             ),
-
-                            # 🔵 Titre stylisé avec ID pour mise à jour dynamique
-                            dcc.Link(
-                                html.Span(
-                                    [
-                                        html.Span("Singapore", id="title-singapore", style={"fontWeight": "bold", "color": "#212529"}),
-                                        html.Span("’s Open Data", id="title-open-data", style={"fontWeight": "lighter", "color": "#868e96"}),
-                                    ],
-                                    id="header-title",
-                                    style={"fontSize": "1.5rem", "display": "flex", "alignItems": "center"},
-                                ),
-                                href="/",  # Redirige vers la page d'accueil
-                                style={"textDecoration": "none"},  # Supprime le style de lien par défaut
+                            # Groupe pour le logo et le titre
+                            dmc.Group(
+                                children=[
+                                    dcc.Link(
+                                        html.Img(
+                                            id="header-logo",
+                                            src="/assets/img/lion-logo.png",
+                                            style={"height": "40px"},  # Taille du logo
+                                        ),
+                                        href="/",
+                                        style={"textDecoration": "none"},
+                                    ),
+                                    dcc.Link(
+                                        html.Span(
+                                            [
+                                                html.Span("Singapore", id="title-singapore", style={"fontWeight": "bold", "color": "#212529"}),
+                                                html.Span("’s Open Data", id="title-open-data", style={"fontWeight": "lighter", "color": "#868e96"}),
+                                            ],
+                                            id="header-title",
+                                            style={
+                                                "fontSize": "1.5rem",
+                                                "display": "flex",
+                                                "alignItems": "center",
+                                                "marginLeft": "0.5rem"  # Décalage pour aligner légèrement le titre à gauche
+                                            },
+                                        ),
+                                        href="/",
+                                        style={"textDecoration": "none"},
+                                    ),
+                                ],
+                                align="center",
+                                style={"marginLeft": "1rem"}
                             ),
                         ],
-                        align="center",
+                        align="center"
                     ),
-
-                    # 🌙 Boutons (GitHub + Thème sombre/claire)
+                    # Right side group: Boutons GitHub et thème
                     dmc.Group(
-                        [
-                            # 🖥 Lien GitHub
+                        children=[
+                            search_select,
                             dmc.Anchor(
                                 dmc.ActionIcon(get_icon("mdi:github", height=25), variant="subtle", size="lg"),
                                 href=GITHUB_LINK,
                                 target="_blank"
                             ),
-                            # 🌙 Bouton mode sombre/claire
                             dmc.ActionIcon(
                                 id="theme-toggle",
                                 children=get_icon("tabler:moon", height=25),
@@ -70,12 +91,12 @@ def header_component():
                                 size="lg",
                             ),
                         ],
-                        align="right",
+                        align="right"
                     ),
                 ],
                 justify="space-between",
                 align="center",
-                style={"padding": "0.5rem 1rem"},
+                style={"padding": "0.5rem 1rem"}
             )
         ],
         shadow="sm",
@@ -88,6 +109,7 @@ def header_component():
             "width": "100%"
         },
     )
+
 
 # 🔄 Clientside Callback pour changer la couleur du logo en fonction du thème
 clientside_callback(
@@ -141,3 +163,12 @@ clientside_callback(
 )
 def update_icon(theme):
     return get_icon("radix-icons:sun", height=25) if theme == "dark" else get_icon("radix-icons:moon", height=25)
+
+# 🔄 Callback pour changer de page avec le select 
+@callback(
+    Output("url", "pathname"),
+    Input("nav-search-select", "value"),
+    prevent_initial_call=True
+)
+def change_page(value):
+    return value
