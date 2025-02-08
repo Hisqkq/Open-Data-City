@@ -54,7 +54,7 @@ Eldercare Services : https://data.gov.sg/datasets?formats=GEOJSON|KML|SHP|KMZ&so
 
 ## Idée d'analyse
 
-- Une page sur les types d'études et les salaires qui en découlent. Une comparaison entre les établissements de l'ensenignement supérieur, les salaires moyens des diplômés, etc. On peut faire une comparaison entre les écoles publiques et privées. 
+- Une page sur les types d'études et les salaires qui en découlent. Une comparaison entre les établissements de l'ensenignement supérieur, les salaires moyens des diplômés, etc. 
 
 - Une page sur les types de travail, les salaires, les conditions de travail, etc.
 

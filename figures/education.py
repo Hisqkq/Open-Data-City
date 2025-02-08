@@ -1,6 +1,8 @@
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from services.data.process_education_data import get_aggregated_data, get_line_chart_data
+from plotly.subplots import make_subplots
+from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data
 
 def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
     """
@@ -39,7 +41,7 @@ def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022,
 
     return fig
 
-def create_line_chart_figure(metric="intake", gender="both", template="plotly_white", csv_path="services/data/processed/course_data.csv", hover_mode="closest"):
+def create_line_chart_figure(metric="intake", gender="both", template="mantine_light", csv_path="services/data/processed/course_data.csv", hover_mode="closest"):
     """
     Crée un graphique linéaire interactif avec Plotly Graph Objects pour l'évolution des cours selon la métrique sélectionnée.
     
@@ -90,5 +92,62 @@ def create_line_chart_figure(metric="intake", gender="both", template="plotly_wh
     if hover_mode == "closest":
         fig.update_xaxes(showspikes=True)
         fig.update_yaxes(showspikes=True)
-        
+
+    return fig
+
+
+def create_admission_trends_figure(template="mantine_light"):
+    """
+    Crée un graphique à lignes multiples illustrant l'évolution des indicateurs d'admission (intake, enrolment et intake_rate)
+    sur les années. Les indicateurs absolus (intake et enrolment) sont affichés sur l'axe principal,
+    tandis que le taux d'admission (intake_rate) est affiché sur un axe secondaire.
+    
+    Paramètres:
+      - csv_path: chemin vers le fichier CSV contenant les colonnes: 
+          year, intake, enrolment, intake_rate
+      
+    Retourne:
+      - Une figure Plotly avec un axe secondaire pour le taux d'admission.
+    """
+    # Charger et convertir les données
+    df = get_admission_trade_data()
+    
+    # Créer un graphique avec un axe secondaire
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    # Trace pour l'intake
+    fig.add_trace(
+        go.Scatter(x=df["year"], y=df["intake"], mode="lines+markers", name="Intake"),
+        secondary_y=False,
+    )
+    # Trace pour l'enrolment
+    fig.add_trace(
+        go.Scatter(x=df["year"], y=df["enrolment"], mode="lines+markers", name="Enrolment"),
+        secondary_y=False,
+    )
+    # Trace pour le taux d'admission, sur l'axe secondaire
+    fig.add_trace(
+        go.Scatter(x=df["year"], y=df["intake_rate"], mode="lines+markers", name="Intake Rate (%)"),
+        secondary_y=True,
+    )
+    
+    # Mise à jour des axes et de la légende
+    fig.update_layout(
+        title="University Admissions Trends Over the Years",
+        xaxis_title="Year",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.3,
+            xanchor="center",
+            x=0.5
+        ),
+        margin=dict(l=50, r=50, t=80, b=100),
+        template=template
+    )
+    fig.update_layout(hovermode="x unified")
+    
+    fig.update_yaxes(title_text="Absolute Numbers", secondary_y=False)
+    fig.update_yaxes(title_text="Intake Rate (%)", secondary_y=True)
+    
     return fig

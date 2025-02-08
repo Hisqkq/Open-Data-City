@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+## Get data functions for the education data
+
 def get_aggregated_data(detail_level="global", parent_value=None, year=2022, csv_path="services/data/raw/GraduateEmploymentSurvey.csv"):
     """
     Retourne un DataFrame agrégé pour le graphique.
@@ -61,6 +63,72 @@ def get_aggregated_data(detail_level="global", parent_value=None, year=2022, csv
         raise ValueError("Niveau de détail non reconnu. Utilisez 'global', 'university' ou 'school'.")
 
 
+def get_line_chart_data(metric="intake_rate", gender="both", csv_path="services/data/processed/course_data.csv"):
+    """
+    Pré-traite et agrège les données pour créer un graphique linéaire.
+    
+    Paramètres:
+      - metric : doit être l'une des valeurs suivantes : "intake", "enrolment", "graduates", "intake_rate"
+      - gender : "both" (valeurs combinées, c'est-à-dire les colonnes avec suffixe _MF), "women" (suffixe _F), ou "men" (suffixe _men)
+      - csv_path : chemin vers le fichier CSV prétraité.
+      
+    Retourne un DataFrame pivoté avec :
+       - index : year
+       - colonnes : courses
+       - valeurs : moyenne (ou somme) de la métrique pour ce cours et cette année.
+       
+    Si le paramètre n'est pas valide, la fonction retourne un DataFrame vide.
+    """
+    # Liste des métriques autorisées et des genres autorisés
+    allowed_metrics = {"intake", "enrolment", "graduates", "intake_rate"}
+    allowed_genders = {"both", "women", "men"}
+    
+    if metric not in allowed_metrics:
+        raise ValueError(f"Le paramètre 'metric' doit être l'une des valeurs suivantes : {allowed_metrics}")
+    if gender not in allowed_genders:
+        raise ValueError(f"Le paramètre 'gender' doit être l'une des valeurs suivantes : {allowed_genders}")
+    
+    # Charger le CSV
+    df = pd.read_csv(csv_path)
+        
+    
+    # Sélection de la colonne à utiliser
+    if gender == "both":
+        col_name = f"{metric}_MF" if metric != "intake_rate" else "intake_rate_MF"
+    elif gender == "women":
+        col_name = f"{metric}_F" if metric != "intake_rate" else "intake_rate_F"
+    elif gender == "men":
+        col_name = f"{metric}_men" if metric != "intake_rate" else "intake_rate_men"
+    
+    # Vérifier que la colonne existe dans le DataFrame
+    if col_name not in df.columns:
+        raise ValueError(f"La colonne '{col_name}' n'existe pas dans les données.")
+    
+    # Agrégation : pour chaque année et chaque cours, calcul de la moyenne de la colonne choisie.
+    df_grouped = df.groupby(["year", "course"], as_index=False)[col_name].mean()
+    
+    # Pivot de la table pour obtenir une table avec index year, colonnes courses, et valeurs la métrique agrégée.
+    df_pivot = df_grouped.pivot(index="year", columns="course", values=col_name)
+    
+    # Optionnel : trier les index (années) en ordre croissant
+    df_pivot = df_pivot.sort_index()
+    
+    return df_pivot
+
+
+def get_admission_trade_data(csv_path="services/data/processed/annual_student_intake_enrolment.csv"):
+    df = pd.read_csv(csv_path)
+    df["year"] = pd.to_numeric(df["year"], errors="coerce")
+    df["intake"] = pd.to_numeric(df["intake"], errors="coerce")
+    df["enrolment"] = pd.to_numeric(df["enrolment"], errors="coerce")
+    df["intake_rate"] = pd.to_numeric(df["intake_rate"], errors="coerce")
+
+    return df
+
+
+
+## Preprocessing functions for the education data
+
 def preprocess_course_data(csv_path="services/data/raw/IntakeEnrolmentGraduatesofUniversitiesbyCourse.csv"):
     """
     Charge et prétraite les données du CSV pour les cours.
@@ -120,64 +188,94 @@ def preprocess_course_data(csv_path="services/data/raw/IntakeEnrolmentGraduateso
     return df_pivot
 
 
-import pandas as pd
-
-def get_line_chart_data(metric="intake_rate", gender="both", csv_path="services/data/processed/course_data.csv"):
+def calculate_annual_student_intake_and_enrolment(csv_path="services/data/raw/IntakeEnrolmentandGraduatesofUniversitiesbyCourse.csv", output_path="services/data/processed/annual_student_intake_enrolment.csv"):
     """
-    Pré-traite et agrège les données pour créer un graphique linéaire.
+    Calcule par année le nombre d'étudiants qui s'inscrivent à l'université, en sommant sur la colonne intake et la colonne enrolment.
+    Enregistre le résultat dans un nouveau fichier CSV.
     
     Paramètres:
-      - metric : doit être l'une des valeurs suivantes : "intake", "enrolment", "graduates", "intake_rate"
-      - gender : "both" (valeurs combinées, c'est-à-dire les colonnes avec suffixe _MF), "women" (suffixe _F), ou "men" (suffixe _men)
-      - csv_path : chemin vers le fichier CSV prétraité.
-      
-    Retourne un DataFrame pivoté avec :
-       - index : year
-       - colonnes : courses
-       - valeurs : moyenne (ou somme) de la métrique pour ce cours et cette année.
-       
-    Si le paramètre n'est pas valide, la fonction retourne un DataFrame vide.
+        - csv_path : chemin vers le fichier CSV d'entrée.
+        - output_path : chemin vers le fichier CSV de sortie.
     """
-    # Liste des métriques autorisées et des genres autorisés
-    allowed_metrics = {"intake", "enrolment", "graduates", "intake_rate"}
-    allowed_genders = {"both", "women", "men"}
-    
-    if metric not in allowed_metrics:
-        raise ValueError(f"Le paramètre 'metric' doit être l'une des valeurs suivantes : {allowed_metrics}")
-    if gender not in allowed_genders:
-        raise ValueError(f"Le paramètre 'gender' doit être l'une des valeurs suivantes : {allowed_genders}")
-    
-    # Charger le CSV
     df = pd.read_csv(csv_path)
-        
     
-    # Sélection de la colonne à utiliser
-    if gender == "both":
-        col_name = f"{metric}_MF" if metric != "intake_rate" else "intake_rate_MF"
-    elif gender == "women":
-        col_name = f"{metric}_F" if metric != "intake_rate" else "intake_rate_F"
-    elif gender == "men":
-        col_name = f"{metric}_men" if metric != "intake_rate" else "intake_rate_men"
+    # Conversion des colonnes numériques
+    df["intake"] = pd.to_numeric(df["intake"], errors="coerce")
+    df["enrolment"] = pd.to_numeric(df["enrolment"], errors="coerce")
+
+    # On filtre que sur la colonne sex = "MF" pour éviter les doublons
+    df = df[df["sex"] == "MF"]
+
+    # Agrégation par année
+    df_aggregated = df.groupby("year").agg({
+        "intake": "sum",
+        "enrolment": "sum"
+    }).reset_index()
+
+    # On transforme les données en entiers pour éviter les décimales
+    df_aggregated["intake"] = df_aggregated["intake"].astype(int)
+    df_aggregated["enrolment"] = df_aggregated["enrolment"].astype(int)
+
+    # On rajoute une colonne "intake rate" pour avoir le taux d'admission
+    df_aggregated["intake_rate"] = 100 * df_aggregated["intake"] / df_aggregated["enrolment"]
     
-    # Vérifier que la colonne existe dans le DataFrame
-    if col_name not in df.columns:
-        raise ValueError(f"La colonne '{col_name}' n'existe pas dans les données.")
+    # Enregistrement du résultat dans un nouveau fichier CSV
+    df_aggregated.to_csv(output_path, index=False)
     
-    # Agrégation : pour chaque année et chaque cours, calcul de la moyenne de la colonne choisie.
-    df_grouped = df.groupby(["year", "course"], as_index=False)[col_name].mean()
+    return df_aggregated
+
+def transform_institution_data(enrolment_csv="services/data/raw/Enrolment by Institutions.csv", intake_csv="services/data/raw/Intake by Institutions.csv", output_csv="services/data/processed/institution_data.csv"):
+    """
+    Transforme les données d'enrolment et d'intake par institution pour obtenir un fichier CSV
+    avec les colonnes: year, institution, enrolment, intake et intake_rate.
     
-    # Pivot de la table pour obtenir une table avec index year, colonnes courses, et valeurs la métrique agrégée.
-    df_pivot = df_grouped.pivot(index="year", columns="course", values=col_name)
+    Les fichiers d'entrée sont supposés avoir le format suivant:
+      - Colonnes: year, sex, puis une série de colonnes pour les différentes institutions.
+      - Chaque fichier comporte deux lignes par année (par exemple, une pour MF et une pour F).
     
-    # Optionnel : trier les index (années) en ordre croissant
-    df_pivot = df_pivot.sort_index()
+    Le taux d'admission (intake_rate) est calculé en pourcentage: 100 * intake / enrolment.
     
-    return df_pivot
+    Parameters:
+      - enrolment_csv (str) : chemin vers le fichier CSV "enrolment by institution".
+      - intake_csv (str) : chemin vers le fichier CSV "intake by institution".
+      - output_csv (str) : chemin où enregistrer le fichier transformé.
+      
+    Retourne:
+      - df_merged (DataFrame): le DataFrame final.
+    """
+    # Charger le fichier d'enrolment
+    df_enrolment = pd.read_csv(enrolment_csv)
+    # On passe du format large au format long : identifier les colonnes institutionnelles.
+    df_enrolment_long = df_enrolment.melt(id_vars=["year", "sex"], var_name="institution", value_name="enrolment")
+    # S'assurer que la colonne 'enrolment' est numérique
+    df_enrolment_long["enrolment"] = pd.to_numeric(df_enrolment_long["enrolment"], errors="coerce")
+    # Agréger par year et institution en prennant la valeur maximale qui est toujours MF (pour avoir les données mixtes)
+    df_enrolment_agg = df_enrolment_long.groupby(["year", "institution"], as_index=False)["enrolment"].max()
+    
+    # Charger le fichier d'intake
+    df_intake = pd.read_csv(intake_csv)
+    df_intake_long = df_intake.melt(id_vars=["year", "sex"], var_name="institution", value_name="intake")
+    df_intake_long["intake"] = pd.to_numeric(df_intake_long["intake"], errors="coerce")
+    df_intake_agg = df_intake_long.groupby(["year", "institution"], as_index=False)["intake"].max()
+    
+    # Fusionner les deux DataFrames sur year et institution
+    df_merged = pd.merge(df_enrolment_agg, df_intake_agg, on=["year", "institution"], how="outer")
+    
+    # Calculer le taux d'admission (intake_rate) en pourcentage
+    # On vérifie que l'enrolment n'est pas zéro pour éviter une division par zéro.
+    df_merged["intake_rate"] = df_merged.apply(
+        lambda row: 100 * row["intake"] / row["enrolment"] if pd.notnull(row["enrolment"]) and row["enrolment"] != 0 else None,
+        axis=1
+    )
+    
+    # Enregistrer le résultat dans un fichier CSV
+    df_merged.to_csv(output_csv, index=False)
+    return df_merged
 
 
 
 
 
 if __name__ == "__main__":
-
-    print(get_line_chart_data())
+    calculate_annual_student_intake_and_enrolment()
+    transform_institution_data()
