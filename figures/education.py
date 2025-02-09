@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -6,12 +7,20 @@ from services.data.process_education_data import get_aggregated_data, get_line_c
 
 def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
     """
-    Crée une figure Plotly Express (bar chart) en fonction du niveau de détail.
-    Les barres sont coloriées en fonction de la moyenne du taux d'emploi overall (entre 70 et 100).
+    Crée une figure Plotly avec des barres arrondies et une légende de couleur personnalisée pour `employment_rate_overall`.
+    
+    Paramètres :
+      - detail_level (str) : Niveau d'agrégation ("global", "university", "school").
+      - parent_value (str ou None) : Valeur du parent (ex: université pour afficher les écoles).
+      - year (int) : Année de référence.
+      - template (str) : Thème graphique Plotly.
+
+    Retourne :
+      - Une figure Plotly avec barres arrondies et une légende de couleur pour `employment_rate_overall`.
     """
     df_agg = get_aggregated_data(detail_level, parent_value, year)
-    
-    # Définir la colonne x selon le niveau
+
+    # Déterminer la colonne à afficher sur l'axe X
     if detail_level == "global":
         x_col = "university"
     elif detail_level == "university":
@@ -20,26 +29,45 @@ def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022,
         x_col = "degree"
     else:
         x_col = "university"
-    
-    fig = px.bar(
-        df_agg,
-        x=x_col,
-        y="gross_monthly_median",
-        color="employment_rate_overall",
-        color_continuous_scale=px.colors.sequential.deep_r,
-        range_color=[70, 100],
-        labels={
-            x_col: x_col.capitalize(),
-            "gross_monthly_median": "Gross Salary (S$)",
-            "employment_rate_overall": "Employment Rate (%)"
-        },
+
+    # Création de la figure avec des barres arrondies
+    fig = go.Figure(layout=dict(barcornerradius=15))
+
+    fig.add_trace(go.Bar(
+        x=df_agg[x_col],
+        y=df_agg["gross_monthly_median"],
+        marker=dict(
+            color=df_agg["employment_rate_overall"],
+            colorscale="deep_r",
+            cmin=70, cmax=100,  # Échelle de couleur de 70% à 100%
+            line=dict(color="white", width=1.5),  # Contour blanc pour effet arrondi
+            colorbar=dict(
+                title=dict(
+                    text="Employment Rate (%)",
+                    side="top",
+                ),
+                orientation="h",
+                len=0.5,  # Longueur de la barre de couleur
+            )
+        ),
+        opacity=0.8,  # Légère transparence pour améliorer l'effet visuel
+        hoverinfo="x+y+text",
+        text=df_agg["employment_rate_overall"].apply(lambda x: f"Employment Rate: {x:.1f}%"),  # Ajout dans le hover
+    ))
+
+    # Mise en forme des axes et légende
+    fig.update_layout(
         title=f"Median Gross Salary by {x_col.capitalize()}",
-        template=template  # Utilise le template fourni
+        xaxis_title=x_col.capitalize(),
+        yaxis_title="Gross Salary (S$)",
+        template=template,
+        xaxis_tickangle=-7,
+        hovermode="x unified",
+        height=550,
     )
-    fig.update_layout(xaxis_tickangle=-7)
-    fig.update_layout(hovermode="x unified")
 
     return fig
+
 
 def create_line_chart_figure(metric="intake", gender="both", template="mantine_light", csv_path="services/data/processed/course_data.csv", hover_mode="closest"):
     """
@@ -98,62 +126,95 @@ def create_line_chart_figure(metric="intake", gender="both", template="mantine_l
 
     return fig
 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
 
-def create_admission_trends_figure(template="mantine_light"):
+def create_admission_trends_figure(show_regression=False, marker_size=8, template="mantine_light"):
     """
-    Crée un graphique à lignes multiples illustrant l'évolution des indicateurs d'admission (intake, enrolment et intake_rate)
-    sur les années. Les indicateurs absolus (intake et enrolment) sont affichés sur l'axe principal,
-    tandis que le taux d'admission (intake_rate) est affiché sur un axe secondaire.
-    
-    Paramètres:
-      - csv_path: chemin vers le fichier CSV contenant les colonnes: 
-          year, intake, enrolment, intake_rate
+    Crée un graphique interactif illustrant l'évolution des admissions universitaires à Singapour.
+    Connecte les points historiques et les prédictions sur une seule ligne continue.
+
+    Paramètres :
+      - show_regression (bool) : Afficher ou non les courbes de régression des prédictions.
+      - marker_size (int) : Taille des points de données.
+      - template (str) : Thème graphique pour Plotly.
       
-    Retourne:
-      - Une figure Plotly avec un axe secondaire pour le taux d'admission.
+    Retourne :
+      - Une figure Plotly avec les admissions réelles et prédites, ainsi qu'une séparation entre historique et prévisions.
     """
-    # Charger et convertir les données
-    df = get_admission_trade_data()
+    # Charger les données
+    df = pd.read_csv("services/data/processed/updated_annual_student_intake_enrolment.csv")
+
+    # Déterminer l'année de séparation des données réelles et des prédictions
+    last_real_year = df.dropna(subset=["intake"]).iloc[-1]["year"]
     
-    # Créer un graphique avec un axe secondaire
+    # Création du graphique avec un axe secondaire
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    
-    # Trace pour l'intake
-    fig.add_trace(
-        go.Scatter(x=df["year"], y=df["intake"], mode="lines+markers", name="Intake"),
-        secondary_y=False,
-    )
-    # Trace pour l'enrolment
-    fig.add_trace(
-        go.Scatter(x=df["year"], y=df["enrolment"], mode="lines+markers", name="Enrolment"),
-        secondary_y=False,
-    )
-    # Trace pour le taux d'admission, sur l'axe secondaire
-    fig.add_trace(
-        go.Scatter(x=df["year"], y=df["intake_rate"], mode="lines+markers", name="Intake Rate (%)"),
-        secondary_y=True,
-    )
-    
+
+    # Ajout des courbes connectant les points historiques et prévisions
+    fig.add_trace(go.Scatter(
+        x=df["year"], y=df["intake"], mode="lines+markers", name="Intake",
+        marker=dict(color="blue", size=marker_size), line=dict(color="blue", dash="solid")
+    ), secondary_y=False)
+
+    fig.add_trace(go.Scatter(
+        x=df["year"], y=df["enrolment"], mode="lines+markers", name="Enrolment",
+        marker=dict(color="green", size=marker_size), line=dict(color="green", dash="solid")
+    ), secondary_y=False)
+
+    fig.add_trace(go.Scatter(
+        x=df["year"], y=df["intake_rate"], mode="lines+markers", name="Intake Rate (%)",
+        marker=dict(color="red", size=marker_size), line=dict(color="red", dash="solid")
+    ), secondary_y=True)
+
+    # Affichage des prédictions si demandé
+    if show_regression:
+        fig.add_trace(go.Scatter(
+            x=df["year"], y=df["intake_pred"], mode="lines+markers", name="Intake (Forecast)",
+            marker=dict(color="blue", symbol="circle-open", size=marker_size), line=dict(color="blue", dash="dot")
+        ), secondary_y=False)
+
+        fig.add_trace(go.Scatter(
+            x=df["year"], y=df["enrolment_pred"], mode="lines+markers", name="Enrolment (Forecast)",
+            marker=dict(color="green", symbol="circle-open", size=marker_size), line=dict(color="green", dash="dot")
+        ), secondary_y=False)
+
+        fig.add_trace(go.Scatter(
+            x=df["year"], y=df["intake_rate_pred"], mode="lines+markers", name="Intake Rate (Forecast)",
+            marker=dict(color="red", symbol="circle-open", size=marker_size), line=dict(color="red", dash="dot")
+        ), secondary_y=True)
+
+        # Ajout d'une ligne verticale pour séparer les données réelles et prédites
+        fig.add_shape(type="line", x0=last_real_year+0.5, x1=last_real_year+0.5, y0=0, y1=1, xref='x', yref='paper',
+                    line=dict(color="black", width=2, dash="dash"))
+        
+        # Ajout d'annotations pour différencier les périodes historiques et prédites
+        fig.add_annotation(x=last_real_year-1, y=0.97, xref="x", yref="paper", text="Historical", showarrow=False, font=dict(size=12))
+        fig.add_annotation(x=last_real_year+2, y=0.97, xref="x", yref="paper", text="Forecast", showarrow=False, font=dict(size=12))
+        fig.update_xaxes(range=[2004.8, 2028.2])
+
+    else:
+        # On met l'axe des y jusqu'en 2023 pour ne pas étirer le graphique
+        fig.update_xaxes(range=[2004.8, 2023.2])
+
+
     # Mise à jour des axes et de la légende
     fig.update_layout(
         title="University Admissions Trends Over the Years",
         xaxis_title="Year",
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=-0.3,
-            xanchor="center",
-            x=0.5
-        ),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
         margin=dict(l=50, r=50, t=80, b=100),
-        template=template
+        template=template,
+        hovermode="x unified"
     )
-    fig.update_layout(hovermode="x unified")
-    
+
     fig.update_yaxes(title_text="Absolute Numbers", secondary_y=False)
     fig.update_yaxes(title_text="Intake Rate (%)", secondary_y=True)
-    
+
     return fig
+
+
 
 
 def create_institution_trends_figure(metric="enrolment", institutions=None, template="mantine_light", csv_path="services/data/processed/institution_data.csv", hover_mode="closest"):

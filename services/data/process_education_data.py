@@ -116,7 +116,7 @@ def get_line_chart_data(metric="intake_rate", gender="both", csv_path="services/
     return df_pivot
 
 
-def get_admission_trade_data(csv_path="services/data/processed/annual_student_intake_enrolment.csv"):
+def get_admission_trade_data(csv_path="services/data/processed/updated_annual_student_intake_enrolment.csv"):
     df = pd.read_csv(csv_path)
     df["year"] = pd.to_numeric(df["year"], errors="coerce")
     df["intake"] = pd.to_numeric(df["intake"], errors="coerce")

@@ -95,6 +95,11 @@ layout = dmc.Container(
                         "marginBottom": "1rem"
                     }
                 ),
+                dmc.Switch(
+                            id="education-prediction-switch",
+                            label="Show Predictions",
+                            checked=True
+                        ),
                 dmc.Space(h="md"),
                 dcc.Graph(
                     id="admissions-trends-chart",
@@ -134,8 +139,6 @@ layout = dmc.Container(
                     }
                 ),
                 dmc.Space(h="md"),
-                
-                dmc.Space(h="md"),
                 dmc.Group(
                     children=[
                         dmc.Select(
@@ -146,7 +149,8 @@ layout = dmc.Container(
                                 {"value": "graduates", "label": "Graduates"},
                                 {"value": "intake_rate", "label": "Intake Rate"}
                             ],
-                            placeholder="Select a metric"
+                            placeholder="Select a metric",
+                            label="Metric"
                         ),
                         dmc.Select(
                             id="gender-dropdown",
@@ -155,7 +159,8 @@ layout = dmc.Container(
                                 {"value": "women", "label": "Women"},
                                 {"value": "men", "label": "Men"}
                             ],
-                            placeholder="Select a gender"
+                            placeholder="Select a gender",
+                            label="Gender"
                         ),
                         dmc.Switch(
                             id="hover-switch",
@@ -469,11 +474,12 @@ def update_courses_line_chart(metric, gender, theme, hover_switch):
 
 @callback(
     Output("admissions-trends-chart", "figure"),
-    Input("theme-store", "data")
+    Input("theme-store", "data"),
+    Input("education-prediction-switch", "checked")
 )
-def update_admissions_trends_chart(theme):
+def update_admissions_trends_chart(theme, show_predictions):
     template = "mantine_dark" if theme == "dark" else "mantine_light"
-    fig = create_admission_trends_figure(template=template)
+    fig = create_admission_trends_figure(template=template, show_regression=show_predictions)
     return fig
 
 
