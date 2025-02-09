@@ -4,6 +4,7 @@ import json
 from dash import dcc, html, callback, Output, Input, State, ctx
 from dash_extensions import Lottie
 import plotly.express as px
+from dash_iconify import DashIconify
 
 from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure, create_institution_trends_figure
 
@@ -113,6 +114,85 @@ layout = dmc.Container(
                         "lineHeight": "1.6",
                         "textAlign": "justify"
                     }
+                ),
+                dmc.Space(h="md"),
+                dmc.Accordion(
+                    disableChevronRotation=True,
+                    children=[
+                        dmc.AccordionItem(
+                            [
+                                dmc.AccordionControl(
+                                    "How were the predictions made?",
+                                    icon=DashIconify(
+                                        icon="mdi:information-outline",
+                                        color=dmc.DEFAULT_THEME["colors"]["blue"][6],
+                                        width=20,
+                                    ),
+                                ),
+                                dmc.AccordionPanel(
+                                    [
+                                        dmc.Text("Prediction Methodology:", size="lg", style={"marginBottom": "10px"}),
+                                        dmc.Text(
+                                            "To forecast future university admissions, we employed a Quantile Regression model combined with a Box-Cox transformation. "
+                                            "This approach was chosen to handle non-linear relationships and to stabilize variance in our data.",
+                                            style={"marginBottom": "10px"}
+                                        ),
+                                        dmc.Text("Box-Cox Transformation:", size="lg", style={"marginBottom": "10px"}),
+                                        dmc.Text(
+                                            "The Box-Cox transformation is a power transformation that aims to make data more normally distributed. "
+                                            "By applying this transformation to our 'intake' and 'enrolment' variables, we achieved a more linear relationship, "
+                                            "which is essential for regression analysis.",
+                                            style={"marginBottom": "10px"}
+                                        ),
+                                        dmc.Text("Quantile Regression:", size="lg", style={"marginBottom": "10px"}),
+                                        dmc.Text(
+                                            "Unlike traditional regression models that predict the mean of the dependent variable, Quantile Regression predicts specific quantiles (e.g., the median). "
+                                            "This is particularly useful for understanding the distributional effects and is robust to outliers.",
+                                            style={"marginBottom": "10px"}
+                                        ),
+                                        dmc.Text("Implementation Steps:", size="lg", style={"marginBottom": "10px"}),
+                                        dmc.List(
+                                            [
+                                                dmc.ListItem(
+                                                    dmc.Text(
+                                                        "Data Transformation: Applied the Box-Cox transformation to the 'intake' and 'enrolment' data to stabilize variance and achieve normality.",
+                                                        style={"marginBottom": "5px"}
+                                                    )
+                                                ),
+                                                dmc.ListItem(
+                                                    dmc.Text(
+                                                        "Model Training: Trained Quantile Regression models (at the 0.5 quantile) using the transformed data to capture the median relationship between the variables and time.",
+                                                        style={"marginBottom": "5px"}
+                                                    )
+                                                ),
+                                                dmc.ListItem(
+                                                    dmc.Text(
+                                                        "Prediction: Used the trained models to predict future values for 'intake' and 'enrolment' up to the year 2028.",
+                                                        style={"marginBottom": "5px"}
+                                                    )
+                                                ),
+                                                dmc.ListItem(
+                                                    dmc.Text(
+                                                        "Inverse Transformation: Applied the inverse Box-Cox transformation to the predicted values to revert them to the original scale.",
+                                                        style={"marginBottom": "5px"}
+                                                    )
+                                                ),
+                                            ],
+                                            style={"marginBottom": "10px"}
+                                        ),
+                                        dmc.Text("Rationale for Choices:", size="lg", style={"marginBottom": "10px"}),
+                                        dmc.Text(
+                                            "The combination of Box-Cox transformation and Quantile Regression allows for flexibility in modeling non-linear relationships and provides robustness against outliers. "
+                                            "This methodology ensures that our predictions are not unduly influenced by extreme values and that they capture the central tendency of the data over time.",
+                                            style={"marginBottom": "10px"}
+                                        ),
+                                    ]
+                                ),
+                            ],
+                            value="info",
+                            style={"marginBottom": "1rem", "width": "80%", "textAlign": "justify", "margin": "auto"},
+                        ),
+                    ],
                 ),
             ]
         ),
