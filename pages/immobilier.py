@@ -7,14 +7,10 @@ import dash_leaflet as dl
 from dash import Output, Input, dcc
 import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction
-from services.maps.map_immo import load_geojson
+from services.maps.map_immo import create_map
 import json
 
 dash.register_page(__name__, path="/immobilier")
-
-# Charger les données GeoJSON des quartiers
-with open("services/data/raw/areazone.geojson", "r") as f:
-    areazone_data = json.load(f)
 
 layout = dmc.Container(
     fluid=True,
@@ -138,29 +134,42 @@ layout = dmc.Container(
         # ----------------------
 
         html.Div(
-            style={"height": "100vh", "width": "100%", "display": "flex", "flexDirection": "column"},
+            style={
+                "height": "100vh",
+                "width": "100%",
+                "display": "flex",
+                "flexDirection": "row",
+            },
             children=[
-                # Carte Leaflet
-                dl.Map(
-                    center=[1.3521, 103.8198],  # Centrer la carte sur Singapour
-                    zoom=11,  # Niveau de zoom initial
+                # Section pour la carte (75% de la largeur)
+                html.Div(
+                    style={
+                        "width": "66%",
+                        "height": "85%",
+                    },
                     children=[
-                        dl.TileLayer(),  # Ajouter une couche de tuiles (fond de carte)
-                        dl.GeoJSON(
-                            data=areazone_data,  # Données des quartiers
-                            id="areazone-geojson",
-                            style={
-                                "color": "blue",  # Couleur des contours des quartiers
-                                "weight": 2,  # Épaisseur des contours
-                                "fillOpacity": 0.1,  # Opacité de remplissage
-                            },
-                            hoverStyle={
-                                "color": "red",  # Couleur au survol
-                                "weight": 3,
-                            },
+                        # Carte Leaflet
+                        create_map()
+                    ],
+                ),
+                # Section pour la boîte d'informations (25% de la largeur)
+                html.Div(
+                    style={
+                        "width": "34%",
+                        "height": "85%",
+                        "padding": "20px",
+                        "boxSizing": "border-box",
+                        "borderLeft": "1px solid #ddd",
+                        "backgroundColor": "#f9f9f9",
+                        "overflowY": "auto",
+                    },
+                    children=[
+                        html.H3("Informations sur le quartier", style={"marginTop": 0}),
+                        html.Div(
+                            id="info-box-content",  # Contenu dynamique de la boîte
+                            children="Cliquez sur un quartier pour afficher des informations.",
                         ),
                     ],
-                    style={"height": "50%", "width": "100%"},
                 ),
             ],
             className="scroll-section",
