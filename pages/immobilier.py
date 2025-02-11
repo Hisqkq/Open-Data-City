@@ -8,7 +8,6 @@ from dash import Output, Input, dcc
 import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction
 from services.maps.map_immo import create_map
-import json
 
 dash.register_page(__name__, path="/immobilier")
 
@@ -96,8 +95,8 @@ layout = dmc.Container(
                     n_clicks=0,
                     style={
                         "position": "absolute",
-                        "top": "20px",
-                        "right": "20px",
+                        "top": "85px",
+                        "right": "85px",
                         "background": "#3498db",
                         "color": "white",
                         "border": "none",
@@ -127,10 +126,38 @@ layout = dmc.Container(
             className="scroll-section",
         ),
         dmc.Space(h="xl"),
+
+        # ----------------------
+        # Section : Carte interactive pour la prediction
+        # ----------------------
+
+        html.Div(
+            style={
+                "height": "100vh",
+                "width": "100%",
+                "display": "flex",
+                "flexDirection": "row",
+            },
+            children=[
+                # Section pour la carte (75% de la largeur)
+                html.Div(
+                    style={
+                        "width": "66%",
+                        "height": "85%",
+                    },
+                    children=[
+                        # Carte Leaflet
+                        create_map()
+                    ],
+                ),
+            ],
+            className="scroll-section",
+        ),
+
         
 
         # ----------------------
-        # Section : Carte interactive
+        # Section : Carte interactive pour la prediction
         # ----------------------
 
         html.Div(
