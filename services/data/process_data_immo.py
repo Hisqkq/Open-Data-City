@@ -52,8 +52,6 @@ def process_data_table_intro():
 
 def process_data_map_income():
     df_income = pd.read_csv("services/data/raw/income.csv")
-    # Identifier les colonnes des revenus (en supposant qu'elles commencent après "Planning Area")
-    #on enlève la colonne 'Total'
     df_income = df_income.drop(columns=['Total'])
     income_cols = df_income.columns[1:]  # Supposons que la première colonne est 'Planning Area'
 
@@ -90,7 +88,8 @@ def process_data_map_income():
         "11_000_11_999": 11500,
         "12_000andOver": 12500
     }
-
+    # on remplace le nom de la colonne 'Thousands' par 'PLN_AREA_N'
+    df_cum = df_cum.rename(columns={'Thousands': 'PLN_AREA_N'})
 
     # Appliquer le mapping
     df_cum["median_income"] = df_cum["income_group"].map(income_median_mapping)
@@ -98,8 +97,13 @@ def process_data_map_income():
     return df_cum
 
 def get_income_mapping():
-    df_cum = process_data_map_income()  # Appelle ta fonction qui prépare les données
-    return dict(zip(df_cum["Planning Area"], df_cum["median_income"]))
+    df_cum = process_data_map_income()
+
+    # Renommer la colonne si nécessaire (vérifie bien son nom exact)
+    if "Planning Area" in df_cum.columns:
+        df_cum = df_cum.rename(columns={"Planning Area": "PLN_AREA_N"})
+
+    return dict(zip(df_cum["PLN_AREA_N"], df_cum["median_income"]))  # Associe les quartiers aux revenus
 
 
 def get_color_scale():
