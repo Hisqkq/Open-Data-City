@@ -4,8 +4,9 @@ NAV_LINKS = {
     "Home": ["/", "bi:house-door-fill"],
     "Data": ["/data", "tabler:gauge"],
     "Immobilier": ["/immobilier", "icon-park-outline:building-one"],
-    "Visualisations": ["/visualisation", "tabler:chart-pie"],
     "Education": ["/education", "tabler:book"],
+    "Economy": ["/economy", "tabler:currency-dollar"],
+    "Visualisations": ["/visualisation", "tabler:chart-pie"],
     "Notifications": ["/notifications", "tabler:bell"],
     "Settings": ["/settings", "tabler:settings"],
     "About Us": ["/about-us", "tabler:user"]
