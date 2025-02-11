@@ -75,3 +75,5 @@ On peut aussi essayer de prédire le nombre d'élèves dans une école en foncti
 
 
 https://www.singstat.gov.sg/find-data/search-by-theme/population/geographic-distribution/latest-data
+
+https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx

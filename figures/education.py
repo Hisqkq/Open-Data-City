@@ -1,8 +1,8 @@
-import pandas as pd
-import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+
 from plotly.subplots import make_subplots
+
 from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data, get_institution_trends_data
 
 def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
@@ -57,7 +57,7 @@ def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022,
 
     # Mise en forme des axes et légende
     fig.update_layout(
-        title=f"Median Gross Salary by {x_col.capitalize()}",
+        title=f"Median Gross Starting Salary by {x_col.capitalize()}",
         xaxis_title=x_col.capitalize(),
         yaxis_title="Gross Salary (S$)",
         template=template,
@@ -65,6 +65,8 @@ def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022,
         hovermode="x unified",
         height=550,
     )
+
+    fig.update_xaxes(showspikes=False)
 
     return fig
 
@@ -144,7 +146,7 @@ def create_admission_trends_figure(show_regression=False, marker_size=8, templat
       - Une figure Plotly avec les admissions réelles et prédites, ainsi qu'une séparation entre historique et prévisions.
     """
     # Charger les données
-    df = pd.read_csv("services/data/processed/updated_annual_student_intake_enrolment.csv")
+    df = get_admission_trade_data()
 
     # Déterminer l'année de séparation des données réelles et des prédictions
     last_real_year = df.dropna(subset=["intake"]).iloc[-1]["year"]
