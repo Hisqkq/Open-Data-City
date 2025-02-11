@@ -7,7 +7,6 @@ from dash_iconify import DashIconify
 
 from figures.economy import create_unemployment_bar_chart, create_overal_unemployment_line, create_unemployment_residents_line_chart
 
-
 dash.register_page(__name__, path="/economy")
 
 layout = dmc.Container(
@@ -225,6 +224,31 @@ layout = dmc.Container(
                     ]
                 ),
                 dmc.Space(h="xl"),
+                
+            ]
+        ),
+        dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
+            className="scroll-section",
+            children=[
+                dmc.Title("Working Residents by Salary and Population", order=2),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "This interactive map visualizes the distribution of working residents in Singapore, segmented by median salary and population. "
+                    "The map provides a comprehensive overview of the labor market landscape, highlighting areas with high concentrations of workers "
+                    "and their corresponding salary levels. By exploring this data, you can gain insights into the economic dynamics of different regions "
+                    "and identify potential opportunities for growth and development.",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
+                dmc.Space(h="md"),
+                html.Iframe(srcDoc=open("services/maps/working_residents_salary_pop_map.html", "r").read(),
+                    style={"width": "100%", "height": "500px", "border": "none"})
             ]
         )
 

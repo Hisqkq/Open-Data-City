@@ -25,10 +25,6 @@ def process_planning_area():
         description = feature["properties"].get("Description", "")
         feature["properties"]["PLN_AREA_N"] = extract_planning_area(description)
 
-        # 🔥 Réduction de la complexité des polygones
-        geom = shape(feature["geometry"])
-        feature["geometry"] = mapping(geom.simplify(0.001))  # 0.001 = tolérance (ajuster selon besoin)
-
     # 📌 Sauvegarder le GeoJSON optimisé
     os.makedirs(os.path.dirname(PROCESSED_GEOJSON_PATH), exist_ok=True)
     with open(PROCESSED_GEOJSON_PATH, "w", encoding="utf-8") as f:
