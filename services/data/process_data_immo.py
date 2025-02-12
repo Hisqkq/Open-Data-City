@@ -4,6 +4,8 @@ import json
 import re
 import os
 
+# from process_economic_data import prepare_planning_areas_geojson
+
 def process_data_immo():
     #chemin des fichiers
     RAW_DATA_PATH = "services/data/raw/immo.csv"
@@ -140,6 +142,9 @@ def process_planning_area():
 
     print(f"✅ Fichier simplifié et sauvegardé dans {PROCESSED_GEOJSON_PATH}")
 
-
 # if __name__ == "__main__":
-#     process_planning_area()
+#     geojson_data = prepare_planning_areas_geojson(background_variable= "price_m2")
+
+#     # Écriture dans un fichier GeoJSON
+#     with open("services/data/processed/PriceWithSalary.geojson", "w", encoding="utf-8") as f:
+#         json.dump(geojson_data, f, ensure_ascii=False, indent=4)

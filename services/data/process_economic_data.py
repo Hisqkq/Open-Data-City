@@ -163,13 +163,25 @@ def preprocess_salary_data(csv_path="services/data/raw/ResidentWorkingPersonsAge
 
     df["working_population"] = df["working_population"] * 1000
     df["working_population"] = df["working_population"].astype(int)
+
+    # Charger les prix au m2
+    df_price = pd.read_csv("services/data/processed/immo_map_price.csv")
+    
+    price_df = df_price[df_price["Year"] == 2017][["town", "price_m2"]]
+
+    price_df.rename(columns={"town": "PlanningArea"}, inplace=True)
+
+    df = df.merge(price_df, on="PlanningArea", how="left")
+
+    print(df)
     
     # Retourner uniquement les colonnes utiles
-    return df[["PlanningArea", "working_population", "median_salary_category"]]
+    return df[["PlanningArea", "working_population", "median_salary_category", "price_m2"]]
 
 def prepare_planning_areas_geojson(geojson_path="services/data/processed/PlanningArea.geojson",
                                    csv_path="services/data/raw/ResidentWorkingPersonsAged15YearsandOverbyPlanningAreaandGrossMonthlyIncomefromWorkGeneralHouseholdSurvey2015.csv",
-                                   output_path="services/data/processed/PlanningAreaWithSalary.geojson"):
+                                   output_path="services/data/processed/PlanningAreaWithSalary.geojson",
+                                   background_variable="working_population"):
     """
     Charge le GeoJSON des planning areas et le CSV de données (population et median salary category),
     puis enrichit chaque feature du GeoJSON en ajoutant :
@@ -185,7 +197,7 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
     # Supposons que la première colonne est le nom de la planning area, la deuxième la population,
     # et la dernière colonne la valeur correspondant à la catégorie de salaire médian.
     df["PlanningArea"] = df.iloc[:,0].str.strip()
-    df["working_population"] = pd.to_numeric(df.iloc[:,1], errors="coerce")
+    df[background_variable] = pd.to_numeric(df.iloc[:,1], errors="coerce")
     
     # Charger le GeoJSON
     with open(geojson_path, "r", encoding="utf-8") as f:
@@ -198,7 +210,7 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
         # Rechercher la ligne correspondante (en comparant en majuscules)
         row = df[df["PlanningArea"].str.upper() == area_name.upper()]
         if not row.empty:
-            feature["properties"]["working_population"] = int(row.iloc[0]["working_population"])
+            feature["properties"][background_variable] = int(row.iloc[0][background_variable])
             feature["properties"]["median_salary_category"] = row.iloc[0]["median_salary_category"]
 
     for feature in geojson["features"]:

@@ -128,30 +128,29 @@ layout = dmc.Container(
         dmc.Space(h="xl"),
 
         # ----------------------
-        # Section : Carte interactive pour la prediction
+        # Section : Carte avec le switch
         # ----------------------
 
-        html.Div(
-            style={
-                "height": "100vh",
-                "width": "100%",
-                "display": "flex",
-                "flexDirection": "row",
-            },
-            children=[
-                # Section pour la carte (75% de la largeur)
-                html.Div(
-                    style={
-                        "width": "66%",
-                        "height": "85%",
-                    },
-                    children=[
-                        # Carte Leaflet
-                        create_map()
-                    ],
-                ),
-            ],
+       dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
             className="scroll-section",
+            children=[
+                dmc.Title("Working Residents by Salary and Price per square meter", order=2),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "description à venir",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
+                dmc.Space(h="md"),
+                html.Iframe(srcDoc=open("services/maps/folium_map_immo_price.html", "r").read(),
+                    style={"width": "100%", "height": "500px", "border": "none"})
+            ]
         ),
 
         
