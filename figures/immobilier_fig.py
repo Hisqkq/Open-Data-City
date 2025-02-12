@@ -1,5 +1,7 @@
 import plotly.express as px
 import plotly.graph_objects as go
+from dash import dash_table
+from dash import html
 from services.data.process_data_immo import process_data_immo, process_data_table_intro
 
 def create_line_chart_figure_introduction():
@@ -12,33 +14,41 @@ def create_line_chart_figure_introduction():
         df_agg,
         x="Date",
         y="price_m2",
-        title="Prix au m2 en fonction de la date",
+        title="Price per m2 depending on the date",
     )
     return fig
 
 def create_table_figure_introduction():
     """
-    Crée une figure Plotly Express (table) pour l'introduction.
+    Crée une table stylisée avec Dash pour l'introduction.
     """
     df_agg = process_data_table_intro()
-    
-    fig = go.Figure(
-        data=[
-            go.Table(
-                header=dict(
-                    values=list(df_agg.columns), 
-                    fill_color="lightgrey",
-                    align="center"
-                ),
-                cells=dict(
-                    values=[df_agg[col] for col in df_agg.columns], 
-                    fill_color="white",
-                    align="center"
-                )
-            )
-        ]
+
+    table = dash_table.DataTable(
+        columns=[{"name": col, "id": col} for col in df_agg.columns],
+        data=df_agg.to_dict("records"),
+        style_table={"overflowX": "auto"},
+        style_header={
+            "backgroundColor": "#1E1E1E",  # Fond du header sombre
+            "color": "white",
+            "fontWeight": "bold",
+            "textAlign": "center",
+            "border": "1px solid #444",
+        },
+        style_cell={
+            "backgroundColor": "#282828",  # Fond sombre pour les cellules
+            "color": "white",
+            "textAlign": "center",
+            "padding": "10px",
+            "border": "1px solid #444",
+        },
+        style_data_conditional=[
+            {"if": {"row_index": "odd"}, "backgroundColor": "#333"},  # Alternance des lignes
+            {"if": {"state": "selected"}, "backgroundColor": "#444"},  # Highlight au clic
+        ],
     )
-    return fig
+
+    return html.Div(table, style={"width": "80%", "margin": "auto", "padding": "20px"})
 
 
 

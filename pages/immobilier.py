@@ -15,10 +15,17 @@ layout = dmc.Container(
     fluid=True,
     p="xl",
     children=[
-        # Stores pour suivre le niveau et le parent courant
-        dcc.Store(id="current-level", data="global"),
-        dcc.Store(id="current-parent", data=None),
+
+        html.Div(
+            dmc.Title("Real estate indicators", order=1, style={"marginBottom": "1rem", "textAlign": "center"}),
+            style={"width": "100%"},
+            className="scroll-section",
+        ),
+        # # Stores pour suivre le niveau et le parent courant
+        # dcc.Store(id="current-level", data="global"),
+        # dcc.Store(id="current-parent", data=None),
         
+
         # ----------------------
         # En-tête avec titre et animation Lottie
         # ----------------------
@@ -26,104 +33,141 @@ layout = dmc.Container(
             style={
                 "display": "flex",
                 "gap": "1rem",
-                "alignItems": "center",
-                "marginBottom": "2rem",
-                "padding": "2rem",
-                "background": "linear-gradient(135deg, #f5f7fa, #c3cfe2)",
-                "borderRadius": "15px",
-                "boxShadow": "0 4px 10px rgba(0, 0, 0, 0.1)",
+                "alignItems": "top",
+                "marginBottom": "1rem"
             },
+            className="scroll-section",
             children=[
                 html.Div(
-                    style={"width": "70%", "textAlign": "left"},
+                    style={"width": "75%"},
                     children=[
-                        dmc.Title("Singapore and the Soaring Real Estate Market!", order=1, style={"color": "#2c3e50"}),
+                        dmc.Title("Singapore and the Soaring Real Estate Market!", order=1, style={"color": "#f6efed"}),
                         dmc.Text(
                             "Since 2017, Singapore’s property prices have seen a significant increase, reflecting the complex dynamics of the real estate market in one of the world’s most densely populated cities.",
                             size="lg",
-                            style={"color": "#34495e"}
+                            style={"color": "#f6efed"}
                         ),
                         dmc.Text(
                             "As the price per square meter continues to rise, the question arises: how does this trend impact housing affordability for residents?",
                             size="lg",
-                            style={"color": "#34495e"}
+                            style={"color": "#f6efed"}
                         ),
                         dmc.Text(
                             "Through this analysis, we will explore key figures, regional disparities, and future predictions to better understand the real estate challenges in Singapore.",
                             size="lg",
-                            style={"color": "#34495e"}
+                            style={"color": "#f6efed"}
                         ),
                     ]
                 ),
+
                 html.Div(
-                    style={"width": "30%"},
+                    style={"width": "25%"},
                     children=[
                         Lottie(
                             options=dict(
                                 loop=True,
                                 autoplay=True,
-                                rendererSettings=dict(preserveAspectRatio='xMidYMid slice')
+                                rendererSettings=dict(preserveAspectRatio="xMidYMid slice")
                             ),
                             width="100%",
                             url="assets/img/Animation - 1738836928686.json"
                         )
                     ]
                 ),
-            ],
-            className="fade-in",  # Ajouter une classe pour l'animation
+            ]
         ),
         dmc.Space(h="xl"),
         
-        # ----------------------
-        # Section : Graphique interactif
-        # ----------------------
-        html.Div(
-            style={
-                "position": "relative",
-                "padding": "2rem",
-                "background": "#ffffff",
-                "borderRadius": "15px",
-                "boxShadow": "0 4px 10px rgba(0, 0, 0, 0.1)",
-                "marginBottom": "2rem",
-            },
+        # ---------- Section 1 :  ----------
+        dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
+            className="scroll-section",
             children=[
-                dmc.Title("Price per Square Metre Over the Last 8 Years", order=3, style={"textAlign": "center", "color": "#2c3e50"}),
+                dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
                 dmc.Space(h="md"),
-                html.Button(
-                    "Reset Graph",
-                    id="reset-btn",
-                    n_clicks=0,
+                dmc.Text(
+                    "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
+                    size="md",
                     style={
-                        "position": "absolute",
-                        "top": "85px",
-                        "right": "85px",
-                        "background": "#3498db",
-                        "color": "white",
-                        "border": "none",
-                        "padding": "10px 20px",
-                        "borderRadius": "5px",
-                        "cursor": "pointer",
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
                     }
                 ),
+                dmc.Space(h="md"),
                 dcc.Graph(id="immo1-line-chart", figure=create_line_chart_figure_introduction()),
-                dmc.Space(h="md")
-            ],
-            className="scroll-section",  # Ajouter une classe pour l'animation
+                dmc.Space(h="md"),
+                dmc.Text(
+                    """
+                    The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
+                    Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
+                    This period of stagnation seems to mark a balance between supply and demand.
+
+                    From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
+                    in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
+
+                    From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
+                    a historic record that reflects strong pressure on the market.
+
+                    Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
+                    purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
+                    had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
+                    has led to an influx of buyers, further increasing pressure on the market.
+
+                    The question remains: will this trend continue, or are we on the verge of a market turnaround? Only time will tell.
+                    """,
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
+                ),
+            ]
         ),
         dmc.Space(h="xl"),
 
-        # ----------------------
-        # Section : Tableau Accroche
-        # ----------------------
-        html.Div(
-            style={"position": "relative", "padding": "1rem"},
-            children=[
-                dmc.Title("Number of homes costing more than a million dollars at resale", order=3, style={"textAlign": "center"}),
-                dmc.Space(h="md"),
-                dcc.Graph(id="immo1-line-chart", figure=create_table_figure_introduction()),
-                dmc.Space(h="md")
-            ],
+
+        # ---------- Section 1 :  ----------
+        dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
             className="scroll-section",
+            children=[
+                dmc.Title("Number of homes costing more than a million dollars at resale", order=2),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    """
+                    The high-end real estate market in Singapore is experiencing a meteoric rise. The number of homes resold for more than S$1 million has literally exploded in recent years. Until 2019, these transactions remained relatively rare, with less than 100 sales per year. But from 2021, the market is taking off, exceeding 200 and then 400 sales per year.
+                    """,
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
+                dmc.Space(h="md"),
+                html.Div(create_table_figure_introduction(), id="immo1-table-container"),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    """
+                    The evolution of the figures is striking. In 2020, only 77 properties exceeded this symbolic bar, but by 2021, this number tripled to reach 233. The trend is only increasing with 426 sales in 2023, and an impressive record of 940 in 2024!
+
+                    And what about 2025? With data only for January and February, there have already been 120 sales. That's almost twice as many as the whole of 2020! If this momentum continues, 2025 could well set a new record.
+
+                    🔎 What are the reasons for this surge?
+                    Several factors explain this rise in power. The growing appeal of Singapore as an economic hub, the increase in real estate prices, demand from foreign investors and a limited supply of exceptional properties are fueling this frenzy. The question now is: how far will it go?
+                    """,
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify",
+                        "marginBottom": "1rem"
+                    }
+                ),
+            ]
         ),
         dmc.Space(h="xl"),
 
@@ -153,6 +197,50 @@ layout = dmc.Container(
             ]
         ),
 
+
+        # ----------------------
+        # Section : Carte interactive pour la prediction
+        # ----------------------
+
+        dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
+            className="scroll-section",
+            children=[
+                dmc.Title("Working Residents by Salary and Price per square meter", order=2),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "description à venir",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
+                dmc.Space(h="md"),
+                create_map(),
+                                # Section pour la boîte d'informations (25% de la largeur)
+                html.Div(
+                    style={
+                        "width": "34%",
+                        "height": "85%",
+                        "padding": "20px",
+                        "boxSizing": "border-box",
+                        "borderLeft": "1px solid #ddd",
+                        "backgroundColor": "#f9f9f9",
+                        "overflowY": "auto",
+                    },
+                    children=[
+                        html.H3("Informations sur le quartier", style={"marginTop": 0}),
+                        html.Div(
+                            id="info-box-content",  # Contenu dynamique de la boîte
+                            children="Cliquez sur un quartier pour afficher des informations.",
+                        ),
+                    ],
+                ),
+            ]
+        ),
         
 
         # ----------------------
