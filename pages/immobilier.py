@@ -192,7 +192,7 @@ layout = dmc.Container(
                     }
                 ),
                 dmc.Space(h="md"),
-                html.Iframe(srcDoc=open("services/maps/folium_map_immo_price.html", "r").read(),
+                html.Iframe(srcDoc=open("services/maps/folium_map_price.html.html", "r").read(),
                     style={"width": "100%", "height": "500px", "border": "none"})
             ]
         ),

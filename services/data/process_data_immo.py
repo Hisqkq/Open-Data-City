@@ -3,6 +3,7 @@ import branca
 import json
 import re
 import os
+from shapely.geometry import shape
 
 
 # from process_economic_data import prepare_planning_areas_geojson
@@ -149,3 +150,53 @@ def process_planning_area():
 #     # Écriture dans un fichier GeoJSON
 #     with open("services/data/processed/PriceWithSalary.geojson", "w", encoding="utf-8") as f:
 #         json.dump(geojson_data, f, ensure_ascii=False, indent=4)
+
+
+#####################
+# PROCESS POUR DONNEES CARTE SWITCH
+#####################
+
+
+def prepare_planning_areas_geojson(geojson_path="services/data/processed/PlanningArea.geojson",
+                                   output_path="services/data/processed/PriceWithSalary.geojson"):
+    """
+    Charge le GeoJSON des planning areas et le CSV contenant les prix au m² par quartier.
+    Enrichit chaque feature du GeoJSON avec :
+      - price_m2 : le prix moyen du m² pour l'année 2017
+    """
+    # Charger le CSV contenant les prix au m² et ne garder que l'année 2017
+    df = pd.read_csv("services/data/processed/immo_map_price.csv")
+    df = df[df["Year"] == 2017]  # Filtrer pour ne garder que l'année 2017
+    
+    # Normaliser le nom des quartiers pour éviter les erreurs de correspondance
+    df["town"] = df["town"].str.strip().str.upper()
+
+    # Charger le GeoJSON
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        geojson = json.load(f)
+
+    # Mettre à jour les propriétés des features selon la planning area
+    for feature in geojson["features"]:
+        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()  # Nom du quartier dans le GeoJSON
+        
+        # Trouver la ligne correspondant au quartier
+        row = df[df["town"] == area_name]
+        if not row.empty:
+            feature["properties"]["price_m2"] = float(row.iloc[0]["price_m2"])  # Ajouter le prix au m²
+        
+    # Ajouter le centroïde pour chaque zone si non présent
+    for feature in geojson["features"]:
+        if "centroid" not in feature["properties"]:
+            geom = feature["geometry"]
+            poly = shape(geom)
+            centroid = poly.centroid
+            feature["properties"]["centroid"] = {"lat": centroid.y, "lng": centroid.x}
+
+    # Sauvegarder le GeoJSON enrichi
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(geojson, f, indent=4)
+
+    return geojson
+
+if __name__ == "__main__":
+    prepare_planning_areas_geojson()
