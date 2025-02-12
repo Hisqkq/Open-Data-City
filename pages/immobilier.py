@@ -192,6 +192,16 @@ layout = dmc.Container(
                     }
                 ),
                 dmc.Space(h="md"),
+                dmc.SegmentedControl(
+                            id="resale_or_pricem2",
+                            value="ng",
+                            data=[
+                                {"value": "Resale", "label": "Resale"},
+                                {"value": "Price", "label": "Price per m²"},
+                            ],
+                            mb=10,
+                        ),
+                dmc.Space(h="md"),
                 html.Iframe(srcDoc=open("services/maps/folium_map_price.html", "r").read(),
                     style={"width": "100%", "height": "500px", "border": "none"})
             ]

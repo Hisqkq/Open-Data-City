@@ -162,20 +162,24 @@ def process_planning_area():
 # PROCESS POUR DONNEES CARTE SWITCH
 #####################
 
-
 def prepare_planning_areas_geojson(geojson_path="services/data/processed/PlanningArea.geojson",
                                    output_path="services/data/processed/PriceWithSalary.geojson"):
     """
-    Charge le GeoJSON des planning areas et le CSV contenant les prix au m² par quartier.
-    Enrichit chaque feature du GeoJSON avec :
+    Charge le GeoJSON des planning areas et les CSV contenant :
       - price_m2 : le prix moyen du m² pour l'année 2017
+      - resale_price : le prix moyen de revente d'un logement en 2017
+    Enrichit chaque feature du GeoJSON avec ces valeurs.
     """
-    # Charger le CSV contenant les prix au m² et ne garder que l'année 2017
-    df = pd.read_csv("services/data/processed/immo_map_price.csv")
-    df = df[df["Year"] == 2017]  # Filtrer pour ne garder que l'année 2017
-    
-    # Normaliser le nom des quartiers pour éviter les erreurs de correspondance
-    df["town"] = df["town"].str.strip().str.upper()
+
+    # Charger le CSV des prix au m²
+    df_price = pd.read_csv("services/data/processed/immo_map_price.csv")
+    df_price = df_price[df_price["Year"] == 2017]  # Filtrer pour l'année 2017
+    df_price["town"] = df_price["town"].str.strip().str.upper()  # Normaliser les noms
+
+    # Charger le CSV des prix de revente
+    df_resale = pd.read_csv("services/data/processed/df_grouped_resale.csv")
+    df_resale = df_resale[df_resale["Year"] == 2017]  # Filtrer pour l'année 2017
+    df_resale["town"] = df_resale["town"].str.strip().str.upper()  # Normaliser les noms
 
     # Charger le GeoJSON
     with open(geojson_path, "r", encoding="utf-8") as f:
@@ -183,13 +187,18 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
 
     # Mettre à jour les propriétés des features selon la planning area
     for feature in geojson["features"]:
-        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()  # Nom du quartier dans le GeoJSON
-        
-        # Trouver la ligne correspondant au quartier
-        row = df[df["town"] == area_name]
-        if not row.empty:
-            feature["properties"]["price_m2"] = float(row.iloc[0]["price_m2"])  # Ajouter le prix au m²
-        
+        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()
+
+        # Ajouter price_m2
+        row_price = df_price[df_price["town"] == area_name]
+        if not row_price.empty:
+            feature["properties"]["price_m2"] = float(row_price.iloc[0]["price_m2"])
+
+        # Ajouter resale_price
+        row_resale = df_resale[df_resale["town"] == area_name]
+        if not row_resale.empty:
+            feature["properties"]["resale_price"] = float(row_resale.iloc[0]["resale_price"])
+
     # Ajouter le centroïde pour chaque zone si non présent
     for feature in geojson["features"]:
         if "centroid" not in feature["properties"]:
