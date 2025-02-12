@@ -63,6 +63,42 @@ def create_table_figure_introduction():
 import folium
 import json
 
+import folium
+import json
+
+def parse_median_salary(category):
+    """
+    Convertit une catégorie de salaire en valeur numérique médiane.
+    Exemple : "4_000_4_999" devient 4500.
+    """
+    try:
+        if "andOver" in category:
+            digits = "".join(filter(str.isdigit, category))
+            return float(digits)
+        else:
+            parts = category.split("_")
+            if len(parts) >= 2:
+                low = float("".join(parts[:2]))
+                high = float("".join(parts[2:])) if len(parts) > 2 else low
+                return (low + high) / 2
+    except Exception:
+        return None
+
+def get_salary_color(salary):
+    """
+    Détermine la couleur du marqueur en fonction du salaire médian.
+    """
+    min_sal, max_sal = 3000, 12000
+    if salary is None:
+        return "#808080"  # Gris si inconnu
+    norm = (salary - min_sal) / (max_sal - min_sal)
+    norm = max(0, min(1, norm))
+    r = int(173 + norm * (255 - 173))
+    g = int(216 + norm * (182 - 216))
+    b = int(230 + norm * (193 - 230))
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
 def get_fill_color(price):
     """
     Retourne une couleur pour les polygones en fonction du prix au mètre carré.
@@ -88,11 +124,25 @@ def get_fill_color(price):
     
     return rgb_to_hex(rgb)
 
-def create_folium_map(geojson_path="services/data/processed/PriceWithSalary.geojson"):
+def get_marker_radius_for_salary(salary):
+    """
+    Calcule le rayon du marker en fonction de la valeur numérique du salaire médian.
+    On attribue un rayon linéaire entre 5 et 20 pixels.
+    """
+    min_sal, max_sal = 3000, 12000
+    min_radius, max_radius = 5, 20
+    if salary is None:
+        return min_radius
+    norm = (salary - min_sal) / (max_sal - min_sal)
+    norm = max(0, min(1, norm))
+    return min_radius + norm * (max_radius - min_radius)
+
+
+def create_folium_map(geojson_path="services/data/processed/PriceWithSalaryUpdated.geojson"):
     """
     Crée une carte Folium affichant :
       - Les planning areas colorées selon le prix au mètre carré.
-      - Des marqueurs positionnés sur le centroïde de chaque zone avec info sur le prix/m².
+      - Des marqueurs positionnés sur le centroïde de chaque zone avec info sur le prix/m² et les revenus médians.
       - Une légende indiquant l'échelle des prix/m².
     """
     # Charger le GeoJSON
@@ -118,39 +168,40 @@ def create_folium_map(geojson_path="services/data/processed/PriceWithSalary.geoj
         tooltip=folium.GeoJsonTooltip(fields=["PLN_AREA_N", "price_m2"], aliases=["Area:", "Price/m²:"])
     ).add_to(m)
 
-    # Ajout des cercles pour afficher le prix/m² dans chaque quartier
+
+    # Ajout des cercles pour les salaires
     for feature in geojson["features"]:
         price = feature["properties"].get("price_m2")
+        median_salary = feature["properties"].get("median_salary_category", "N/A")
         if price is None or price <= 0:
             continue
         centroid = feature["properties"].get("centroid")
         if not centroid:
             continue
-
+        salary_cat = feature["properties"].get("median_salary_category")
+        salary_value = parse_median_salary(salary_cat)
+        marker_color = get_salary_color(salary_value)
+        marker_radius = get_marker_radius_for_salary(salary_value)
         folium.CircleMarker(
             location=[centroid["lat"], centroid["lng"]],
-            radius=7,  # Taille fixe pour bien voir les points
+            radius=marker_radius,
             color="black",
             fill=True,
-            fill_color=get_fill_color(price),
+            fill_color=marker_color,
             fill_opacity=0.9,
             popup=folium.Popup(f"""
                 <h4>{feature["properties"].get("PLN_AREA_N", "")}</h4>
-                <p>Price/m²: {price:.2f} SGD</p>
+                <p>Working Population: {price}</p>
+                <p>Median Salary: {salary_value if salary_value is not None else 'N/A'}</p>
             """, max_width=250)
         ).add_to(m)
 
     # Légende pour le prix/m²
     price_legend = '''
-     <div style="
-     position: fixed; 
-     bottom: 50px; left: 50px; width: 180px; height: 140px; 
+     <div style="position: fixed; bottom: 50px; left: 50px; width: 180px; height: 140px; 
      border:2px solid grey; z-index:9999; font-size:14px;
-     background-color: white;
-     opacity: 0.8;
-     padding: 10px;
-     ">
-     <b>Price/m² Scale</b><br>
+     background-color: white; opacity: 0.8; padding: 10px;">
+     <b>Price m_2</b><br>
      3k - 5k: <i style="background:#ffffcc; width:20px; height:20px; display:inline-block"></i><br>
      5k - 7k: <i style="background:#fed976; width:20px; height:20px; display:inline-block"></i><br>
      7k - 9k: <i style="background:#fd8d3c; width:20px; height:20px; display:inline-block"></i><br>
@@ -158,6 +209,25 @@ def create_folium_map(geojson_path="services/data/processed/PriceWithSalary.geoj
      </div>
      '''
     m.get_root().html.add_child(folium.Element(price_legend))
+
+    # Légende pour la médiane du salaire
+    salary_legend = '''
+     <div style="
+     position: fixed; 
+     bottom: 50px; right: 50px; width: 200px; height: 140px; 
+     border:2px solid grey; z-index:9999; font-size:14px;
+     background-color: white;
+     opacity: 0.8;
+     padding: 10px;
+     ">
+     <b>Median Salary Scale</b><br>
+     3000 - 5000: <i style="background:#add8e6; width:20px; height:20px; display:inline-block"></i><br>
+     5000 - 7000: <i style="background:#c4a3d2; width:20px; height:20px; display:inline-block"></i><br>
+     7000 - 9000: <i style="background:#e498a6; width:20px; height:20px; display:inline-block"></i><br>
+     9000 - 12000: <i style="background:#ffb6c1; width:20px; height:20px; display:inline-block"></i>
+     </div>
+     '''
+    m.get_root().html.add_child(folium.Element(salary_legend))
 
     return m
 

@@ -157,6 +157,12 @@ def process_planning_area():
 #####################
 
 
+
+#####################
+# PROCESS POUR DONNEES CARTE SWITCH
+#####################
+
+
 def prepare_planning_areas_geojson(geojson_path="services/data/processed/PlanningArea.geojson",
                                    output_path="services/data/processed/PriceWithSalary.geojson"):
     """
@@ -198,5 +204,49 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
 
     return geojson
 
-if __name__ == "__main__":
-    prepare_planning_areas_geojson()
+def merge_salary_data(price_geojson_path="services/data/processed/PriceWithSalary.geojson",
+                      salary_geojson_path="services/data/processed/PlanningAreaWithSalary.geojson",
+                      output_path="services/data/processed/PriceWithSalaryUpdated.geojson"):
+    """
+    Fusionne les données de salaire (working_population, median_salary_category) depuis 
+    PlanningAreaWithSalary.geojson dans PriceWithSalary.geojson en faisant correspondre les zones de planification (PLN_AREA_N).
+    """
+    
+    # Charger le GeoJSON des salaires
+    with open(salary_geojson_path, "r", encoding="utf-8") as f:
+        salary_geojson = json.load(f)
+
+    # Construire un dictionnaire pour un accès rapide aux données de salaire
+    salary_data = {}
+    for feature in salary_geojson["features"]:
+        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()
+        salary_data[area_name] = {
+            "working_population": feature["properties"].get("working_population"),
+            "median_salary_category": feature["properties"].get("median_salary_category"),
+        }
+
+    # Charger le GeoJSON des prix
+    with open(price_geojson_path, "r", encoding="utf-8") as f:
+        price_geojson = json.load(f)
+
+    # Mettre à jour les propriétés des features du GeoJSON des prix
+    for feature in price_geojson["features"]:
+        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()
+        
+        # Vérifier si on a les données de salaire correspondantes
+        if area_name in salary_data:
+            feature["properties"]["working_population"] = salary_data[area_name]["working_population"]
+            feature["properties"]["median_salary_category"] = salary_data[area_name]["median_salary_category"]
+
+    # Sauvegarder le GeoJSON mis à jour
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(price_geojson, f, indent=4)
+
+    return price_geojson
+
+# if __name__ == "__main__":
+#     merge_salary_data()
+
+
+# if __name__ == "__main__":
+#     prepare_planning_areas_geojson()

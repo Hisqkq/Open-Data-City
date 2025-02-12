@@ -163,20 +163,9 @@ def preprocess_salary_data(csv_path="services/data/raw/ResidentWorkingPersonsAge
 
     df["working_population"] = df["working_population"] * 1000
     df["working_population"] = df["working_population"].astype(int)
-
-    # Charger les prix au m2
-    df_price = pd.read_csv("services/data/processed/immo_map_price.csv")
-    
-    price_df = df_price[df_price["Year"] == 2017][["town", "price_m2"]]
-
-    price_df.rename(columns={"town": "PlanningArea"}, inplace=True)
-
-    df = df.merge(price_df, on="PlanningArea", how="left")
-
-    print(df)
-    
+   
     # Retourner uniquement les colonnes utiles
-    return df[["PlanningArea", "working_population", "median_salary_category", "price_m2"]]
+    return df[["PlanningArea", "working_population", "median_salary_category"]]
 
 def prepare_planning_areas_geojson(geojson_path="services/data/processed/PlanningArea.geojson",
                                    csv_path="services/data/raw/ResidentWorkingPersonsAged15YearsandOverbyPlanningAreaandGrossMonthlyIncomefromWorkGeneralHouseholdSurvey2015.csv",
