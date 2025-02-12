@@ -175,7 +175,7 @@ layout = dmc.Container(
         # Section : Carte avec le switch
         # ----------------------
 
-       dmc.Card(
+        dmc.Card(
             shadow="sm",
             withBorder=True,
             padding="lg",
@@ -207,6 +207,42 @@ layout = dmc.Container(
             ]
         ),
 
+
+        # ----------------------
+        # Section : Carte avec le switch TEEEEEEST
+        # ----------------------
+
+        dmc.Card(
+            shadow="sm",
+            withBorder=True,
+            padding="lg",
+            className="scroll-section",
+            children=[
+                dmc.Title("Working Residents by Salary and Resale price", order=2),
+                dmc.Space(h="md"),
+                dmc.Text(
+                    "description à venir",
+                    size="md",
+                    style={
+                        "lineHeight": "1.6",
+                        "textAlign": "justify"
+                    }
+                ),
+                dmc.Space(h="md"),
+                dmc.SegmentedControl(
+                            id="resale_or_pricem2",
+                            value="ng",
+                            data=[
+                                {"value": "Resale", "label": "Resale"},
+                                {"value": "Price", "label": "Price per m²"},
+                            ],
+                            mb=10,
+                        ),
+                dmc.Space(h="md"),
+                html.Iframe(srcDoc=open("services/maps/folium_map_resale.html", "r").read(),
+                    style={"width": "100%", "height": "500px", "border": "none"})
+            ]
+        ),
 
         # ----------------------
         # Section : Carte interactive pour la prediction
