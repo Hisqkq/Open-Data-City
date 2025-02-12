@@ -184,7 +184,7 @@ layout = dmc.Container(
                 dmc.Title("Working Residents by Salary and Price per square meter", order=2),
                 dmc.Space(h="md"),
                 dmc.Text(
-                    "description à venir",
+                    "This map shows the distribution of salaries with either the resale price or the price per square meter",
                     size="md",
                     style={
                         "lineHeight": "1.6",
@@ -202,48 +202,18 @@ layout = dmc.Container(
                             mb=10,
                         ),
                 dmc.Space(h="md"),
-                html.Iframe(srcDoc=open("services/maps/folium_map_price.html", "r").read(),
-                    style={"width": "100%", "height": "500px", "border": "none"})
-            ]
-        ),
-
-
-        # ----------------------
-        # Section : Carte avec le switch TEEEEEEST
-        # ----------------------
-
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
-            className="scroll-section",
-            children=[
-                dmc.Title("Working Residents by Salary and Resale price", order=2),
-                dmc.Space(h="md"),
-                dmc.Text(
-                    "description à venir",
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify"
-                    }
+                dcc.Store(id="selected_map", data="services/maps/folium_map_resale.html"),  # Stocke l'URL du fichier
+                dcc.Loading(  # Effet de chargement pendant le changement de carte
+                    type="circle",
+                    children=html.Iframe(
+                        id="map_iframe",
+                        srcDoc=open("services/maps/folium_map_resale.html", "r").read(),
+                        style={"width": "100%", "height": "500px", "border": "none"}
+                    )
                 ),
-                dmc.Space(h="md"),
-                dmc.SegmentedControl(
-                            id="resale_or_pricem2",
-                            value="ng",
-                            data=[
-                                {"value": "Resale", "label": "Resale"},
-                                {"value": "Price", "label": "Price per m²"},
-                            ],
-                            mb=10,
-                        ),
-                dmc.Space(h="md"),
-                html.Iframe(srcDoc=open("services/maps/folium_map_resale.html", "r").read(),
-                    style={"width": "100%", "height": "500px", "border": "none"})
             ]
         ),
-
+        
         # ----------------------
         # Section : Carte interactive pour la prediction
         # ----------------------
@@ -384,3 +354,18 @@ layout = dmc.Container(
         dmc.Space(h="xl"),
     ]
 )
+
+
+# Callback pour changer la carte affichée
+@dash.callback(
+    Output("map_iframe", "srcDoc"),
+    Input("resale_or_pricem2", "value"),
+)
+def update_map(selected_value):
+    if selected_value == "Resale":
+        map_path = "services/maps/folium_map_resale.html"
+    else:
+        map_path = "services/maps/folium_map_price.html"
+
+    with open(map_path, "r") as f:
+        return f.read()
