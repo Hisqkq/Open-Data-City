@@ -1,11 +1,15 @@
 dash
+dash_cytoscape
 dash_extensions
 dash_iconify
 dash-leaflet
 dash-mantine-components
 
+numpy
 pandas
 polars
+scipy
 shapely
+folium
 
 scikit-learn

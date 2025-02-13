@@ -2,11 +2,12 @@ import plotly.graph_objects as go
 import pandas as pd
 import json
 import dash_mantine_components as dmc
+import dash_cytoscape as cyto
 
 import dash_leaflet as dl
 from dash import html
 
-from services.data.process_economic_data import get_unemployment_by_city, get_overall_unemployment_rate, get_unemployment_by_age, get_unemployment_by_qualification, get_unemployment_by_sex
+from services.data.process_economic_data import get_unemployment_by_city, get_overall_unemployment_rate, get_unemployment_by_age, get_unemployment_by_qualification, get_unemployment_by_sex, get_combined_cpi_salary_data, compute_partial_correlation_matrix
 
 def create_unemployment_bar_chart(theme="mantine_light"):
     """
@@ -297,7 +298,6 @@ def create_folium_map(geojson_path="services/data/processed/PlanningAreaWithSala
         tooltip=folium.GeoJsonTooltip(fields=["PLN_AREA_N"], aliases=["Area:"])
     ).add_to(m)
     
-    # Ajout des cercles pour les salaires
     for feature in geojson["features"]:
         pop = feature["properties"].get("working_population")
         if pop is None or pop <= 0:
@@ -323,7 +323,6 @@ def create_folium_map(geojson_path="services/data/processed/PlanningAreaWithSala
             """, max_width=250)
         ).add_to(m)
     
-    # Légende pour la population (polygones)
     population_legend = '''
      <div style="
      position: fixed; 
@@ -362,6 +361,162 @@ def create_folium_map(geojson_path="services/data/processed/PlanningAreaWithSala
     m.get_root().html.add_child(folium.Element(salary_legend))
     
     return m
+
+def create_cpi_salary_line_chart_mantine(salary_line_width=5, cpi_line_width=2, cpi_columns=None):
+    """
+    Crée un graphique LineChart avec Dash Mantine Components affichant plusieurs séries :
+      - Une série pour chaque catégorie du CPI.
+      - Une série pour l'indexation des salaires médians, affichée en plus gros et renommée "Median Salary Index".
+    
+    Paramètres :
+      - template : le template à utiliser pour le graphique (ex. "mantine_light" ou "mantine_dark").
+      - salary_line_width : épaisseur de la ligne pour la série "Median Salary Index".
+      - cpi_line_width : épaisseur de ligne pour les autres séries.
+      - cpi_columns : liste des colonnes du CPI à inclure (optionnel).
+    
+    Retourne :
+      - Un composant dmc.LineChart prêt à être utilisé dans le layout.
+    """
+    # Charger les données combinées
+    data = get_combined_cpi_salary_data(cpi_columns=cpi_columns)
+    keys = list(data[0].keys())
+    
+    series = []
+    unique_colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
+    counter = 0
+    
+    for key in keys:
+        if key == "year_month":
+            continue
+        if key == "Median Salary Index":
+            series.append({
+                "name": key, 
+                "color": "red", 
+                "strokeWidth": salary_line_width,  
+                "strokeLinecap": "round",  # Bordures arrondies pour un effet plus lisse
+                "strokeDasharray": "4 2",  # Ligne légèrement en pointillés pour se démarquer
+                "dotProps": {"r": 4}  # Points légèrement plus visibles
+            })
+        else:
+            series.append({
+                "name": key, 
+                "color": unique_colors[counter % len(unique_colors)], 
+                "strokeWidth": cpi_line_width
+            })
+            counter += 1
+
+    chart = dmc.LineChart(
+        h=450,
+        dataKey="year_month",
+        data=data,
+        series=series,
+        withLegend=True,
+        dotProps={"r": 0},
+        curveType="natural",
+        referenceLines=[
+            {"y": 100, "label": "Reference: 100", "stroke": "red", "strokeWidth": 1, "strokeDasharray": "5,5"},
+            {"x": "2019-Jun", "stroke": "red", "strokeWidth": 1, "strokeDasharray": "5,5"},
+            {"x": "2020-Mar", "label": "Covid-19 Outbreak"}
+        ],
+        p="lg",
+        legendProps={"verticalAlign": "bottom"},
+        yAxisProps={"domain": [45, 135]},  # Fixer l'échelle de l'axe Y
+        yAxisLabel="Index",
+        xAxisLabel="Year-Month",
+    )
+    return chart
+
+def create_cytoscape_graph(alpha=0.05, theme="light"):
+    adj_matrix, corr_partial, var_names = compute_partial_correlation_matrix(alpha=alpha)
+
+    nodes = [{"data": {"id": var, "label": var}} for var in var_names]
+    edges = []
+
+    for i in range(len(var_names)):
+        for j in range(i + 1, len(var_names)):
+            if adj_matrix[i, j] == 1:
+                weight = abs(corr_partial[i, j])
+                edges.append({
+                    "data": {
+                        "source": var_names[i],
+                        "target": var_names[j],
+                        "weight": weight
+                    }
+                })
+
+    elements = nodes + edges
+
+    # Définir les couleurs selon le thème
+    if theme == "dark":
+        node_color = "#1f77b4"
+        text_color = "#ffffff"
+        edge_color = "#aaaaaa"
+    else:
+        node_color = "#ff7f0e"
+        text_color = "#000000"
+        edge_color = "#666666"
+
+    return cyto.Cytoscape(
+        id="cytoscape",
+        elements=elements,
+        responsive=True,
+        layout={"name": "cose"},
+        style={"width": "100%", "height": "600px"},
+        stylesheet=[
+            {
+                "selector": "node",
+                "style": {
+                    "label": "data(label)",
+                    "font-size": "14px",
+                    "background-color": node_color,
+                    "color": text_color,
+                    "text-halign": "center",
+                    "text-valign": "center",
+                    "width": 20,
+                    "height": 20
+                }
+            },
+            {
+                "selector": "edge",
+                "style": {
+                    "width": "mapData(weight, 0, 1, 1, 5)",
+                    "line-color": edge_color,
+                    "curve-style": "bezier",
+                }
+            },
+            {
+                "selector": "node:selected",
+                "style": {
+                    "background-color": "red",
+                    "border-width": 2,
+                    "border-color": "black"
+                }
+            },
+            {
+                "selector": "edge:selected",
+                "style": {
+                    "line-color": "red",
+                    "width": 4
+                }
+            },
+            {
+                "selector": ".highlight",
+                "style": {
+                    "background-color": "red",
+                    "color": "white",
+                    "font-size": "16px"
+                }
+            },
+            {
+                "selector": ".highlight-edge",
+                "style": {
+                    "line-color": "red",
+                    "width": 4
+                }
+            }
+        ]
+    )
+
 
 if __name__ == "__main__":
     m = create_folium_map()
