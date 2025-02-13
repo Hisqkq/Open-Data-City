@@ -275,41 +275,39 @@ layout = dmc.Container(
                 # ----------------------
                 # Partie droite : Graphiques
                 # ----------------------
+        # ----------------------
+        # Partie droite : Graphiques avec SegmentedControl
+        # ----------------------
                 html.Div(
                     style={
-                        "width": "30%",  # 25% de la largeur
+                        "width": "25%",  # 25% de la largeur
                         "height": "85%",  # 85% de la hauteur
-                        "display": "flex",
-                        "flexDirection": "column",  # Disposition en colonne
+                        "padding": "20px",
+                        "boxSizing": "border-box",
+                        "borderLeft": "1px solid #ddd",
+                        "backgroundColor": "#ffffff",
+                        "overflowY": "auto",
                     },
                     children=[
-                        # Section en haut : Bar chart (prix au m²)
+                        # SegmentedControl pour basculer entre les graphiques
+                        dmc.SegmentedControl(
+                            id="graph-toggle",
+                            value="bar-chart",  # Valeur par défaut
+                            data=[
+                                {"value": "bar-chart", "label": "Prix au m²"},
+                                {"value": "line-chart", "label": "Évolution des prix"},
+                            ],
+                            fullWidth=True,
+                            style={"marginBottom": "20px"},
+                        ),
+                        # Conteneur pour les graphiques
                         html.Div(
-                            style={
-                                "flex": 1,  # Prend 50% de la hauteur
-                                "padding": "20px",
-                                "boxSizing": "border-box",
-                                "borderBottom": "1px solid #ddd",
-                                "backgroundColor": "#ffffff",
-                            },
+                            id="graph-container",
                             children=[
-                                html.H3("Prix au m² par quartier", style={"marginTop": 0}),
+                                # Bar chart par défaut
                                 dcc.Graph(id="price-per-sqm-bar-chart"),
                             ],
                         ),
-                        # # Section en bas : Graphique en ligne (évolution des prix)
-                        # html.Div(
-                        #     style={
-                        #         "flex": 1,  # Prend 50% de la hauteur
-                        #         "padding": "20px",
-                        #         "boxSizing": "border-box",
-                        #         "backgroundColor": "#ffffff",
-                        #     },
-                        #     children=[
-                        #         html.H3("Évolution des prix depuis 2017", style={"marginTop": 0}),
-                        #         dcc.Graph(id="price-evolution-line-chart"),
-                        #     ],
-                        # ),
                     ],
                 ),
                 dmc.Space(h="md"),
@@ -381,3 +379,16 @@ def update_map(selected_value):
 
     with open(map_path, "r") as f:
         return f.read()
+    
+
+# Callback pour basculer entre les graphiques
+@dash.callback(
+    Output("graph-container", "children"),  # Mettre à jour le conteneur de graphiques
+    Input("graph-toggle", "value"),  # Valeur sélectionnée dans le SegmentedControl
+)
+def update_graph(selected_graph):
+    if selected_graph == "bar-chart":
+        return dcc.Graph(id="price-per-sqm-bar-chart")
+    elif selected_graph == "line-chart":
+        return dcc.Graph(id="price-evolution-line-chart")
+    return html.Div()  # Retourner un conteneur vide par défaut

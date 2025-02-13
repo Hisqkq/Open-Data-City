@@ -410,3 +410,22 @@ def create_folium_map_resale(geojson_path="services/data/processed/PriceWithSala
 # if __name__ == "__main__":
 #     m = create_folium_map_resale()
 #     m.save("folium_map_resale.html")
+
+
+##########################################
+# création de la figure de l'évolution des prix en fonction du quartier cliqué sur la map
+##########################################
+
+def create_line_chart_figure_history_price():
+    """
+    Crée une figure Plotly Express (line chart) pour l'évolution des prix.
+    """
+    df_agg = process_data_immo()
+    
+    fig = px.line(
+        df_agg,
+        x="Date",
+        y="price_m2",
+        title="Price per m2 depending on the date",
+    )
+    return fig

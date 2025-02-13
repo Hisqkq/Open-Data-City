@@ -2,7 +2,7 @@ import json
 import dash_leaflet as dl
 
 # Charger les données GeoJSON des quartiers
-with open("services/data/processed/PlanningArea.geojson", "r") as f:
+with open("services/data/processed/PriceWithHistory.geojson", "r") as f:
     areazone_data = json.load(f)
 
 
@@ -14,7 +14,7 @@ def create_map():
                         dl.TileLayer(),
                         dl.GeoJSON(
                             data=areazone_data,
-                            id="PlanningArea",
+                            id="PLN_AREA_N",
                             style={
                                 "color": "blue",
                                 "weight": 2,
