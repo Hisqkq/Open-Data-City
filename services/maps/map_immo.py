@@ -26,5 +26,5 @@ def create_map():
                             },
                         ),
                     ],
-                    style={"height": "50%", "width": "100%"},
+                    style={"height": "100%", "width": "100%"},
                 )

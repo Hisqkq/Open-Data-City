@@ -207,96 +207,112 @@ layout = dmc.Container(
                         style={"width": "100%", "height": "500px", "border": "none"}
                     )
                 ),
+                dmc.Space(h="md"),
             ]
         ),
         
-        # ----------------------
-        # Section : Carte interactive pour la prediction
-        # ----------------------
-
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
-            className="scroll-section",
-            children=[
-                dmc.Title("Working Residents by Salary and Price per square meter", order=2),
-                dmc.Space(h="md"),
-                dmc.Text(
-                    "description à venir",
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify"
-                    }
-                ),
-                dmc.Space(h="md"),
-                create_map(),
-                                # Section pour la boîte d'informations (25% de la largeur)
-                html.Div(
-                    style={
-                        "width": "34%",
-                        "height": "85%",
-                        "padding": "20px",
-                        "boxSizing": "border-box",
-                        "borderLeft": "1px solid #ddd",
-                        "backgroundColor": "#f9f9f9",
-                        "overflowY": "auto",
-                    },
-                    children=[
-                        html.H3("Informations sur le quartier", style={"marginTop": 0}),
-                        html.Div(
-                            id="info-box-content",  # Contenu dynamique de la boîte
-                            children="Cliquez sur un quartier pour afficher des informations.",
-                        ),
-                    ],
-                ),
-            ]
-        ),
-        
-
         # ----------------------
         # Section : Carte interactive pour la prediction
         # ----------------------
 
         html.Div(
             style={
-                "height": "100vh",
-                "width": "100%",
-                "display": "flex",
-                "flexDirection": "row",
+                "height": "100vh",  # Prend toute la hauteur de la page
+                "width": "100%",    # Prend toute la largeur de la page
+                "display": "flex",  # Utilise Flexbox pour organiser les éléments
+                "flexDirection": "row",  # Disposition en ligne
             },
             children=[
-                # Section pour la carte (75% de la largeur)
+                # ----------------------
+                # Partie gauche : Choix de l'utilisateur
+                # ----------------------
                 html.Div(
                     style={
-                        "width": "66%",
-                        "height": "85%",
-                    },
-                    children=[
-                        # Carte Leaflet
-                        create_map()
-                    ],
-                ),
-                # Section pour la boîte d'informations (25% de la largeur)
-                html.Div(
-                    style={
-                        "width": "34%",
+                        "width": "20%",
                         "height": "85%",
                         "padding": "20px",
                         "boxSizing": "border-box",
-                        "borderLeft": "1px solid #ddd",
+                        "borderRight": "1px solid #ddd",
                         "backgroundColor": "#f9f9f9",
                         "overflowY": "auto",
                     },
                     children=[
-                        html.H3("Informations sur le quartier", style={"marginTop": 0}),
-                        html.Div(
-                            id="info-box-content",  # Contenu dynamique de la boîte
-                            children="Cliquez sur un quartier pour afficher des informations.",
+                        html.H3("Estimation de bien", style={"marginTop": 0}),
+                        html.P("Faites vos choix pour obtenir une estimation :"),
+                        # Exemple de filtres (à adapter)
+                        html.Label("Type de bien :"),
+                        dcc.Dropdown(
+                            id="property-type",
+                            options=[
+                                {"label": "Appartement", "value": "apartment"},
+                                {"label": "Maison", "value": "house"},
+                            ],
+                            placeholder="Sélectionnez un type de bien",
                         ),
+                        html.Label("Surface (m²) :"),
+                        dcc.Input(id="surface", type="number", placeholder="Entrez la surface"),
+                        html.Label("Quartier :"),
+                        dcc.Dropdown(
+                            id="quartier-select",
+                            # options=[{"label": q, "value": q} for q in df["Quartier"].unique()],
+                            placeholder="Sélectionnez un quartier",
+                        ),
+                        html.Button("Estimer", id="estimate-btn", style={"marginTop": "10px"}),
                     ],
                 ),
+                # ----------------------
+                # Partie centrale : Carte interactive
+                # ----------------------
+                html.Div(
+                    style={
+                        "width": "50%",  # 50% de la largeur
+                        "height": "85%",  # 85% de la hauteur
+                    },
+                    children=[
+                        create_map(),  # Carte Leaflet
+                    ],
+                ),
+                # ----------------------
+                # Partie droite : Graphiques
+                # ----------------------
+                html.Div(
+                    style={
+                        "width": "30%",  # 25% de la largeur
+                        "height": "85%",  # 85% de la hauteur
+                        "display": "flex",
+                        "flexDirection": "column",  # Disposition en colonne
+                    },
+                    children=[
+                        # Section en haut : Bar chart (prix au m²)
+                        html.Div(
+                            style={
+                                "flex": 1,  # Prend 50% de la hauteur
+                                "padding": "20px",
+                                "boxSizing": "border-box",
+                                "borderBottom": "1px solid #ddd",
+                                "backgroundColor": "#ffffff",
+                            },
+                            children=[
+                                html.H3("Prix au m² par quartier", style={"marginTop": 0}),
+                                dcc.Graph(id="price-per-sqm-bar-chart"),
+                            ],
+                        ),
+                        # # Section en bas : Graphique en ligne (évolution des prix)
+                        # html.Div(
+                        #     style={
+                        #         "flex": 1,  # Prend 50% de la hauteur
+                        #         "padding": "20px",
+                        #         "boxSizing": "border-box",
+                        #         "backgroundColor": "#ffffff",
+                        #     },
+                        #     children=[
+                        #         html.H3("Évolution des prix depuis 2017", style={"marginTop": 0}),
+                        #         dcc.Graph(id="price-evolution-line-chart"),
+                        #     ],
+                        # ),
+                    ],
+                ),
+                dmc.Space(h="md"),
             ],
             className="scroll-section",
         ),
