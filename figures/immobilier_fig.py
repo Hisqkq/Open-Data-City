@@ -4,22 +4,54 @@ from dash import dash_table
 from dash import html
 import folium
 import json
+import dash_mantine_components as dmc
+import pandas as pd
 
 from services.data.process_data_immo import process_data_immo, process_data_table_intro, process_data_line_history
 
+
 def create_line_chart_figure_introduction():
     """
-    Crée une figure Plotly Express (line chart) pour l'introduction.
-    """
-    df_agg = process_data_immo()
+    Crée un line chart personnalisé avec Plotly Graph Objects pour la hausse des prix au metre carre.
     
-    fig = px.line(
-        df_agg,
-        x="Date",
-        y="price_m2",
-        title="Price per m2 depending on the date",
+    Paramètres:
+      - Aucun.
+      
+    Retourne:
+      - Une figure Plotly.
+    """
+    data = process_data_immo()  
+    data_list = data.to_dict(orient="records")
+
+    return dmc.LineChart(
+        h=300,
+        data=data_list,
+        series=[{"name": "price_m2", "label": "Price per m2 depending on the date"}],
+        dataKey="Date",
+        type="gradient",
+        strokeWidth=5,
+        curveType="natural",
+        yAxisProps={"domain": [4500.0, 7000.0]},  # Ajusté en fonction de la plage du prix
+        p="lg",
+        withLegend=True,
+        tooltipAnimationDuration=200,
+        unit="SGD",
     )
-    return fig
+
+
+# def create_line_chart_figure_introduction():
+#     """
+#     Crée une figure Plotly Express (line chart) pour l'introduction.
+#     """
+#     df_agg = process_data_immo()
+    
+#     fig = px.line(
+#         df_agg,
+#         x="Date",
+#         y="price_m2",
+#         title="Price per m2 depending on the date",
+#     )
+#     return fig
 
 def create_table_figure_introduction():
     """
@@ -51,7 +83,7 @@ def create_table_figure_introduction():
         ],
     )
 
-    return html.Div(table, style={"width": "80%", "margin": "auto", "padding": "20px"})
+    return dmc.Paper(table, style={"width": "80%", "margin": "auto", "padding": "20px"})
 
 
 
@@ -430,4 +462,32 @@ def create_line_chart_figure_history_price(town = "Ang Mo Kio"):
         y="price_m2",
         title="Price per m2 depending on the date",
     )
+    return fig
+
+
+def create_bar_chart_figure(selected_town="Ang Mo Kio"):
+    df = process_data_line_history()
+
+    # Filtrer les données pour 2024
+    df_2024 = df[df["Year"] == 2024].groupby("town")["price_m2"].mean().reset_index()
+
+    # Ajouter une colonne de couleur pour mettre en évidence le quartier sélectionné
+    df_2024["color"] = df_2024["town"].apply(lambda x: "red" if x == selected_town else "lightgray")
+
+    fig = px.bar(
+        df_2024,
+        x="town",
+        y="price_m2",
+        title="Prix moyen au m² en 2024",
+        color="color",
+        color_discrete_map="identity",  # Utilise les couleurs définies dans la colonne
+    )
+
+    fig.update_layout(
+        xaxis_title="Quartier",
+        yaxis_title="Prix au m²",
+        template="plotly_white",
+        xaxis_tickangle=-45  # Incline les noms des quartiers pour la lisibilité
+    )
+
     return fig
