@@ -21,11 +21,7 @@ layout = dmc.Container(
             style={"width": "100%"},
             className="scroll-section",
         ),
-        # # Stores pour suivre le niveau et le parent courant
-        # dcc.Store(id="current-level", data="global"),
-        # dcc.Store(id="current-parent", data=None),
         
-
         # ----------------------
         # En-tête avec titre et animation Lottie
         # ----------------------

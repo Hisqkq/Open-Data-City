@@ -253,6 +253,74 @@ def merge_salary_data(price_geojson_path="services/data/processed/PriceWithSalar
 
     return price_geojson
 
+##########################
+# DONNEE CARTE PREDICTION
+##########################
+
+def prepare_planning_areas_geojson_history(geojson_path="services/data/processed/PlanningArea.geojson",
+                                   output_path="services/data/processed/PriceWithHistory.geojson"):
+    """
+    Charge le GeoJSON des planning areas et les fichiers CSV contenant :
+    - price_m2 : le prix moyen du m² pour 2017
+    - resale_price : le prix moyen de revente par quartier
+    - price_m2_history : l'évolution des prix du m² dans le temps
+    """
+
+    # Charger les fichiers CSV
+    df_price = pd.read_csv("services/data/processed/immo_map_price.csv")
+    df_resale = pd.read_csv("services/data/processed/df_grouped_resale.csv")
+    df_history = pd.read_csv("services/data/processed/price_pred.csv")  # Historique des prix
+
+    # Filtrer pour 2017 et normaliser les noms de quartiers
+    df_price = df_price[df_price["Year"] == 2017]
+    df_resale = df_resale[df_resale["Year"] == 2017]
+    df_price["town"] = df_price["town"].str.strip().str.upper()
+    df_resale["town"] = df_resale["town"].str.strip().str.upper()
+
+    # Construire l'historique des prix par quartier (matrice)
+    df_history["town"] = df_history["town"].str.strip().str.upper()
+    price_history_dict = df_history.groupby("town").apply(
+        lambda g: g[["Year", "Month", "price_m2"]].sort_values(["Year", "Month"]).to_dict(orient="records")
+    ).to_dict()
+
+    # Charger le GeoJSON
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        geojson = json.load(f)
+
+    # Ajouter les informations aux features
+    for feature in geojson["features"]:
+        area_name = feature["properties"].get("PLN_AREA_N", "").strip().upper()
+
+        # Prix au m² (2017)
+        row_price = df_price[df_price["town"] == area_name]
+        if not row_price.empty:
+            feature["properties"]["price_m2"] = float(row_price.iloc[0]["price_m2"])
+
+        # Prix de revente (2017)
+        row_resale = df_resale[df_resale["town"] == area_name]
+        if not row_resale.empty:
+            feature["properties"]["resale_price"] = float(row_resale.iloc[0]["resale_price"])
+
+        # Historique des prix au m² (matrice)
+        feature["properties"]["price_m2_history"] = price_history_dict.get(area_name, [])
+
+        # Ajouter le centroïde si absent
+        if "centroid" not in feature["properties"]:
+            geom = feature["geometry"]
+            poly = shape(geom)
+            centroid = poly.centroid
+            feature["properties"]["centroid"] = {"lat": centroid.y, "lng": centroid.x}
+
+    # Sauvegarder le GeoJSON enrichi
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(geojson, f, indent=4)
+
+    return geojson
+
+if __name__ == "__main__":
+    prepare_planning_areas_geojson_history()
+
+
 # if __name__ == "__main__":
 #     merge_salary_data()
 
