@@ -311,6 +311,30 @@ def transform_institution_data(enrolment_csv="services/data/raw/Enrolment by Ins
     return df_merged
 
 
+def compute_corr_institution():
+    """
+    Calcule la corrélation entre les taux d'admission (intake_rate) et les effectifs (enrolment) par institution.
+    """
+    df_intake = pd.read_csv("services/data/raw/Intake by Institutions.csv")
+    df_enrolment = pd.read_csv("services/data/raw/Enrolment by Institutions.csv")
+
+    # On filtre la colonne sex = "MF" et on drop la colonne sex
+    df_intake = df_intake[df_intake["sex"] == "MF"].drop(columns=["sex"])
+    df_enrolment = df_enrolment[df_enrolment["sex"] == "MF"].drop(columns=["sex"])
+
+    df_intake_rate = df_intake.copy()
+
+    # On calcule le taux d'admission
+
+    df_intake_rate.iloc[:, 2:] = 100 * df_intake_rate.iloc[:, 2:] / df_enrolment.iloc[:, 2:]
+
+    # On fait deux matrice des correlations en ommetant la colonne year dans les dataframes
+
+    corr_intake = df_intake.drop(columns=["year"]).corr()
+    corr_enrolment = df_enrolment.drop(columns=["year"]).corr()
+    corr_intake_rate = df_intake_rate.drop(columns=["year"]).corr()
+
+    return corr_intake, corr_enrolment, corr_intake_rate
 
 
 

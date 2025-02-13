@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
 import json
+import scipy.stats
 from shapely.geometry import shape
+from scipy.linalg import inv
+from itertools import combinations
 
 
 def get_unemployment_by_city(csv_path="services/data/raw/UnemploymentRate.csv"):
@@ -60,9 +63,70 @@ def get_unemployment_by_sex(csv_path="services/data/raw/unemployment_by_sex.csv"
     pivot = pivot.rename(columns={"male": "Male", "female": "Female"})
     return pivot.to_dict(orient="records")
 
+def get_combined_cpi_salary_data(cpi_csv="services/data/processed/CPI_transformed.csv",
+                                 salary_csv="services/data/processed/median_income_transformed.csv",
+                                 cpi_columns=None):
+    """
+    Combine les données du Consumer Price Index (CPI) et de l'évolution du salaire médian.
+    
+    Paramètres :
+      - cpi_csv : chemin vers le CSV transformé du CPI.
+      - salary_csv : chemin vers le CSV transformé du salaire médian (contenant la colonne "index").
+      - cpi_columns : liste des colonnes du CPI à conserver (si None, on conserve toutes sauf "year_month").
+    
+    Retourne :
+      - Une liste de dictionnaires (via .to_dict("records")) avec une colonne "year_month" 
+        et pour chaque catégorie du CPI ainsi que la colonne "Median Salary Index" (l'ancienne "index").
+    """
+    # Charger les données CPI
+    df_cpi = pd.read_csv(cpi_csv)
+    df_salary = pd.read_csv(salary_csv)[["year_month", "index"]]    
+    df_cpi = pd.merge(df_cpi, df_salary, on="year_month", how="inner")
+    # on renomme la colonne index en Median Salary Index
+    df_cpi.rename(columns={"index": "Median Salary Index"}, inplace=True)
 
+    if cpi_columns is None:
+        cpi_columns = [col for col in df_cpi.columns if col != "year_month"]
+    df_cpi = df_cpi[["year_month"] + cpi_columns]
+    
+    # Renommer la colonne "index" en "Median Salary Index" pour plus de clarté
+    if "index" in df_cpi.columns:
+        df_cpi.rename(columns={"index": "Median Salary Index"}, inplace=True)
+    
+    return df_cpi.to_dict("records")
 
+def get_cpi_multiselect(cpi_csv="services/data/processed/CPI_transformed.csv", salary_csv="services/data/processed/median_income_transformed.csv"):
+    """
+    Retourne une liste d'options pour le multiselect du graphique CPI.
+    
+    Cette fonction lit le CSV transformé du CPI et retourne une liste de dictionnaires 
+    de la forme [{"value": <colonne>, "label": <colonne>}, ...] pour toutes les colonnes 
+    (catégories CPI) à l'exception de "year_month".
+    
+    Paramètres :
+      - cpi_csv : chemin vers le fichier CSV transformé du CPI.
+      - salary_csv : (non utilisé ici, mais conservé pour compatibilité)
+    
+    Retourne :
+      - options : liste d'options pour un composant dmc.Select ou dmc.MultiSelect.
+    """
+    # Lire le fichier CSV transformé
+    df_cpi = pd.read_csv(cpi_csv)
+    
+    # Nettoyer les noms de colonnes (supprimer les espaces superflus)
+    df_cpi.columns = df_cpi.columns.str.strip()
+    
+    # Exclure la colonne "year_month" qui sert d'index temporel
+    cpi_columns = [col for col in df_cpi.columns if col != "year_month"]
+    
+    # Créer la liste des options pour le multiselect
+    options = [{"value": col, "label": col} for col in cpi_columns]
+    # On ajoute l'option "Index salaire médian" pour comparer avec le CPI
+    options.append({"value": "Median Salary Index", "label": "Median Salary Index"})
 
+    values = ["All Items", "Food", "Clothing & Footwear", "Housing & Utilities", "Household Durables & Services", "Health Care", "Transport", "Communication", "Recreation & Culture", "Education", "Personal Care", "Alcoholic Drinks & Tobacco", "Public Transport", "Median Salary Index"]
+
+    return options, values
 
 def preprocess_unemployment_data(csv_path="services/data/raw/ResidentLabourForceAged15YearsandOverbyLabourForceStatusAgeAndSex.csv"):
     """
@@ -138,17 +202,12 @@ def preprocess_salary_data(csv_path="services/data/raw/ResidentWorkingPersonsAge
     """
     # Charger le CSV
     df = pd.read_csv(csv_path)
-    # Renommer la première colonne en "PlanningArea"
     df.rename(columns={df.columns[0]: "PlanningArea"}, inplace=True)
     
-    # Les colonnes de répartition sont toutes les colonnes à partir de la 3e (index 2)
     breakdown_cols = df.columns[2:]
     
-    # Calcul de la population totale en sommant les colonnes de répartition
     df["working_population"] = df[breakdown_cols].sum(axis=1)
-    # On convertit la colonne en int pour éviter les problèmes de calcul
     
-    # Fonction pour déterminer la catégorie médiane
     def find_median_category(row):
         total = row["working_population"]
         half = total / 2
@@ -156,7 +215,7 @@ def preprocess_salary_data(csv_path="services/data/raw/ResidentWorkingPersonsAge
         for col in breakdown_cols:
             cum_sum += row[col]
             if cum_sum >= half:
-                return col  # Retourne le nom de la colonne correspondante à la médiane
+                return col  
         return None
     
     df["median_salary_category"] = df.apply(find_median_category, axis=1)
@@ -180,23 +239,17 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
       PlanningArea,Total,Below_1_000,1_000_1_499,...,12_000andOver
     On utilisera la colonne "Total" pour la population et la dernière colonne pour la catégorie de salaire.
     """
-    # Charger le CSV et ignorer la ligne "Total"
     df = preprocess_salary_data(csv_path)
     
-    # Supposons que la première colonne est le nom de la planning area, la deuxième la population,
-    # et la dernière colonne la valeur correspondant à la catégorie de salaire médian.
+
     df["PlanningArea"] = df.iloc[:,0].str.strip()
     df[background_variable] = pd.to_numeric(df.iloc[:,1], errors="coerce")
     
-    # Charger le GeoJSON
     with open(geojson_path, "r", encoding="utf-8") as f:
         geojson = json.load(f)
     
-    # Mettre à jour les propriétés des features selon le planning area
     for feature in geojson["features"]:
-        # On suppose que le nom de la planning area est dans la propriété "PLN_AREA_N"
         area_name = feature["properties"].get("PLN_AREA_N", "").strip()
-        # Rechercher la ligne correspondante (en comparant en majuscules)
         row = df[df["PlanningArea"].str.upper() == area_name.upper()]
         if not row.empty:
             feature["properties"][background_variable] = int(row.iloc[0][background_variable])
@@ -209,13 +262,120 @@ def prepare_planning_areas_geojson(geojson_path="services/data/processed/Plannin
             centroid = poly.centroid
             feature["properties"]["centroid"] = {"lat": centroid.y, "lng": centroid.x}
 
-    # Sauvegarder le GeoJSON enrichi
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(geojson, f, indent=4)
 
     return geojson
 
+def preprocess_CPI_data(csv_path="services/data/raw/ConsumerPriceIndexCPI2019AsBaseYearMonthly.csv"):
+    # Lecture du fichier CSV d'origine
+    df = pd.read_csv(csv_path)
+    
+    df["DataSeries"] = df["DataSeries"].str.strip()
+    
+    melted = pd.melt(df, id_vars=["DataSeries"], var_name="year_month", value_name="CPI")
+    
+    pivot_df = melted.pivot(index="year_month", columns="DataSeries", values="CPI").reset_index()
+
+    # On garde les valeurs au dela de April 2000
+    pivot_df = pivot_df[pivot_df["year_month"] >= "2000"]
+
+    pivot_df["year_month"] = pivot_df["year_month"].apply(lambda x: x[:4] + "-" + x[4:])
+
+    pivot_df = pivot_df[['year_month', 'All Items', 'Food', 'Clothing & Footwear', 'Housing & Utilities', 'Household Durables & Services', 'Health Care', 'Transport', 'Communication', 'Recreation & Culture', 'Education', 'Personal Care', 'Alcoholic Drinks & Tobacco', 'Public Transport']]
+    
+    pivot_df.to_csv("services/data/processed/CPI_transformed.csv", index=False)
+    
+    print("Transformation terminée. Le fichier 'CPI_transformed.csv' a été enregistré.")
+    return pivot_df
+
+def transform_med_income(csv_path="services/data/raw/MedianGrossMonthlyIncomeFromEmploymentofFullTimeEmployedResidentsTotal.csv", base_date="2019-06-01", output_csv="services/data/processed/median_income_transformed.csv"):
+    """
+    Transforme le CSV annuel de salaire médian en un DataFrame mensuel interpolé, avec les colonnes suivantes :
+      - year         : année (numérique)
+      - month        : mois (abrégé, par exemple "Jan", "Feb", …)
+      - year_month   : chaîne de caractère "YYYY-MMM"
+      - med_income_incl_empcpf : salaire médian interpolé pour le mois
+      - index        : indice calculé par rapport à la valeur de référence (base_date)
+    
+    On considère que les valeurs annuelles correspondent au mois de juin de chaque année.
+    La fonction enregistre le résultat dans output_csv et retourne le DataFrame.
+    """
+    # Lire le CSV
+    df = pd.read_csv(csv_path)
+    
+    df = df[['year', 'med_income_incl_empcpf']]
+    
+    df['date'] = pd.to_datetime(df['year'].astype(str) + "-06-01")
+    df = df.set_index('date')
+    
+    new_index = pd.date_range(start=df.index.min(), end=df.index.max(), freq='MS')  # "MS": début de mois
+    
+    df_monthly = df.reindex(new_index)
+    df_monthly['med_income_incl_empcpf'] = df_monthly['med_income_incl_empcpf'].interpolate(method='linear')
+    
+    df_monthly = df_monthly.reset_index().rename(columns={'index': 'date'})
+    
+    df_monthly['year'] = df_monthly['date'].dt.year
+    df_monthly['month'] = df_monthly['date'].dt.strftime('%b')
+    df_monthly['year_month'] = df_monthly['date'].dt.strftime('%Y-%b')
+    
+    # Récupérer la valeur de référence pour l'indexation (base_date, ici juin 2019)
+    base_value_series = df_monthly.loc[df_monthly['date'] == pd.to_datetime(base_date), 'med_income_incl_empcpf']
+    if base_value_series.empty:
+        raise ValueError(f"Base date {base_date} non trouvée dans les données.")
+    base_value = base_value_series.iloc[0]
+    
+    df_monthly['index'] = df_monthly['med_income_incl_empcpf'] / base_value * 100
+    
+    df_monthly = df_monthly[['year', 'month', 'year_month', 'med_income_incl_empcpf', 'index']]
+    
+    df_monthly.to_csv(output_csv, index=False)
+    
+    return df_monthly
+
+
+def compute_partial_correlation_matrix(alpha=0.05):
+    """
+    Calcule la matrice des corrélations partielles et la matrice d'adjacence après correction de Bonferroni.
+    Retourne :
+    - adj_matrix : matrice binaire des liens significatifs.
+    - corr_matrix : matrice des corrélations partielles.
+    - var_names : noms des variables (pour les nœuds du graphe).
+    """
+    df_cpi = pd.read_csv("services/data/processed/CPI_transformed.csv").drop(columns=["All Items"])
+    df_salary = pd.read_csv("services/data/processed/median_income_transformed.csv")[["year_month", "index"]]
+    df_salary.rename(columns={"index": "Median Salary Index"}, inplace=True)
+
+    df = pd.merge(df_cpi, df_salary, on="year_month", how="inner").drop(columns=["year_month"])
+
+    df_std = (df - df.mean()) / df.std()
+
+    precision_matrix = inv(df_std.corr().values)  
+    n_vars = df_std.shape[1]
+    corr_partial = np.zeros((n_vars, n_vars))
+    p_values = np.zeros((n_vars, n_vars))
+
+    for i, j in combinations(range(n_vars), 2):
+        theta_ij = precision_matrix[i, j]
+        theta_ii = precision_matrix[i, i]
+        theta_jj = precision_matrix[j, j]
+        corr_partial[i, j] = -theta_ij / np.sqrt(theta_ii * theta_jj)
+        corr_partial[j, i] = corr_partial[i, j]
+
+        dof = df_std.shape[0] - n_vars
+        z_score = 0.5 * np.log((1 + corr_partial[i, j]) / (1 - corr_partial[i, j])) * np.sqrt(dof)
+        p_values[i, j] = 2 * (1 - scipy.stats.norm.cdf(np.abs(z_score)))
+        p_values[j, i] = p_values[i, j]
+
+    alpha_corr = alpha / (n_vars * (n_vars - 1) / 2)
+    adj_matrix = (p_values < alpha_corr).astype(int)
+
+    return adj_matrix, corr_partial, df.columns.tolist()
+
 
 
 if __name__ == "__main__":
     prepare_planning_areas_geojson()
+    preprocess_CPI_data()
+    transform_med_income()

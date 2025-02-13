@@ -6,7 +6,7 @@ from dash_extensions import Lottie
 import plotly.express as px
 from dash_iconify import DashIconify
 
-from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure, create_institution_trends_figure
+from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure, create_institution_trends_figure, create_corr_institution_figure
 
 dash.register_page(__name__, path="/education")
 
@@ -295,6 +295,10 @@ layout = dmc.Container(
                         "marginBottom": "1rem"
                     }
                 ),
+                dmc.Space(h="md"),
+                dcc.Graph(
+                    id="institution-trends-chart",
+                ),
                 dmc.Group(
                     children=[
                         dmc.MultiSelect(
@@ -335,23 +339,31 @@ layout = dmc.Container(
                     ]
                 ),
                 dmc.Space(h="md"),
-                dcc.Graph(
-                    id="institution-trends-chart",
-                ),
-                dmc.Space(h="md"),
                 # Texte d'observations en dessous de la figure
-                dmc.Text(
-                    "Observations: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. "
-                    "In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, "
-                    "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education in Singapore and offer valuable insights into how "
-                    "admission strategies evolve over the years.",
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify",
-                        "marginTop": "1rem"
-                    }
-                )
+                html.Div(
+                        children=[
+                            dmc.Text(
+                                "Observations: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. "
+                                "In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, "
+                                "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education in Singapore and offer valuable insights into how "
+                                "admission strategies evolve over the years.",
+                                size="md",
+                                style={
+                                    "lineHeight": "1.6",
+                                    "marginTop": "1rem",
+                                    "flex": "1"
+                                }
+                            ),
+                            dcc.Graph(id="corr-institution-chart", style={"marginTop": "1rem", "flex": "2"}, config={'displayModeBar': False}),
+                    ],
+                style={"display": "flex",
+                        "flexWrap": "wrap",
+                        "justifyContent": "center",
+                        "alignItems": "center",
+                        "gap": "1rem",
+                        "width": "90%",
+                        "margin": "auto"}
+            )
             ]
         ),
         dmc.Space(h="xl"),
@@ -581,4 +593,23 @@ def update_institution_trends(selected_institutions, metric, theme):
         selected_institutions = None
     
     fig = create_institution_trends_figure(metric=metric, institutions=selected_institutions, template=template)
+    return fig
+
+
+@callback(
+    Output("corr-institution-chart", "figure"),
+    Input("institution-multiselect", "value"),
+    Input("institution-metric-dropdown", "value"),
+    Input("theme-store", "data")
+)
+def update_corr_institution_chart(selected_institutions, metric, theme):
+    # Choix du template Plotly en fonction du switch de thème
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+    
+    # Valeurs par défaut
+    if metric is None:
+        metric = "enrolment"
+    # Si aucune institution n'est sélectionnée, on peut choisir d'afficher toutes.
+    
+    fig = create_corr_institution_figure(mode=metric, institutions=selected_institutions, template=template)
     return fig

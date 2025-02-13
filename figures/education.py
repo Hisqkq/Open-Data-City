@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 
-from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data, get_institution_trends_data
+from services.data.process_education_data import get_aggregated_data, get_line_chart_data, get_admission_trade_data, get_institution_trends_data, compute_corr_institution
 
 def create_bar_chart_figure(detail_level="global", parent_value=None, year=2022, template="mantine_light"):
     """
@@ -278,4 +278,33 @@ def create_institution_trends_figure(metric="enrolment", institutions=None, temp
         fig.update_xaxes(showspikes=True)
         fig.update_yaxes(showspikes=True)
     
+    return fig
+
+def create_corr_institution_figure(institutions=["sit", "smu", "suss", "sutd", "nus", "ntu"], template="mantine_light", mode="intake"):
+    intake_corr, enrolment_corr, corr_intake_rate = compute_corr_institution()
+
+    if mode == "intake":
+        corr = intake_corr
+    elif mode == "enrolment":
+        corr = enrolment_corr
+    else:
+        corr = corr_intake_rate
+    corr = corr.loc[institutions, institutions]
+
+    fig = go.Figure(data=go.Heatmap(
+        z=corr,
+        x=corr.columns,
+        y=corr.columns,
+        colorscale='Viridis'))
+    
+    fig.update_layout(
+        title=f"Correlation between Institutions ({mode.capitalize()})",
+        template=template,
+        margin=dict(l=50, r=50, t=80, b=100),
+    )
+
+    # on met un background transparent pour la figure
+    fig.update_layout(paper_bgcolor = 'rgba(0,0,0,0)', 
+    plot_bgcolor = 'rgba(0,0,0,0)')    
+
     return fig
