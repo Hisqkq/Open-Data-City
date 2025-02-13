@@ -325,7 +325,6 @@ def compute_corr_institution():
     df_intake_rate = df_intake.copy()
 
     # On calcule le taux d'admission
-
     df_intake_rate.iloc[:, 2:] = 100 * df_intake_rate.iloc[:, 2:] / df_enrolment.iloc[:, 2:]
 
     # On fait deux matrice des correlations en ommetant la colonne year dans les dataframes
