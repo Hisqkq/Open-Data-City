@@ -5,7 +5,7 @@ from dash import html
 import folium
 import json
 
-from services.data.process_data_immo import process_data_immo, process_data_table_intro
+from services.data.process_data_immo import process_data_immo, process_data_table_intro, process_data_line_history
 
 def create_line_chart_figure_introduction():
     """
@@ -416,14 +416,16 @@ def create_folium_map_resale(geojson_path="services/data/processed/PriceWithSala
 # création de la figure de l'évolution des prix en fonction du quartier cliqué sur la map
 ##########################################
 
-def create_line_chart_figure_history_price():
+def create_line_chart_figure_history_price(town = "Ang Mo Kio"):
     """
     Crée une figure Plotly Express (line chart) pour l'évolution des prix.
     """
-    df_agg = process_data_immo()
+    df_agg = process_data_line_history()
     
+    df_filtered = df_agg[df_agg["town"] == town]
+
     fig = px.line(
-        df_agg,
+        df_filtered,
         x="Date",
         y="price_m2",
         title="Price per m2 depending on the date",

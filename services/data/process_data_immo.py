@@ -327,3 +327,13 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     prepare_planning_areas_geojson()
+
+def process_data_line_history():
+
+    df = pd.read_csv("services/data/processed/price_pred.csv")
+
+    df["town"] = df["town"].replace("Kallang/Whampoa", "Kallang")
+
+    df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(Day=1))
+
+    return df

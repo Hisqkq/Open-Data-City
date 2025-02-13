@@ -4,9 +4,9 @@ from dash import dcc, html
 from dash_extensions import Lottie
 import plotly.express as px
 import dash_leaflet as dl
-from dash import Output, Input, dcc
+from dash import Output, Input, dcc, State
 import pandas as pd
-from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction
+from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction, create_line_chart_figure_history_price
 from services.maps.map_immo import create_map
 
 dash.register_page(__name__, path="/immobilier")
@@ -273,11 +273,8 @@ layout = dmc.Container(
                     ],
                 ),
                 # ----------------------
-                # Partie droite : Graphiques
+                # Partie droite : Graphiques avec SegmentedControl
                 # ----------------------
-        # ----------------------
-        # Partie droite : Graphiques avec SegmentedControl
-        # ----------------------
                 html.Div(
                     style={
                         "width": "25%",  # 25% de la largeur
@@ -289,25 +286,17 @@ layout = dmc.Container(
                         "overflowY": "auto",
                     },
                     children=[
-                        # SegmentedControl pour basculer entre les graphiques
                         dmc.SegmentedControl(
                             id="graph-toggle",
-                            value="bar-chart",  # Valeur par défaut
+                            value="line-chart",
                             data=[
-                                {"value": "bar-chart", "label": "Prix au m²"},
                                 {"value": "line-chart", "label": "Évolution des prix"},
+                                {"value": "bar-chart", "label": "Prix moyen"},
                             ],
                             fullWidth=True,
                             style={"marginBottom": "20px"},
                         ),
-                        # Conteneur pour les graphiques
-                        html.Div(
-                            id="graph-container",
-                            children=[
-                                # Bar chart par défaut
-                                dcc.Graph(id="price-per-sqm-bar-chart"),
-                            ],
-                        ),
+                        dcc.Graph(id="price-trend-graph"),  # Graphique dynamique
                     ],
                 ),
                 dmc.Space(h="md"),
@@ -392,3 +381,19 @@ def update_graph(selected_graph):
     elif selected_graph == "line-chart":
         return dcc.Graph(id="price-evolution-line-chart")
     return html.Div()  # Retourner un conteneur vide par défaut
+
+
+@dash.callback(
+    Output("price-trend-graph", "figure"),
+    Input("geojson-layer", "n_clicks"),
+    State("geojson-layer", "clickData")
+)
+def update_graph(n_clicks, clickData):
+    print("Quartier cliqué : ", clickData)  # 🛠 Debugging
+    
+    if not clickData or "properties" not in clickData:
+        return create_line_chart_figure_history_price("Ang Mo Kio")
+    
+    town_name = clickData["properties"]["PLN_AREA_N"].title()
+
+    return create_line_chart_figure_history_price(town_name)
