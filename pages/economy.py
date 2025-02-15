@@ -46,58 +46,87 @@ layout = dmc.Container(
     children=[
 
         html.Div(
-            dmc.Title("Economic indicators", order=1, style={"marginBottom": "1rem", "textAlign": "center"}),
-            style={"width": "100%"},
+            style={"width": "100%", "textAlign": "center", "marginBottom": "1.5rem", "marginTop": "1rem", "margin": "auto"},
             className="scroll-section",
+            children=[
+                dmc.Group(
+                    children=[
+                        DashIconify(icon="mdi:finance", height=40, color="#228be6"), 
+                        dmc.Title("Economic Insights", order=1),
+                    ],
+                    align="center",
+                    justify="center",
+                    style={"margin": "auto", "textAlign": "center"}
+                ),
+                dmc.Text(
+                    "Explore key economic indicators shaping Singapore’s financial landscape.",
+                    size="md",
+                    style={"marginTop": "0.5rem"},
+                ),
+                dmc.Space(h="xl"),
+            ],
         ),
+
         
         # ---------- En-tête ----------
         html.Div(
             style={
                 "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "space-between",
                 "gap": "1rem",
-                "alignItems": "top",
-                "marginBottom": "1rem"
+                "marginBottom": "2rem",
             },
             className="scroll-section",
             children=[
+                # Section gauche : Texte et citation
                 html.Div(
-                    style={"width": "75%"},
+                    style={"flex": 1, "maxWidth": "75%"},
                     children=[
+                        # Citation inspirante
+                        dmc.Blockquote(
+                            "Understanding economic trends is key to making informed decisions in business, policy, and everyday life.",
+                            cite="- Singapore Economic Review",
+                            icon=DashIconify(icon="mdi:lightbulb-on-outline", height=20),
+                            color="primary",
+                            radius="lg",
+                            style={"textAlign": "center", "width": "100%"},
+                        ),
+                        dmc.Space(h="md"),
+                        # Texte introductif
                         dmc.Text(
-                            "Singapore is renowned for its highly competitive university admissions—a relentless pursuit of academic excellence that places enormous pressure on students and their families.",
-                            size="lg"
+                            "This dashboard provides an in-depth look at key economic indicators in Singapore, including unemployment rates, wage evolution, "
+                            "and cost of living trends. By analyzing these data points, we can better understand the dynamics of the labor market, the impact "
+                            "of inflation, and how salaries have evolved over time.",
+                            size="lg",
+                            style={"lineHeight": "1.6", "textAlign": "justify"},
                         ),
                         dmc.Space(h="sm"),
                         dmc.Text(
-                            "This page provides a comprehensive analysis of education data, designed to guide prospective students, educators, and researchers in navigating these challenging dynamics. By examining overall admissions trends, course demand dynamics, institutional competitiveness, and graduate salary outcomes, we aim to shed light on how competition has evolved over the years and what it means for access to quality education.",
-                            size="lg"
+                            "With interactive charts and visualizations, you can explore various aspects of Singapore’s economy and gain insights into "
+                            "how these factors influence everyday life. Whether you're a researcher, policymaker, or simply curious about economic trends, "
+                            "this page offers valuable data-driven perspectives.",
+                            size="md",
+                            style={"lineHeight": "1.6", "textAlign": "justify"},
                         ),
-                        dmc.Space(h="sm"),
-                        dmc.Text(
-                            "This in-depth exploration not only highlights the meritocratic drive behind Singapore's educational system but also raises critical questions about equity and sustainability in such a high-pressure setting. Through data-driven insights, we hope to empower stakeholders to make informed decisions and foster a more balanced academic environment, where success is measured by both achievement and opportunity.",
-                            size="lg"
-                        )
-                    ]
+                    ],
                 ),
 
+                # Section droite : Animation Lottie
                 html.Div(
-                    style={"width": "25%"},
+                    style={"flex": 1, "maxWidth": "25%", "display": "flex", "justifyContent": "center"},
                     children=[
                         Lottie(
-                            options=dict(
-                                loop=True,
-                                autoplay=True,
-                                rendererSettings=dict(preserveAspectRatio="xMidYMid slice")
-                            ),
+                            options=dict(loop=True, autoplay=True, rendererSettings=dict(preserveAspectRatio="xMidYMid slice")),
                             width="100%",
-                            url="https://lottie.host/79d4e32b-2ed7-4df2-b4a5-b5ead10bc2be/yosMzk6470.json"
+                            url="https://lottie.host/a3d30bc7-499f-4425-af0c-86d35bdce3ff/YovYlOMFwS.json"
                         )
                     ]
                 ),
-            ]
+            ],
         ),
         dmc.Space(h="xl"),
+
 
         # ---------- Section 1 :  ----------
         dmc.Card(
@@ -122,14 +151,10 @@ layout = dmc.Container(
                 dcc.Graph(id="unemployment-rate-bar-chart"),
                 dmc.Space(h="md"),
                 dmc.Text(
-                    "For instance, engineering studies are consistently among the most popular overall, and "
-                    "especially among male students. In contrast, for female students, courses in Humanities & Social Sciences tend to lead in popularity."
-                    "Moreover, when focusing on the intake rate (the percentage of admitted students relative to total enrolment), you’ll notice that "
-                    "fields such as Architecture and Medicine register much lower rates. For example, Architecture typically appears at the bottom of "
-                    "the intake rate rankings, with Medicine just above it. In the Dentistry field, there is also a marked difference between genders—men "
-                    "exhibit an intake rate of approximately 34.5%, compared to around 21% for women. However, given the overall low number of students "
-                    "in Dentistry, these percentage differences can be highly variable, and in some cases, women may even have a higher rate than men. "
-                    "This chart provides nuanced insights into course competitiveness and helps to understand how demand shifts across disciplines over time.",
+                    "The chart above shows the unemployment rate of Singapore and in major cities in the world. "
+                    "We can see that the unemployment rate in Singapore is lower than in other major cities. "
+                    "This indicates a strong labor market and a relatively low level of unemployment in the country. "
+                    "The next section will provide more detailed insights into the unemployment trends in Singapore.",
                     size="md",
                     style={
                         "lineHeight": "1.6",
@@ -293,6 +318,7 @@ layout = dmc.Container(
                             dmc.Title("Consumer Price Index (CPI) and Median Salary Index", order=2, style={"textAlign": "center"}),
                             style={"width": "100%"}
                         ),
+                        dmc.Space(h="xl"),
                         html.Div(
                             dmc.Text(
                                 "This line chart displays the evolution of the Consumer Price Index (CPI) and the Median Salary Index in Singapore over the years. "
@@ -302,17 +328,11 @@ layout = dmc.Container(
                                 "economic prosperity and wage growth. By examining these two indices together, you can gain a holistic view of economic trends and "
                                 "understand how price fluctuations impact salary dynamics.",
                                 size="md",
-                                style={
-                                    "lineHeight": "1.6",
-                                    "textAlign": "justify",
-                                    "marginBottom": "1rem",
-                                    "marginTop": "1rem",
-                                    "width": "80%",
-                                }
                             ),
                             # on aligne le div au milieur de la page
-                            style={"margin": "auto", "textAlign": "center"}
+                            style={"margin": "auto", "textAlign": "justify", "display": "inline-block"}
                         ),
+                        dmc.Space(h="xl"),
                         html.Div(
                             children=[
                                 dmc.MultiSelect(
@@ -321,12 +341,13 @@ layout = dmc.Container(
                                     data=get_cpi_multiselect()[0],
                                     placeholder="Select CPI categories",
                                     searchable=True,
-                                    style={"width": "45%", "margin": "auto"}
+                                    style={"width": "75%", "margin": "auto"}
                                 ),
                                 html.Div(
                                     create_cpi_salary_line_chart_mantine(),
                                     id="cpi-salary-line-chart"
                                 ),
+                                
 
                                 html.Div(
                                     style={
@@ -336,6 +357,7 @@ layout = dmc.Container(
                                         "justifyContent": "center",
                                         "width": "100%",
                                     },
+                                    className="scroll-section",
                                     children=[
                                         # Section gauche : Texte explicatif
                                         html.Div(
@@ -349,10 +371,17 @@ layout = dmc.Container(
                                                 ),
                                                 dmc.Space(h="md"),
                                                 dmc.Text(
-                                                    "This graph represents the partial correlations between economic indicators "
-                                                    "after controlling for all other variables. It is based on a statistical test "
-                                                    "using p-values. You can adjust the significance level (alpha) to filter the edges "
-                                                    "shown in the graph. Lower alpha values make the graph more sparse.",
+                                                    "This graph visualizes the partial correlations between economic indicators, controlling for all other variables. "
+                                                    "Edges represent statistically significant relationships based on a p-value test, and you can adjust the significance level (alpha) "
+                                                    "to filter weaker connections. A lower alpha value results in a sparser graph, showing only the strongest correlations.",
+                                                    size="md",
+                                                    style={"lineHeight": "1.6", "textAlign": "justify"},
+                                                ),
+                                                dmc.Space(h="sm"),
+                                                dmc.Text(
+                                                    "You can interact with the graph by clicking on a node: all connected nodes will be highlighted according to their partial correlation "
+                                                    "with the selected node. Positive correlations are shown in red, while negative correlations appear in blue. "
+                                                    "A color scale bar below the graph provides a reference for interpreting these relationships.",
                                                     size="md",
                                                     style={"lineHeight": "1.6", "textAlign": "justify"},
                                                 ),
@@ -370,6 +399,7 @@ layout = dmc.Container(
                                             ],
                                         ),
 
+
                                         # Section droite : Graph + Colorbar
                                         html.Div(
                                             style={"flex": 2, "display": "flex", "flexDirection": "column", "alignItems": "center"},
@@ -385,10 +415,104 @@ layout = dmc.Container(
 
                                     
                             ],
+                            style={"width": "100%", "margin": "auto"}
                         )
                     ],
                     style={"margin": "auto"}
                 ),
+                dmc.Space(h="xl"),
+                dmc.Space(h="xl"),
+
+                # References
+                html.Div(
+                    children=[
+                        dmc.Title("References", order=3, style={"textAlign": "center", "marginBottom": "1rem"}),
+                        
+                        dmc.Text(
+                            "Ministry of Manpower. (2016). Overall Unemployment Rate, Annual (2024) [Dataset]. data.gov.sg. Retrieved February 15, 2025 from ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://data.gov.sg/datasets/d_e3598914c86699a9a36e68190f78c59a/view",
+                            href="https://data.gov.sg/datasets/d_e3598914c86699a9a36e68190f78c59a/view",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Space(h="sm"),
+                        
+                        dmc.Text(
+                            "Ministry of Manpower Singapore. (n.d.). Annual average resident unemployment rate by sex, age and highest qualification attained. Singapore Government. Retrieved February 13, 2025, from 3 ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx",
+                            href="https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Space(h="sm"),
+                        
+                        dmc.Text(
+                            "Singapore Department of Statistics. (2024). Resident Working Persons Aged 15 Years and Over by Planning Area and Industry (General Household Survey 2015) (2025) [Dataset]. data.gov.sg. Retrieved February 15, 2025 from ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://data.gov.sg/datasets/d_962495f413f039655f14cb8a59f44317/view",
+                            href="https://data.gov.sg/datasets/d_962495f413f039655f14cb8a59f44317/view",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Space(h="sm"),
+                        
+                        dmc.Text(
+                            "Singapore Department of Statistics. (2024). Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work (General Household Survey 2015) (2025) [Dataset]. data.gov.sg. Retrieved February 15, 2025 from ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://data.gov.sg/datasets/d_bb771c5189ce18007621533dd36142bb/view",
+                            href="https://data.gov.sg/datasets/d_bb771c5189ce18007621533dd36142bb/view",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Space(h="sm"),
+                        
+                        dmc.Text(
+                            "Urban Redevelopment Authority. (2023). Master Plan 2019 Planning Area Boundary (No Sea) (2024) [Dataset]. data.gov.sg. Retrieved February 15, 2025 from ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://data.gov.sg/datasets/d_4765db0e87b9c86336792efe8a1f7a66/view",
+                            href="https://data.gov.sg/datasets/d_4765db0e87b9c86336792efe8a1f7a66/view",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Space(h="sm"),
+                        
+                        dmc.Text(
+                            "Singapore Department of Statistics. (2023). Consumer Price Index (CPI), 2019 As Base Year, Monthly (2025) [Dataset]. data.gov.sg. Retrieved February 15, 2025 from ",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        ),
+                        dmc.Anchor(
+                            "https://data.gov.sg/datasets/d_de7e93a1d0e22c790516a632747bf7f0/view",
+                            href="https://data.gov.sg/datasets/d_de7e93a1d0e22c790516a632747bf7f0/view",
+                            target="_blank",
+                            size="xs",
+                            style={"textAlign": "center"}
+                        )
+                    ],
+                    style={"marginTop": "2rem", "textAlign": "center"}
+                )
     ],
 )
 

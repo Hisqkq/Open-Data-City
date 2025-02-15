@@ -17,45 +17,71 @@ layout = dmc.Container(
         # ---------- Stores pour suivre l'état interactif ----------
         dcc.Store(id="current-level", data="global"),
         dcc.Store(id="current-parent", data=None),
-
+    
         html.Div(
-            dmc.Title("Universities in Singapore", order=1, style={"marginBottom": "1rem", "textAlign": "center"}),
-            style={"width": "100%"},
+            style={"width": "100%", "textAlign": "center", "margin": "1rem auto"},
             className="scroll-section",
+            children=[
+                dmc.Group(
+                    align="center",
+                    justify="center",
+                    children=[
+                        DashIconify(icon="mdi:school", height=40, color="#228be6"),
+                        dmc.Title("Universities in Singapore", order=1),
+                    ],
+                    style={"marginBottom": "1rem"}
+                ),
+                dmc.Text(
+                    "Discover the dynamic and competitive landscape of higher education in Singapore.",
+                    size="md",
+                    style={"marginTop": "0.5rem"}
+                ),
+                dmc.Space(h="md"),
+            ]
         ),
-        
-        # ---------- En-tête ----------
+
         html.Div(
             style={
                 "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "space-between",
                 "gap": "1rem",
-                "alignItems": "top",
-                "marginBottom": "1rem"
+                "marginBottom": "2rem"
             },
             className="scroll-section",
             children=[
+                # Partie gauche : Texte explicatif et citation
                 html.Div(
-                    style={"width": "75%"},
+                    style={"flex": "1", "maxWidth": "70%", "paddingRight": "1rem"},
                     children=[
+                        dmc.Blockquote(
+                            "In Singapore, excellence is the standard and competition is fierce. Admissions reflect a relentless commitment to academic achievement.",
+                            cite="- Ministry of Education, Singapore",
+                            icon=DashIconify(icon="mdi:format-quote-open", height=20),
+                            color="primary",
+                            radius="lg",
+                            style={"textAlign": "left", "width": "100%"}
+                        ),
+                        dmc.Space(h="md"),
                         dmc.Text(
-                            "Singapore is renowned for its highly competitive university admissions—a relentless pursuit of academic excellence that places enormous pressure on students and their families.",
-                            size="lg"
+                            "Singapore’s universities consistently rank among the best in the world, attracting top students from across the globe. "
+                            "This page provides an in-depth look at admissions trends, course offerings, and institutional excellence, shedding light on the factors "
+                            "that make Singapore a hub for higher education.",
+                            size="lg",
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
                         ),
                         dmc.Space(h="sm"),
                         dmc.Text(
-                            "This page provides a comprehensive analysis of education data, designed to guide prospective students, educators, and researchers in navigating these challenging dynamics. By examining overall admissions trends, course demand dynamics, institutional competitiveness, and graduate salary outcomes, we aim to shed light on how competition has evolved over the years and what it means for access to quality education.",
-                            size="lg"
+                            "Explore our interactive data to understand how institutions maintain high standards and to gain insights into the evolving landscape of "
+                            "higher education in Singapore.",
+                            size="md",
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
                         ),
-                        dmc.Space(h="sm"),
-                        dmc.Text(
-                            "This in-depth exploration not only highlights the meritocratic drive behind Singapore's educational system but also raises critical questions about equity and sustainability in such a high-pressure setting. Through data-driven insights, we hope to empower stakeholders to make informed decisions and foster a more balanced academic environment, where success is measured by both achievement and opportunity.",
-                            size="lg"
-                        )
                     ]
                 ),
-
+                # Partie droite : Animation Lottie
                 html.Div(
-                    style={"width": "25%"},
+                    style={"flex": "1", "maxWidth": "30%", "display": "flex", "justifyContent": "center", "alignItems": "center"},
                     children=[
                         Lottie(
                             options=dict(
@@ -64,12 +90,16 @@ layout = dmc.Container(
                                 rendererSettings=dict(preserveAspectRatio="xMidYMid slice")
                             ),
                             width="100%",
-                            url="https://lottie.host/55f711be-705a-45f2-8f35-08456dcf6db0/8J4gG2IGrO.json"
+                            url="https://lottie.host/55f711be-705a-45f2-8f35-08456dcf6db0/8J4gG2IGrO.json"  # Remplacez par l'URL de votre animation
                         )
                     ]
                 ),
             ]
         ),
+
+
+
+
         dmc.Space(h="xl"),
         
         # ---------- Section 1 : Overall University Admissions Trends ----------
