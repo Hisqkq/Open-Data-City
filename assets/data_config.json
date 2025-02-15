@@ -1,0 +1,93 @@
+{
+    "datasets": [
+      {
+        "id": "enrolment_by_institutions",
+        "name": "Enrolment by Institutions",
+        "group": "Education Data",
+        "csv_path": "services/data/raw/Enrolment by Institutions.csv",
+        "description": "This dataset contains enrolment figures by institutions from January 1982 to January 2023. Intake figures include students who entered directly into the second and subsequent years. University figures refer to full-time first degrees only. Polytechnics report full-time diploma courses. LASALLE and NAFA figures are for publicly-funded full-time courses. ITE figures exclude apprentices.",
+        "source_link": "https://data.gov.sg/datasets/d_ec8a16e11a050f11880fb6d4a0e6f93f/view"
+      },
+      {
+        "id": "intake_by_institutions",
+        "name": "Intake by Institutions",
+        "group": "Education Data",
+        "csv_path": "services/data/raw/Intake by Institutions.csv",
+        "description": "MOE (Ministry of Education) – Intake figures include students who entered directly into the second and subsequent years. University figures represent full-time first degrees only. National Institute of Education (NIE) figures cover Diplomas and Post-graduate Diplomas in education-related subjects (with BA/BSc in Education included under Nanyang Technological University). Polytechnic figures represent full-time diploma courses only. LASALLE College of the Arts and Nanyang Academy of Fine Arts (NAFA) first degree figures pertain to publicly-funded full-time courses (started in 2012 and 2011 respectively). Institute of Technical Education (ITE) was established in 1992 to replace the former Vocational & Industrial Training Board; ITE figures exclude apprentices. This dataset includes columns for year, sex, and the respective institutions.",
+        "source_link": "https://data.gov.sg/datasets/d_437e089ba21c5221b0d42e3b2636b7f0/view"
+      },
+      {
+        "id": "intake_enrolment_and_graduates_of_universities_by_course",
+        "name": "Intake, Enrolment and Graduates of Universities by Course",
+        "group": "Education Data",
+        "csv_path": "services/data/raw/IntakeEnrolmentandGraduatesofUniversitiesbyCourse.csv",
+        "description": "Universities refers to National University of Singapore, Nanyang Technological University, Singapore Management University, Singapore Institute of Technology, Singapore University of Technology & Design and Singapore University of Social Sciences. Intake, enrolment and graduates figures refer to full-time first degree only. Intake figures include students who entered directly into second and subsequent years. Courses are classified according to course content of the highest weighting. Total intake and enrolment figures include students in courses that are not elsewhere classified.",
+        "source_link": "https://data.gov.sg/datasets/d_6b264092cd066c55d8e2db9e68e7ffdb/view"
+      },
+      {
+        "id": "graduate_employment_survey_of_universities",
+        "name": "Graduate Employment Survey of Universities",
+        "group": "Education Data",
+        "csv_path": "services/data/raw/GraduateEmploymentSurvey.csv",
+        "description": "The Graduate Employment Survey (GES) is jointly conducted by NTU, NUS, SMU, SIT (from 2014), SUTD (from 2015) and SUSS (from 2018) annually to survey the employment conditions of graduates about six months after their final examinations. The Ministry of Education (MOE) publishes the results of key employment indicators of the survey to provide prospective students with timely and comparable data to assist them in making informed course decisions. Graduates from NTU, NUS, SMU and SUSS are surveyed in Nov. Due to their different academic calendars, graduates from SUTD and SIT are surveyed in Feb and Mar. \n\n 2022 GES: \n\n 5,943 fresh graduates and 128 follow-up graduates from NTU were surveyed and the overall response rates obtained were 76.3% and 82.0% respectively. \n 7,430 fresh graduates and 824 follow-up graduates from NUS were surveyed and the overall response rates obtained were 74.8% and 64.4% respectively. \n 1,982 fresh graduates and 167 follow-up graduates from SMU were surveyed and the overall response rates obtained were 76.3% and 82.0% respectively. \n 629 fresh graduates and 19 follow-up graduates from SUSS were surveyed and the overall response rates obtained were 80.8% and 73.7% respectively. \n 388 full-time and 81 follow-up graduates from SUTD were surveyed and the overall response rates obtained were 77.3% and 70.4% respectively. \n 2,193 full-time graduates from SIT were surveyed and the overall response rate obtained was 78.4%.",
+        "source_link": "https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view"
+      },
+      {
+        "id": "overall_unemployment_rate_annual",
+        "name": "Overall Unemployment Rate, Annual",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/OverallUnemploymentRateAnnual.csv",
+        "description": "Annual figures are the simple averages of the non-seasonally adjusted unemployment figures obtained at quarterly intervals. \nSource: Labour Force Survey, Manpower Research & Statistics Department, MOM, except data for June 1995, June 2000 and June 2005, which are from the Population Census 2000, General Household Surveys 1995 & 2005 conducted by the Singapore Department of Statistics.",
+        "source_link": "https://data.gov.sg/datasets/d_e3598914c86699a9a36e68190f78c59a/view"
+      },
+      {
+        "id": "resident_unemployment_rate_age",
+        "name": "Resident Unemployment Rate by Age",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/annual average resident unemployment rate by age.csv",
+        "description": "This dataset shows the annual average resident unemployment rate by age group. The resident unemployment rate is computed based on the number of unemployed residents aged 15 years and over as a percentage of the economically active resident labour force. The economically active resident labour force comprises residents who are employed or unemployed and actively looking for a job. The resident unemployment rate is computed based on the number of unemployed residents aged 15 years and over as a percentage of the economically active resident labour force. The economically active resident labour force comprises residents who are employed or unemployed and actively looking for a job.",
+        "source_link": "https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx"
+      },
+      {
+        "id": "resident_unemployment_rate_sex",
+        "name": "Resident Unemployment Rate by Sex",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/annual average resident unemployment rate by sex.csv",
+        "description": "This dataset shows the annual average resident unemployment rate by sex. The resident unemployment rate is computed based on the number of unemployed residents aged 15 years and over as a percentage of the economically active resident labour force. The economically active resident labour force comprises residents who are employed or unemployed and actively looking for a job.",
+        "source_link": "https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx"
+      },
+      {
+        "id": "resident_unemployment_rate_HQA",
+        "name": "Resident Unemployment Rate by Highest Qualification Attained",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/annual average resident unemployment rate by HQA.csv",
+        "description": "This dataset shows the annual average resident unemployment rate by highest qualification attained. The resident unemployment rate is computed based on the number of unemployed residents aged 15 years and over as a percentage of the economically active resident labour force. The economically active resident labour force comprises residents who are employed or unemployed and actively looking for a job.",
+        "source_link": "https://stats.mom.gov.sg/Pages/UnemploymentTimeSeries.aspx"
+      },
+      {
+        "id": "resident_working_persons_by_planning_area_and_gross_monthly_income",
+        "name": "Resident Working Persons by Planning Area and Gross Monthly Income from Work",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/income.csv",
+        "description": "This dataset shows the number of resident working persons by planning area and gross monthly income from work. The data is based on the Labour Force Survey conducted by the Manpower Research & Statistics Department, Ministry of Manpower. \n\n Notes:Planning areas refer to areas demarcated in the Urban Redevelopment Authority's Master Plan 2014.Income from work includes employer CPF contributions.",
+        "source_link": "https://data.gov.sg/datasets/d_bb771c5189ce18007621533dd36142bb/view"
+      },
+      {
+        "id": "consumer_price_index",
+        "name": "Consumer Price Index (CPI), 2019 As Base Year, Monthly",
+        "group": "Economic Data",
+        "csv_path": "services/data/raw/ConsumerPriceIndexCPI2019AsBaseYearMonthly.csv",
+        "description": "This dataset shows the Consumer Price Index (CPI) with 2019 as the base year. The CPI is a measure of the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services. The CPI is based on prices of food, clothing, shelter, fuels, transportation fares, charges for doctors' and dentists' services, drugs, and other goods and services that people buy for day-to-day living. The index is calculated monthly.\n\n Each column represents the CPI for a specific month and year. The base year is 2019.",
+        "source_link": "https://data.gov.sg/datasets/d_de7e93a1d0e22c790516a632747bf7f0/view"
+      },
+      {
+        "id": "resale_flat_prices_based_on_registration_date_from_jan_2017_onwards",
+        "name": "Resale flat prices based on registration date from Jan-2017 onwards",
+        "group": "Housing Data",
+        "csv_path": "services/data/raw/immo.csv",
+        "description": "This dataset contains resale flat prices based on registration date from Jan-2017 onwards. It includes resale flat prices by town, flat type, storey range, floor area, flat model and lease commence date. \n\n 1. The approximate floor area includes any recess area purchased, space adding item under HDB’s upgrading programmes, roof terrace, etc. \n 2. The transactions exclude resale transactions that may not reflect the full market price such as resale between relatives and resale of part shares. \n 3. Resale prices should be taken as indicative only as the resale prices agreed between buyers and sellers are dependent on many factors.",
+        "source_link": "https://data.gov.sg/datasets/d_8b84c4ee58e3cfc0ece0d773c8ca6abc/view"
+      }
+    ]
+  }
+  
