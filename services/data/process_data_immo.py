@@ -24,8 +24,11 @@ def process_data_immo():
 
     df_grouped = df.groupby(["Year", "Month"])["price_m2"].mean().reset_index()
     df_grouped['Date'] = pd.to_datetime(df_grouped[['Year', 'Month']].assign(Day=1))
+    df_grouped['Date'] = df_grouped['Date'].dt.strftime('%Y-%m')
 
-    return df_grouped
+    df_grouped["price_m2"] = df_grouped["price_m2"].round(2)
+
+    return df_grouped[["Date", "price_m2"]].to_dict(orient="records")
 
     # # Sauvegarder le fichier
     # PROCESSED_DATA_PATH = "services/data/processed/immo.csv"
@@ -51,6 +54,8 @@ def process_data_table_intro():
 
     scd_grap_data = df[df["resale_price"] > 1000000]
     df_scd_graph = scd_grap_data.groupby("Year").size().reset_index(name="count")
+    # on le transforme en dictionnaire
+    df_scd_graph = df_scd_graph.to_dict(orient="records")
 
     return df_scd_graph
 
@@ -335,5 +340,9 @@ def process_data_line_history():
     df["town"] = df["town"].replace("Kallang/Whampoa", "Kallang")
 
     df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(Day=1))
+    df['Date'] = df['Date'].dt.strftime('%Y-%m')  # Format lisible YYYY-MM
+
+    # Arrondir price_m2 pour éviter trop de décimales
+    df["price_m2"] = df["price_m2"].round(2)
 
     return df
