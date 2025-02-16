@@ -7,39 +7,39 @@ from components.sidebar import sidebar_component
 from components.footer import footer_component
 
 _dash_renderer._set_react_version("18.2.0")
+dmc.add_figure_templates()
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=dmc.styles.ALL)
 
-# 🟢 Layout principal avec MantineProvider mis à jour dynamiquement
 app.layout = html.Div(
     [
-        dcc.Store(id="theme-store", data="light"),  # Stocke le mode sombre/clair
-        dcc.Store(id="sidebar-state", data=True),   # Stocke l'état de la sidebar
+        dcc.Store(id="theme-store", data="light"),  
+        dcc.Store(id="sidebar-state", data=True),   
         dcc.Location(id="url"),
 
         dmc.MantineProvider(
             id="mantine-provider",
             theme={"colorScheme": "light"},  
             children=[
-                header_component(),  # Header
-                sidebar_component(),  # Sidebar
-                dash.page_container,  # Contenu des pages
-                footer_component(),  # Footer
+                header_component(),  
+                sidebar_component(),  
+                dash.page_container, 
+                footer_component(), 
             ]
         )
     ]
 )
 
-# 🔄 Callback pour mettre à jour MantineProvider selon `theme-store`
+# 🔄 Callback to update the theme store
 @callback(
     Output("mantine-provider", "theme"),
-    Input("theme-store", "data"),  # Écoute les changements de `theme-store`
+    Input("theme-store", "data"),  
     prevent_initial_call=True
 )
 def update_theme(theme):
     return {"colorScheme": theme}
 
-# 🔄 Clientside Callback pour changer le mode sombre / clair
+# 🔄 clientside_callback to update the theme with the theme store
 clientside_callback(
     """
     (n_clicks, currentTheme) => {

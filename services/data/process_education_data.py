@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import warnings
 
 ## Get data functions for the education data
 
@@ -315,6 +316,8 @@ def compute_corr_institution():
     """
     Calcule la corrélation entre les taux d'admission (intake_rate) et les effectifs (enrolment) par institution.
     """
+    warnings.simplefilter(action="ignore", category=FutureWarning)
+
     df_intake = pd.read_csv("services/data/raw/Intake by Institutions.csv")
     df_enrolment = pd.read_csv("services/data/raw/Enrolment by Institutions.csv")
 
