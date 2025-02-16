@@ -613,7 +613,7 @@ layout = dmc.Container(
                 ),
                 dcc.Markdown(
                     """
-                    ### Mathematical Concept
+                    ### Partial correlation
 
                     The **partial correlation** between two variables *X* and *Y*, controlling for a set of variables *Z*, is defined as:
 
@@ -622,7 +622,8 @@ layout = dmc.Container(
                     $$
 
                     where $\\theta_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix).  
-                    This metric quantifies the direct relationship between *X* and *Y* after removing the effect of *Z*.
+                    This metric quantifies the direct relationship between *X* and *Y* after removing the effect of *Z*. 
+                    It is particularly useful for identifying hidden associations between variables in a multivariate dataset.
                                         """,
                                         mathjax=True,
                                         style={
