@@ -10,33 +10,29 @@ import pandas as pd
 from services.data.process_data_immo import process_data_immo, process_data_table_intro, process_data_line_history
 
 
+import dash_mantine_components as dmc
+
 def create_line_chart_figure_introduction():
     """
-    Crée un line chart personnalisé avec Plotly Graph Objects pour la hausse des prix au metre carre.
-    
-    Paramètres:
-      - Aucun.
-      
-    Retourne:
-      - Une figure Plotly.
+    Crée un line chart personnalisé avec Plotly Graph Objects pour la hausse des prix au mètre carré.
     """
-    data = process_data_immo()  
-    data_list = data.to_dict(orient="records")
+    data_list = process_data_immo()  # Récupérer les données sous forme de dictionnaire
 
     return dmc.LineChart(
         h=300,
         data=data_list,
-        series=[{"name": "price_m2", "label": "Price per m2 depending on the date"}],
+        series=[{"name": "price_m2", "label": "Price per m2"}],
         dataKey="Date",
         type="gradient",
         strokeWidth=5,
         curveType="natural",
-        yAxisProps={"domain": [4500.0, 7000.0]},  # Ajusté en fonction de la plage du prix
+        yAxisProps={"domain": [4500.0, 7200.0]},  # Ajusté en fonction de la plage du prix
         p="lg",
         withLegend=True,
         tooltipAnimationDuration=200,
-        unit="SGD",
+        unit=" SGD",
     )
+
 
 
 # def create_line_chart_figure_introduction():
@@ -53,37 +49,39 @@ def create_line_chart_figure_introduction():
 #     )
 #     return fig
 
+import dash_mantine_components as dmc
+
 def create_table_figure_introduction():
     """
-    Crée une table stylisée avec Dash pour l'introduction.
+    Crée une table stylisée avec Dash Mantine Components pour l'introduction.
     """
-    df_agg = process_data_table_intro()
-
-    table = dash_table.DataTable(
-        columns=[{"name": col, "id": col} for col in df_agg.columns],
-        data=df_agg.to_dict("records"),
-        style_table={"overflowX": "auto"},
-        style_header={
-            "backgroundColor": "#1E1E1E",  # Fond du header sombre
-            "color": "white",
-            "fontWeight": "bold",
-            "textAlign": "center",
-            "border": "1px solid #444",
-        },
-        style_cell={
-            "backgroundColor": "#282828",  # Fond sombre pour les cellules
-            "color": "white",
-            "textAlign": "center",
-            "padding": "10px",
-            "border": "1px solid #444",
-        },
-        style_data_conditional=[
-            {"if": {"row_index": "odd"}, "backgroundColor": "#333"},  # Alternance des lignes
-            {"if": {"state": "selected"}, "backgroundColor": "#444"},  # Highlight au clic
-        ],
+    data = process_data_table_intro()  # Assurez-vous que cette fonction renvoie une liste de dictionnaires
+    
+    # Création des lignes
+    rows = [
+        dmc.TableTr([dmc.TableTd(entry["Year"]), dmc.TableTd(entry["count"])])
+        for entry in data
+    ]
+    
+    # Création de l'en-tête
+    head = dmc.TableThead(
+        dmc.TableTr([dmc.TableTh("Year"), dmc.TableTh("Count")])
+    )
+    
+    # Corps de la table
+    body = dmc.TableTbody(rows)
+    
+    # Table complète avec style
+    return dmc.Table(
+        [head, body],
+        withColumnBorders=True,
+        highlightOnHover=True,
+        striped=True,
+        horizontalSpacing="md",
+        verticalSpacing="sm",
+        withTableBorder=True,
     )
 
-    return dmc.Paper(table, style={"width": "80%", "margin": "auto", "padding": "20px"})
 
 
 
@@ -455,6 +453,22 @@ def create_line_chart_figure_history_price(town = "Ang Mo Kio"):
     df_agg = process_data_line_history()
     
     df_filtered = df_agg[df_agg["town"] == town]
+    # data_list = df_filtered[["Date", "price_m2"]].to_dict(orient="records")
+
+    # return dmc.LineChart(
+    #     h=300,
+    #     data=data,
+    #     series=[{"name": "price_m2", "label": "Price per m2"}],
+    #     dataKey="Date",
+    #     type="gradient",
+    #     strokeWidth=5,
+    #     curveType="natural",
+    #     yAxisProps={"domain": [4500.0, 7200.0]},  # Ajusté en fonction de la plage du prix
+    #     p="lg",
+    #     withLegend=True,
+    #     tooltipAnimationDuration=200,
+    #     unit=" SGD",
+    # )
 
     fig = px.line(
         df_filtered,

@@ -98,12 +98,13 @@ layout = dmc.Container(
                             ],
                           ),
                 dmc.Space(h="md"),
-                dmc.Group(
+                dmc.Paper(
                     style={
                         "width": "75%",
                         "margin": "left",
                         "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
-                        "marginLeft": "10px",  # Marge à gauche
+                        "marginLeft": "5px",  # Marge à gauche
+                        "marginRight": "10px",  # Marge à droite
                         },
                     children=[
                         dmc.Text(
@@ -149,6 +150,10 @@ layout = dmc.Container(
                     ],
                     className="scroll-section",
                 ),
+                # dmc.Image(
+                #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
+                #     radius="md",
+                # ),
             ]
         ),
         dmc.Space(h="xl"),
@@ -415,56 +420,6 @@ layout = dmc.Container(
                     className="scroll-section",
                 ),
             ]
-        ),
-
-        dmc.Space(h="xl"),
-
-
-        # ----------------------
-        # Section d'information complémentaire
-        # ----------------------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
-            style={
-                "background": "#ffffff",
-                "borderRadius": "15px",
-                "boxShadow": "0 4px 10px rgba(0, 0, 0, 0.1)",
-                "marginBottom": "2rem",
-            },
-            children=[
-                dmc.Title("About Real Estate Data", order=2, style={"color": "#2c3e50"}),
-                dmc.Text(
-                    "Description incoming",
-                    size="lg",
-                    style={"color": "#34495e"}
-                )
-            ],
-            className="scroll-section",  # Ajouter une classe pour l'animation
-        ),
-        dmc.Space(h="xl"),
-        
-        # ----------------------
-        # Section de débogage (à masquer en production)
-        # ----------------------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
-            style={
-                "background": "#ffffff",
-                "borderRadius": "15px",
-                "boxShadow": "0 4px 10px rgba(0, 0, 0, 0.1)",
-            },
-            children=[
-                dmc.Title("Debug: Click Data", order=4, style={"color": "#2c3e50"}),
-                html.Pre(
-                    id="clickdata-debug",
-                    style={"whiteSpace": "pre-wrap", "wordBreak": "break-word", "color": "#34495e"}
-                )
-            ],
-            className="scroll-section",  # Ajouter une classe pour l'animation
         ),
         dmc.Space(h="xl"),
     ]
