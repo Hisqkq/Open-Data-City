@@ -6,7 +6,6 @@ NAV_LINKS = {
     "Immobilier": ["/immobilier", "icon-park-outline:building-one"],
     "Education": ["/education", "tabler:book"],
     "Economy": ["/economy", "tabler:currency-dollar"],
-    "Visualisations": ["/visualisation", "tabler:chart-pie"],
     "Notifications": ["/notifications", "tabler:bell"],
     "Settings": ["/settings", "tabler:settings"],
     "About Us": ["/about-us", "tabler:user"]
