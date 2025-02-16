@@ -349,7 +349,7 @@ layout = dmc.Container(
                                         {"label": "Yishun", "value": "Yishun"},
                                     ],
                                     placeholder="Select a town",
-                                    withScrollArea=False,
+                                    withScrollArea=True,
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
