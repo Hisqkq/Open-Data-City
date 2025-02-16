@@ -55,7 +55,7 @@ layout = dmc.Container(
                     style={"flex": "1", "maxWidth": "70%", "paddingRight": "1rem"},
                     children=[
                         dmc.Blockquote(
-                            "In Singapore, excellence is the standard and competition is fierce. Admissions reflect a relentless commitment to academic achievement.",
+                            "The wealth of a nation lies in its people – their commitment to country and community, their willingness to strive and persevere, their ability to think, achieve and excel. How we raise our young at home and teach them in school will shape our society in the next generation.",
                             cite="- Ministry of Education, Singapore",
                             icon=DashIconify(icon="mdi:format-quote-open", height=20),
                             color="primary",

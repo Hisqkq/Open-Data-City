@@ -11,7 +11,6 @@ from figures.economy import create_unemployment_bar_chart, create_overal_unemplo
 dash.register_page(__name__, path="/economy")
 
 def create_colorbar(theme="dark"):
-    # Définition des couleurs en fonction du thème
     text_color = "#ffffff" if theme == "dark" else "#000000"
     border_color = "#ffffff" if theme == "dark" else "#000000"
 
@@ -85,8 +84,8 @@ layout = dmc.Container(
                     children=[
                         # Citation inspirante
                         dmc.Blockquote(
-                            "Understanding economic trends is key to making informed decisions in business, policy, and everyday life.",
-                            cite="- Singapore Economic Review",
+                            "The economy is the start and end of everything. You can't have successful education reform or any other reform if you don't have a strong economy.",
+                            cite="- David Cameron",
                             icon=DashIconify(icon="mdi:lightbulb-on-outline", height=20),
                             color="primary",
                             radius="lg",
@@ -172,17 +171,110 @@ layout = dmc.Container(
             children=[
                 # Titre de la section
                 html.Div(
-                    dmc.Title("Evolution of Unemployment in Singapore", order=2, style={"textAlign": "center"}),
-                    style={"width": "100%"}
-                ),
-                dmc.Space(h="xl"),
-                dmc.Blockquote(
-                    "Unemployed persons refer to people who are not working but are actively looking and available for jobs.",
-                    cite="- Singapore Department of Statistics",
-                    icon=DashIconify(icon="bx:bxs-quote-alt-right", height=20),
-                    color="primary",
-                    radius="lg",
-                    style={"textAlign": "center", "width": "60%", "margin": "auto"}
+                    children=[
+                        # Titre de la section
+                        html.Div(
+                            dmc.Title("Evolution of Unemployment in Singapore", order=2, style={"textAlign": "center"}),
+                            style={"width": "100%"}
+                        ),
+                        dmc.Space(h="xl"),
+                        
+                        # Phrase d'introduction
+                        dmc.Text(
+                            "Before delving into the trends, it is important to define key terms used in this analysis:",
+                            size="lg",
+                            style={"textAlign": "center", "marginBottom": "1rem"}
+                        ),
+                        
+                        # Trois cartes côte à côte pour les définitions
+                        dmc.SimpleGrid(
+                            cols=3,
+                            spacing="lg",
+                            style={"maxWidth": "80%", "margin": "auto"},
+                            children=[
+                                # Carte pour Unemployment
+                                dmc.Card(
+                                    withBorder=True,
+                                    shadow="sm",
+                                    radius="md",
+                                    style={"padding": "1rem"},
+                                    children=[
+                                        dmc.CardSection(
+                                            dmc.Group(
+                                                children=[
+                                                    DashIconify(icon="mdi:account-off", height=30, color="#ff7f0e"),
+                                                    dmc.Text("Unemployment", fw=500, size="md")
+                                                ]
+                                            )
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                **Definition:**
+
+                Unemployed persons refer to people who are not working but are actively looking and available for jobs.    
+                *(Source: Singapore Department of Statistics)*
+                                            """,
+                                            style={"textAlign": "justify", "lineHeight": "1.6", "fontSize": "14px"}
+                                        )
+                                    ]
+                                ),
+                                # Carte pour Residents
+                                dmc.Card(
+                                    withBorder=True,
+                                    shadow="sm",
+                                    radius="md",
+                                    style={"padding": "1rem"},
+                                    children=[
+                                        dmc.CardSection(
+                                            dmc.Group(
+                                                children=[
+                                                    DashIconify(icon="mdi:account-check", height=30, color="#1f77b4"),
+                                                    dmc.Text("Residents", fw=500, size="md")
+                                                ]
+                                            )
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                **Definition:**
+
+                Singapore residents refer to citizens or non-citizens who have been granted permanent residence in Singapore.   
+                *(Source: Singapore Department of Statistics)*
+                                            """,
+                                            style={"textAlign": "justify", "lineHeight": "1.6", "fontSize": "14px"}
+                                        )
+                                    ]
+                                ),
+                                # Carte pour Non-residents
+                                dmc.Card(
+                                    withBorder=True,
+                                    shadow="sm",
+                                    radius="md",
+                                    style={"padding": "1rem"},
+                                    children=[
+                                        dmc.CardSection(
+                                            dmc.Group(
+                                                children=[
+                                                    DashIconify(icon="mdi:account-search", height=30, color="#2ca02c"),
+                                                    dmc.Text("Non-residents", fw=500, size="md")
+                                                ]
+                                            )
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                **Definition:**
+
+                The non-resident population comprised foreigners who were working, studying or living in Singapore but not granted permanent residence, excluding tourists and short-term visitors.   
+                *(Source: Singapore Department of Statistics)*
+                                            """,
+                                            style={"textAlign": "justify", "lineHeight": "1.6", "fontSize": "14px"}
+                                        )
+                                    ]
+                                ),
+                            ]
+                        ),
+                        dmc.Space(h="xl"),
+                    ],
+                    style={"padding": "1rem"}
                 ),
 
                 dmc.Space(h="lg"),
@@ -205,19 +297,19 @@ layout = dmc.Container(
                                 dmc.Group(
                                     children=[
                                         DashIconify(icon="tabler:chart-line", height=35),
-                                        dmc.Title("Overall Trend", order=3, style={"margin": "0"})
+                                        dmc.Title("Overall Unemployment Trend", order=3, style={"margin": "0"})
                                     ],
                                 ),
                                 dmc.Text(
                                     "The graph on the right shows the overall unemployment rate in Singapore, including both residents and non-residents. "
-                                    "This provides a broad perspective of the labor market dynamics over the years.",
+                                    "This provides a broad perspective of the labor market dynamics over the years. "
+                                    "We can see that Singapore's employment situation has always been stable since 1992, the lowest unemployment rate was in 1997 with 1.4% unemployed persons.",
                                     size="md",
                                     style={"lineHeight": "1.6", "textAlign": "justify"}
                                 )
                             ],
                             style={"flex": "1"}
                         ),
-                        # Graphique à droite
                         html.Div(
                             children=[
                                 create_overal_unemployment_line()
@@ -279,6 +371,90 @@ layout = dmc.Container(
                             ),
                     ]
                 ),
+                html.Div(
+                    style={
+                        "display": "flex",
+                        "flexWrap": "wrap",
+                        "justifyContent": "center",
+                        "alignItems": "stretch",
+                        "gap": "1rem",
+                        "width": "90%",
+                        "margin": "auto"
+                    },
+                    children=[
+                        dmc.Card(
+                            withBorder=True,
+                            shadow="sm",
+                            radius="md",
+                            style={"flex": "1", "minWidth": "250px", "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    align="center",
+                                    justify="center",
+                                    children=[
+                                        DashIconify(icon="mdi:gender-male-female", height=30, color="#1f77b4"),
+                                        dmc.Title("By Sex", order=4, style={"margin": "0"})
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dmc.Text(
+                                    "Our analysis indicates that male unemployment rates are generally slightly lower than those for females. "
+                                    "However, fluctuations occur during economic downturns, highlighting persistent gender disparities.",
+                                    size="sm",
+                                    style={"textAlign": "justify", "lineHeight": "1.5"}
+                                ),
+                            ]
+                        ),
+                        dmc.Card(
+                            withBorder=True,
+                            shadow="sm",
+                            radius="md",
+                            style={"flex": "1", "minWidth": "250px", "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    align="center",
+                                    justify="center",
+                                    children=[
+                                        DashIconify(icon="mdi:account-child", height=30, color="#ff7f0e"),
+                                        dmc.Title("By Age", order=4, style={"margin": "0"})
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dmc.Text(
+                                    "Analysis by age shows that younger workers (15-24) face higher unemployment rates compared to older groups. "
+                                    "The trend suggests that experience plays a key role in employment stability.",
+                                    size="sm",
+                                    style={"textAlign": "justify", "lineHeight": "1.5"}
+                                ),
+                            ]
+                        ),
+                        dmc.Card(
+                            withBorder=True,
+                            shadow="sm",
+                            radius="md",
+                            style={"flex": "1", "minWidth": "250px", "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    align="center",
+                                    justify="center",
+                                    children=[
+                                        DashIconify(icon="mdi:book-open-page-variant", height=30, color="#2ca02c"),
+                                        dmc.Title("By Qualification", order=4, style={"margin": "0"})
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dmc.Text(
+                                    "Since 2012, individuals with lower qualifications tend to have lower unemployment rates. "
+                                    "However",
+                                    size="sm",
+                                    style={"textAlign": "justify", "lineHeight": "1.5"}
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+
+
                 dmc.Space(h="xl"),
                 
             ]
@@ -304,7 +480,30 @@ layout = dmc.Container(
                 ),
                 dmc.Space(h="md"),
                 html.Iframe(srcDoc=open("services/maps/working_residents_salary_pop_map.html", "r").read(),
-                    style={"width": "100%", "height": "500px", "border": "none"})
+                    style={"width": "100%", "height": "500px", "border": "none"}),
+                dmc.Space(h="md"),
+                html.Div(
+    children=[
+        dmc.Text("Map Observations", size="lg", style={"marginBottom": "0.5rem", "textAlign": "center"}),
+        dcc.Markdown(
+                        """
+            - **Tanglin** stands out with a median salary exceeding **12,000 SGD**—the highest among the areas. Despite this, Tanglin is not among the most populated regions, suggesting that it is home to a relatively small, affluent group.
+            - In most areas, the median salary hovers around **3,500 SGD**, particularly in densely populated regions such as **Jurong West, Woodlands,** and **Tampines**, which are marked by a deep red background.
+            - Overall, the most populated areas tend to be slightly off-center. Conversely, areas closer to the city center exhibit higher median salaries, indicating that living in central districts requires a better income.
+                        """,
+                        style={
+                            "lineHeight": "1.6",
+                            "textAlign": "justify",
+                            "fontSize": "16px",
+                            "maxWidth": "80%",
+                            "margin": "auto"
+                        }
+                    )
+                ],
+                style={"width": "100%", "marginTop": "1rem", "marginBottom": "1rem"}
+            )
+
+                
             ]
         ),
 
@@ -328,6 +527,7 @@ layout = dmc.Container(
                                 "economic prosperity and wage growth. By examining these two indices together, you can gain a holistic view of economic trends and "
                                 "understand how price fluctuations impact salary dynamics.",
                                 size="md",
+                                style={"textAlign": "justify", "width": "80%", "margin": "auto"}
                             ),
                             # on aligne le div au milieur de la page
                             style={"margin": "auto", "textAlign": "justify", "display": "inline-block"}
@@ -348,14 +548,140 @@ layout = dmc.Container(
                                     id="cpi-salary-line-chart"
                                 ),
                                 
+                                html.Div(
+                                    children=[
+                                        dcc.Markdown(
+                                            """
+                                **Key Observations:**
 
+                                - The **Communication** field has shown a decreasing trend over the years, whereas most other fields have generally increased since 2001.
+                                - The **Median Salary Index** has seen a substantial rise, climbing from an index value of **52** in 2001 to **113** in 2023.
+                                - Between **2011** and **2017**, the **Housing & Utilities** category maintained relatively high index values, ranging between **109** and **114** compared to the 2019 baseline.
+                                - The category with the most significant increase is **Transport** (including cars, motorcycles, and public transport), which reached an index of **131** in 2023.
+
+                                These observations illustrate the dynamic nature of Singapore's economic landscape. However, it remains challenging to discern the interdependencies between the different CPI categories. This complexity motivates the subsequent network analysis using partial correlations to better understand the relationships between inflation trends across various categories.
+                                            """,
+                                            style={
+                                                "lineHeight": "1.6",
+                                                "fontSize": "16px",
+                                                "textAlign": "justify",
+                                                "maxWidth": "80%",
+                                                "margin": "auto",
+                                                "padding": "1rem",
+                                                "border": "1px solid #ccc",
+                                                "borderRadius": "8px",
+                                            }
+                                        )
+                                    ],
+                                    style={"marginTop": "0.5rem", "marginBottom": "0.5rem"}
+                                ),
+                                dmc.Space(h="xl"),
+
+                                ## Network
+                                dmc.Group(
+                                    align="center",
+                                    justify="center",
+                                    children=[
+                                        DashIconify(icon="mdi:graph-outline", height=35),
+                                        dmc.Title("Partial Correlation Graph", order=3),
+                                    ],
+                                ),
+                                dmc.Space(h="xl"),
+                                html.Div(
+    style={
+        "display": "flex",
+        "justifyContent": "center",
+        "gap": "2rem",
+        "maxWidth": "90%",
+        "margin": "auto"
+    },
+    children=[
+        # Carte pour le concept mathématique
+        dmc.Card(
+            withBorder=True,
+            shadow="sm",
+            radius="md",
+            style={"flex": "1", "padding": "1rem"},
+            children=[
+                dmc.Group(
+                    align="center",
+                    justify="center",
+                    children=[
+                        DashIconify(icon="mdi:math-compass", height=30, color="#228be6"),
+                        dmc.Title("Mathematical Concept", order=4, style={"margin": "0", "textAlign": "center"})
+                    ]
+                ),
+                dcc.Markdown(
+                    """
+                    ### Mathematical Concept
+
+                    The **partial correlation** between two variables *X* and *Y*, controlling for a set of variables *Z*, is defined as:
+
+                    $$
+                    r_{XY\cdot Z} = -\\frac{\\theta_{XY}}{\sqrt{\\theta_{XX}\,\\theta_{YY}}}
+                    $$
+
+                    where $\\theta_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix).  
+                    This metric quantifies the direct relationship between *X* and *Y* after removing the effect of *Z*.
+                                        """,
+                                        mathjax=True,
+                                        style={
+                                            "textAlign": "justify",
+                                            "lineHeight": "1.6",
+                                            "fontSize": "16px",
+                                            "marginTop": "1rem"
+                                        }
+                                    )
+                                ]
+                            ),
+                            # Carte pour le code Python simplifié
+                            dmc.Card(
+                                withBorder=True,
+                                shadow="sm",
+                                radius="md",
+                                style={"flex": "1", "padding": "1rem"},
+                                children=[
+                                    dmc.Group(
+                                        align="center",
+                                        justify="center",
+                                        children=[
+                                            DashIconify(icon="mdi:code-tags", height=30, color="#228be6"),
+                                            dmc.Title("Simplified Python Code", order=4, style={"margin": "0", "textAlign": "center"})
+                                        ]
+                                    ),
+                                    dmc.Space(h="sm"),
+                                dmc.Code(
+                                    """def compute_partial_correlation_matrix(df, alpha=0.05):
+
+            df_std = (df - df.mean()) / df.std()
+            precision = np.linalg.inv(df_std.corr().values)
+            n = df_std.shape[1]
+            corr_partial = np.zeros((n, n))
+            p_vals = np.zeros((n, n))
+
+            for i, j in combinations(range(n), 2):
+                corr_partial[i, j] = corr_partial[j, i] = -precision[i, j] / np.sqrt(precision[i, i] * precision[j, j])
+                z = 0.5 * np.log((1 + corr_partial[i, j]) / (1 - corr_partial[i, j])) * np.sqrt(df_std.shape[0] - n)
+                p_vals[i, j] = p_vals[j, i] = 2 * (1 - scipy.stats.norm.cdf(abs(z)))
+            adj_matrix = (p_vals < alpha / (n * (n - 1) / 2)).astype(int)
+
+            return adj_matrix, corr_partial, df.columns.tolist()""",
+                                    block=True,
+                                )
+                             ]
+                        )
+
+                                ]
+                            ),
+                            dmc.Space(h="xl"),
                                 html.Div(
                                     style={
                                         "display": "flex",
                                         "gap": "2rem",
                                         "alignItems": "center",
                                         "justifyContent": "center",
-                                        "width": "100%",
+                                        "width": "90%",
+                                        "margin": "auto"
                                     },
                                     className="scroll-section",
                                     children=[
@@ -363,28 +689,25 @@ layout = dmc.Container(
                                         html.Div(
                                             style={"flex": 1, "maxWidth": "30%"},
                                             children=[
-                                                dmc.Group(
-                                                    children=[
-                                                        DashIconify(icon="mdi:graph-outline", height=35),
-                                                        dmc.Title("Partial Correlation Graph", order=3, style={"margin": "0"}),
-                                                    ],
-                                                ),
-                                                dmc.Space(h="md"),
-                                                dmc.Text(
-                                                    "This graph visualizes the partial correlations between economic indicators, controlling for all other variables. "
-                                                    "Edges represent statistically significant relationships based on a p-value test, and you can adjust the significance level (alpha) "
-                                                    "to filter weaker connections. A lower alpha value results in a sparser graph, showing only the strongest correlations.",
-                                                    size="md",
-                                                    style={"lineHeight": "1.6", "textAlign": "justify"},
-                                                ),
-                                                dmc.Space(h="sm"),
-                                                dmc.Text(
-                                                    "You can interact with the graph by clicking on a node: all connected nodes will be highlighted according to their partial correlation "
-                                                    "with the selected node. Positive correlations are shown in red, while negative correlations appear in blue. "
-                                                    "A color scale bar below the graph provides a reference for interpreting these relationships.",
-                                                    size="md",
-                                                    style={"lineHeight": "1.6", "textAlign": "justify"},
-                                                ),
+                                                dcc.Markdown(
+                                                        """
+                                            **Graph Explanation:**
+
+                                            This graph visualizes the partial correlations between economic indicators, controlling for all other variables.  
+                                            Edges represent statistically significant relationships based on a p-value test. Adjust the significance level (alpha) using the input below to filter weaker connections (lower alpha values yield a sparser graph).  
+
+                                            **Interactivity:**
+
+                                            - Click on a node to highlight all connected nodes according to their partial correlation with the selected node.
+                                            - Positive correlations are shown in red, while negative correlations appear in blue.
+                                            - A colorbar beside the graph provides a reference for interpreting the correlation values (ranging from -1 to 1).
+                                                        """,
+                                                        style={
+                                                            "margin": "auto",
+                                                            "textAlign": "justify",
+                                                            "lineHeight": "1.6",
+                                                        }
+                                                    ),
                                                 dmc.Space(h="md"),
                                                 dmc.NumberInput(
                                                     id="alpha-input",
@@ -402,7 +725,7 @@ layout = dmc.Container(
 
                                         # Section droite : Graph + Colorbar
                                         html.Div(
-                                            style={"flex": 2, "display": "flex", "flexDirection": "column", "alignItems": "center"},
+                                            style={"flex": 2, "display": "flex", "flexDirection": "column", "alignItems": "center", "border": "1px solid #ccc", "borderRadius": "8px"},
                                             children=[
                                                 html.Div(id="cytoscape-graph", children=create_cytoscape_graph(theme="dark"), 
                                                         style={"width": "100%"}),
@@ -411,9 +734,7 @@ layout = dmc.Container(
                                             ],
                                         ),
                                     ],
-                                )
-
-                                    
+                                ),
                             ],
                             style={"width": "100%", "margin": "auto"}
                         )

@@ -461,7 +461,7 @@ def create_cytoscape_graph(alpha=0.05, theme="light"):
         elements=elements,
         responsive=True,
         layout={"name": "cose"},
-        style={"width": "100%", "height": "600px"},
+        style={"width": "100%", "height": "500px"},
         stylesheet=[
             {
                 "selector": "node",
