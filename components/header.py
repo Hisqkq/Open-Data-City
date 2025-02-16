@@ -1,16 +1,24 @@
 import dash_mantine_components as dmc
 from dash import html, dcc, clientside_callback, callback, Output, Input
+from dash_iconify import DashIconify
 from utils.icon import get_icon
 from utils.config import GITHUB_LINK, NAV_LINKS
-from dash_iconify import DashIconify
-from dash_mantine_components import Select
 
-# Construction de la liste des options à partir de NAV_LINKS
-options = [{"value": values[0], "label": name} for name, values in NAV_LINKS.items()]
+def get_nav_options():
+    options = []
+    for key, value in NAV_LINKS.items():
+        if isinstance(value, list):
+            # Option simple (ex: Home)
+            options.append({"value": value[0], "label": key})
+        elif isinstance(value, dict):
+            # Création d'un groupe d'options
+            group_items = [{"value": v[0], "label": subkey} for subkey, v in value.items()]
+            options.append({"group": key, "items": group_items})
+    return options
 
-search_select = Select(
+search_select = dmc.Select(
     id="nav-search-select",
-    data=options,
+    data=get_nav_options(),
     placeholder="Search for a page...",
     searchable=True,
     nothingFoundMessage="Nothing found...",
@@ -25,7 +33,7 @@ def header_component():
         children=[
             dmc.Group(
                 children=[
-                    # Left side group: Sidebar toggle, search select, and logo + title
+                    # Left side group: Sidebar toggle, logo & title
                     dmc.Group(
                         children=[
                             dmc.ActionIcon(
@@ -39,14 +47,13 @@ def header_component():
                                     "transition": "0.3s ease-in-out",
                                 },
                             ),
-                            # Groupe pour le logo et le titre
                             dmc.Group(
                                 children=[
                                     dcc.Link(
                                         html.Img(
                                             id="header-logo",
                                             src="/assets/img/lion-logo.png",
-                                            style={"height": "40px"},  # Taille du logo
+                                            style={"height": "40px"},
                                         ),
                                         href="/",
                                         style={"textDecoration": "none"},
@@ -62,7 +69,7 @@ def header_component():
                                                 "fontSize": "1.5rem",
                                                 "display": "flex",
                                                 "alignItems": "center",
-                                                "marginLeft": "0.5rem"  # Décalage pour aligner légèrement le titre à gauche
+                                                "marginLeft": "0.5rem"
                                             },
                                         ),
                                         href="/",
@@ -75,7 +82,7 @@ def header_component():
                         ],
                         align="center"
                     ),
-                    # Right side group: Boutons GitHub et thème
+                    # Right side group: Search select, GitHub & Theme toggle
                     dmc.Group(
                         children=[
                             search_select,
@@ -110,8 +117,7 @@ def header_component():
         },
     )
 
-
-# 🔄 Clientside Callback pour changer la couleur du logo en fonction du thème
+# Clientside Callback pour changer la couleur du logo en fonction du thème
 clientside_callback(
     """
     (theme) => {
@@ -122,7 +128,7 @@ clientside_callback(
     Input("theme-store", "data"),
 )
 
-# 🔄 Clientside Callback pour changer la couleur du titre en fonction du thème
+# Clientside Callback pour changer la couleur du titre en fonction du thème
 clientside_callback(
     """
     (theme) => {
@@ -143,7 +149,7 @@ clientside_callback(
     Input("theme-store", "data"),
 )
 
-# 🔄 Clientside Callback pour adapter le bouton sidebar selon le thème
+# Clientside Callback pour adapter le bouton sidebar selon le thème
 clientside_callback(
     """
     (theme) => {
@@ -155,16 +161,7 @@ clientside_callback(
     Input("theme-store", "data"),
 )
 
-# 🔄 Callback Python pour mettre à jour l'icône du bouton (Lune 🌙 / Soleil ☀)
-@callback(
-    Output("theme-toggle", "children"),
-    Input("theme-store", "data"),
-    prevent_initial_call=True
-)
-def update_icon(theme):
-    return get_icon("radix-icons:sun", height=25) if theme == "dark" else get_icon("radix-icons:moon", height=25)
-
-# 🔄 Callback pour changer de page avec le select 
+# Callback pour changer de page avec le select 
 @callback(
     Output("url", "pathname"),
     Input("nav-search-select", "value"),
