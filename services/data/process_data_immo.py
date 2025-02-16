@@ -346,3 +346,16 @@ def process_data_line_history():
     df["price_m2"] = df["price_m2"].round(2)
 
     return df
+
+def process_town_street():
+    df = pd.read_csv("services/data/processed/immobilier.csv")
+
+    town_street_dict = {}
+
+    for town, street in df[["town", "street_name"]].drop_duplicates().values:
+        if town not in town_street_dict:
+            town_street_dict[town] = []
+        if street not in town_street_dict[town]:
+            town_street_dict[town].append(street)
+
+    return town_street_dict

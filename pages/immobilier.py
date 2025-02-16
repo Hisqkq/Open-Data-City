@@ -8,6 +8,7 @@ from dash import Output, Input, dcc, State
 import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction, create_line_chart_figure_history_price, create_bar_chart_figure
 from services.maps.map_immo import create_map
+from services.data.process_data_immo import process_town_street
 
 dash.register_page(__name__, path="/immobilier")
 
@@ -353,6 +354,15 @@ layout = dmc.Container(
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
+                                dmc.Select(
+                                    label="Street",
+                                    id="street-select",
+                                    data=[],  # Commence avec une liste vide
+                                    placeholder="Select a street",
+                                    withScrollArea=True,
+                                    mt="md",
+                                ),
+                                dmc.Space(h="md"),
                                 dmc.Group(
                                     style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
                                     children=[
@@ -490,3 +500,13 @@ def update_graph(n_clicks, graph_type, clickData):
 def update_value(value):
     return f"You have selected: {value}"
 
+
+@dash.callback(
+    Output("street-select", "data"), 
+    Input("quartier-select", "value"),
+)
+def update_street_dropdown(selected_town):
+    if not selected_town:
+        return []
+    streets = process_town_street().get(selected_town, [])
+    return [{"label": street, "value": street} for street in streets]
