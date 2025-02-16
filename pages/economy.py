@@ -618,7 +618,7 @@ layout = dmc.Container(
                     The **partial correlation** between two variables *X* and *Y*, controlling for a set of variables *Z*, is defined as:
 
                     $$
-                    r_{XY\cdot Z} = -\\frac{\\theta_{XY}}{\sqrt{\\theta_{XX}\,\\theta_{YY}}}
+                    r_{XY\\cdot Z} = -\\frac{\\theta_{XY}}{\sqrt{\\theta_{XX}\,\\theta_{YY}}}
                     $$
 
                     where $\\theta_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix).  
