@@ -108,90 +108,136 @@ layout = dmc.Container(
             ],
         ),
         dmc.Space(h="xl"),
-        
-        # ---------- Section 1 :  ----------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
+
+        # ---------- Section 1: Overall trend price (text + graph side by side) ----------
+        html.Div(
             className="scroll-section",
+            style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "alignItems": "center",
+                "gap": "1rem",
+                "width": "90%",
+                "margin": "auto"
+            },
             children=[
-                dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
-                dmc.Space(h="md"),
-                dmc.Text(
-                    "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify"
-                    }
-                ),
-                dmc.Space(h="md"),
-                dmc.Paper(
+                # Texte explicatif à gauche
+                html.Div(
                     children=[
-                            create_line_chart_figure_introduction()
-                            ],
-                          ),
-                dmc.Space(h="md"),
-                dmc.Paper(
-                    style={
-                        "width": "75%",
-                        "margin": "left",
-                        "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
-                        "marginLeft": "5px",  # Marge à gauche
-                        "marginRight": "10px",  # Marge à droite
-                        },
-                    children=[
-                        dmc.Text(
-                            """
-                            The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
-                            """,
-                            style={"marginBottom": "10px"}
+                        dmc.Group(
+                            children=[
+                                DashIconify(icon="tabler:chart-line", height=35),
+                                dmc.Title("Price per Square Metre Over the Last 8 Years", order=3, style={"margin": "0"})
+                                ],
                         ),
+                        dmc.Space(h="xl"),
                         dmc.Text(
-                            """
-                            Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
-                            This period of stagnation seems to mark a balance between supply and demand.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
-                            in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
-                            a historic record that reflects strong pressure on the market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
-                            purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
-                            had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
-                            has led to an influx of buyers, further increasing pressure on the market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            "Will this trend continue, or are we on the verge of a market turnaround?",
-                            style={"fontWeight": "bold"}
-                        ),
+                            "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace."
+                            "While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase."
+                            "How far will this price hike go? Will we see a slowdown or correction in the years to come? ",
+                            size="md",
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
+                        )
                     ],
-                    className="scroll-section",
+                    style={"flex": "2"}
                 ),
-                # dmc.Image(
-                #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
-                #     radius="md",
-                # ),
+                html.Div(
+                    children=[
+                        create_line_chart_figure_introduction()
+                    ],
+                    style={"flex": "3"},
+
+                
+                )
+
             ]
         ),
         dmc.Space(h="xl"),
+        
+        # # ---------- Section 1 :  ----------
+        # dmc.Card(
+        #     shadow="sm",
+        #     withBorder=True,
+        #     padding="lg",
+        #     className="scroll-section",
+        #     children=[
+        #         dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
+        #         dmc.Space(h="md"),
+        #         dmc.Text(
+        #             "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
+        #             size="md",
+        #             style={
+        #                 "lineHeight": "1.6",
+        #                 "textAlign": "justify"
+        #             }
+        #         ),
+        #         dmc.Space(h="md"),
+        #         dmc.Paper(
+        #             children=[
+        #                     create_line_chart_figure_introduction()
+        #                     ],
+        #                   ),
+        #         dmc.Space(h="md"),
+        #         dmc.Paper(
+        #             style={
+        #                 "width": "75%",
+        #                 "margin": "left",
+        #                 "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
+        #                 "marginLeft": "5px",  # Marge à gauche
+        #                 "marginRight": "10px",  # Marge à droite
+        #                 },
+        #             children=[
+        #                 dmc.Text(
+        #                     """
+        #                     The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
+        #                     This period of stagnation seems to mark a balance between supply and demand.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
+        #                     in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
+        #                     a historic record that reflects strong pressure on the market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
+        #                     purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
+        #                     had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
+        #                     has led to an influx of buyers, further increasing pressure on the market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     "Will this trend continue, or are we on the verge of a market turnaround?",
+        #                     style={"fontWeight": "bold"}
+        #                 ),
+        #             ],
+        #             className="scroll-section",
+        #         ),
+        #         # dmc.Image(
+        #         #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
+        #         #     radius="md",
+        #         # ),
+        #     ]
+        # ),
+        # dmc.Space(h="xl"),
 
 
         # ---------- Section 2 :  ----------
@@ -339,13 +385,15 @@ layout = dmc.Container(
                 dmc.Title("Working Residents by Salary and Price per square meter", order=2),
                 dmc.Space(h="md"),
                 dmc.Text(
-                    "This map shows the distribution of salaries with either the resale price or the price per square meter",
+                    "This interactive map visualizes the distribution of salaries with either the resale price or the price per square meter."
+                    "The map provides a comprehensive overview of the real estate market landscape, highlighting areas with the highest prices and corresponding salary levels.",
                     size="md",
                     style={
                         "lineHeight": "1.6",
                         "textAlign": "justify"
                     }
                 ),
+                dmc.Text("Select the map to display the distribution of salaries with either the resale price or the price per square meter."),
                 dmc.Space(h="md"),
                 dmc.SegmentedControl(
                             id="resale_or_pricem2",
@@ -367,6 +415,66 @@ layout = dmc.Container(
                     )
                 ),
                 dmc.Space(h="md"),
+                dmc.Paper(
+                    style={
+                        "display": "flex",
+                        "justifyContent": "space-between",
+                        "alignItems": "flex-start",
+                        "gap": "2rem",
+                        "width": "100%",
+                        "marginTop": "20px",
+                        "padding": "20px",
+                        "border": "1px solid #ddd",
+                        "borderRadius": "10px",
+                     },
+                    children=[
+                        # Premier texte (gauche)
+                        html.Div(
+                            style={
+                                "flex": "1",
+                                "borderRight": "2px solid #ccc",
+                                "paddingRight": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "🔍 Resale Observation",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Bukit Timah stands out from other neighborhoods with its highest median salary (SGD 9,000 to SGD 12,000) as well as its highest resale prices.\n"
+                                    "Bukit Timah, Queenstown and Bukit Merah are the three areas with the highest resale prices in the city at around SGD 900,000.\n"
+                                    "We notice that in the outskirts, Jurong West, Woodlands or Pasir Ris, prices are much lower, around 400,000 SGD.",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                        # Deuxième texte (droite)
+                        html.Div(
+                            style={
+                                "flex": "1",
+                                "paddingLeft": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "🔍 Price per Square Meter Observation",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Concerning the prices per square meter, we notice that the city center districts, namely Bukit Timah, Queenstown and Bukit Merah are those with the highest value.\n"
+                                    "Also, in the periphery the price decreases sharply. By clicking on the circles, you can have information on the number of people who work.\n"
+                                    "We can conclude that the price per square meter and resale prices are correlated. Which seems to be logical.",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
             ]
         ),
 
@@ -382,7 +490,7 @@ layout = dmc.Container(
             className="scroll-section",
             children=[
                 dmc.Title("More information about your town and estimated price per square meter for 2025", order=2),
-                dmc.Space(h="md"),
+                dmc.Space(h="lg"),
                 dmc.Paper(
                     style={
                         "height": "100vh",  # Prend toute la hauteur de la page
@@ -397,11 +505,9 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "20%",
-                                "height": "85%",
+                                "height": "60%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
-                                "borderRight": "1px solid #ddd",
-                                "overflowY": "auto",
                             },
                             children=[
                                 html.H3("Estimate your property!", style={"marginTop": 0, "align": "center"}),
@@ -429,7 +535,7 @@ layout = dmc.Container(
                                     id="slider-callback",
                                     min=30,
                                     max=400,
-                                    value=[30, 400],
+                                    value=30,
                                     marks=[
                                         {"value": 30, "label": "30"},
                                         {"value": 100, "label": "100"},
@@ -441,9 +547,8 @@ layout = dmc.Container(
                                 ),
                                 dmc.Text(id="slider-output"),
                                 dmc.Space(h="md"),
-                                html.Label("Town :"),
                                 dmc.Select(
-                                    label="Town",
+                                    label="Town : ",
                                     id="quartier-select",
                                     data = TOWNS,
                                     placeholder="Select a town",
@@ -460,16 +565,6 @@ layout = dmc.Container(
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
-                                dmc.Group(
-                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
-                                    children=[
-                                        dmc.Button("Estimate", id="estimate-btn", style={"marginTop": "10px"}, variant="default")
-                                    ]
-                                ),
-
-                                dmc.Paper(style={"marginTop": "20px"}),
-
-                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold"}),
                             ],
                         ),
                         # ----------------------
@@ -478,10 +573,18 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "40%",  # 50% de la largeur
-                                "height": "85%",  # 85% de la hauteur
+                                "height": "60%",  # 85% de la hauteur
                             },
                             children=[
                                 create_map(),  # Carte Leaflet
+                                dmc.Group(
+                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
+                                    children=[
+                                        dmc.Button("Estimate", id="estimate-btn", style={"marginTop": "10px"}, variant="default")
+                                    ]
+                                ),
+                                dmc.Paper(style={"marginTop": "20px"}),
+                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"}),
                             ],
                         ),
                         # ----------------------
@@ -490,11 +593,9 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "40%",
-                                "height": "85%",
+                                "height": "60%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
-                                "borderLeft": "1px solid #ddd",
-                                "overflowY": "auto",
                             },
                             children=[
                                 dmc.SegmentedControl(
@@ -518,13 +619,138 @@ layout = dmc.Container(
                                     style={"display": "none"},  # Caché au début
                                 ),
                                 dcc.Store(id="selected-town", data="Ang Mo Kio"),
-                                html.H3(id="town-name", children="Town : Ang Mo Kio"),
+                                html.H3(id="town-name", children="Town : Ang Mo Kio", style={"textAlign": "center"}),
                             ],
                         ),
 
                         dmc.Space(h="md"),
                     ],
                     className="scroll-section",
+                ),
+                dmc.Space(h="lg"),
+                dmc.Accordion(
+                    disableChevronRotation=True,
+                    children=[
+                        dmc.AccordionItem(
+                            [
+                                dmc.AccordionControl(
+                                    "How were the predictions made?",
+                                    icon=DashIconify(
+                                        icon="mdi:information-outline",
+                                        color=dmc.DEFAULT_THEME["colors"]["blue"][6],
+                                        width=20,
+                                    ),
+                                ),
+                                dmc.AccordionPanel(
+                                    [
+                                         html.Div([
+    
+                                            # 📌 Titre de la section
+                                            dmc.Group(
+                                                align="center",
+                                                justify="center",
+                                                children=[
+                                                    DashIconify(icon="mdi:chart-line", height=35, color="#228be6"),
+                                                    dmc.Title("Prediction Methodology", order=2),
+                                                ],
+                                                style={"marginBottom": "1rem", "textAlign": "center"}
+                                            ),
+                                            
+                                            # 📌 Explication en deux colonnes
+                                            html.Div(
+                                                style={"display": "flex", "gap": "2rem", "justifyContent": "center"},
+                                                children=[
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🛠 How were the predictions made?
+
+                                                        - **Model Used: CatBoost Regressor**  
+                                                        CatBoost is a high-performance, gradient boosting algorithm optimized for handling categorical features efficiently.
+
+                                                        - **Data Preparation**  
+                                                        - Cleaned real estate transaction data, removing irrelevant columns.
+                                                        - Converted date features (`month`, `year`) and processed lease duration for better predictive power.
+                                                        - Identified categorical features like `town`, `flat_type`, `storey_range`, and `flat_model`.
+
+                                                        - **Training Process**  
+                                                        - **Train-test split (80-20%)** to evaluate model performance.
+                                                        - Used **CatBoost's Pool** method to handle categorical features natively.
+                                                        - Trained for **1500 iterations** with a learning rate of **0.09** and depth **10**.
+                                                        - Applied **early stopping** to avoid overfitting.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🔍 Why this approach?
+
+                                                        - **Handling Categorical Data**  
+                                                        CatBoost's strength lies in its ability to process categorical variables without needing manual encoding.
+
+                                                        - **Hyperparameter Optimization**  
+                                                        - Used **Optuna** to fine-tune model parameters like learning rate, depth, and iterations.
+                                                        - Optimized the model to balance performance and generalization.
+
+                                                        - **Model Evaluation & Feature Importance**  
+                                                        - Metrics: **RMSE: {rmse:.2f}, MAE: {mae:.2f}, R² Score: {r2:.4f}**.
+                                                        - Examined feature importance to understand key predictors of property prices.
+
+                                                        - **Robust Performance**  
+                                                        The model generalizes well across different neighborhoods, capturing key market trends effectively.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                ],
+
+                                            ),
+                                            dmc.Space(h="xl"),
+                                            dmc.Card(
+                                                shadow="sm",
+                                                withBorder=True,
+                                                radius="md",
+                                                style={"width": "60%", "padding": "1rem", "margin": "auto"},
+                                                children=[
+                                                    dmc.Group(
+                                                        children=[
+                                                            DashIconify(icon="mdi:chart-line", height=25, color="#2c3e50"),
+                                                            dmc.Title("CatBoost Model Results", order=3),
+                                                        ],
+                                                        style={"marginBottom": "1rem", "textAlign": "center"}
+                                                    ),
+                                                    dmc.Space(h="sm"),
+                                                    dcc.Markdown(
+                                                        f"""
+                                                        **📊 Model Performance:**  
+                                                        - **Iterations:** 2500 (Best at {2492})  
+                                                        - **Learning Rate:** 0.0415  
+                                                        - **Depth:** 11  
+                                                        - **L2 Regularization:** 0.082  
+                                                        - **Random Strength:** 0.482  
+
+                                                        **📉 Model Metrics:**  
+                                                        - **Mean Absolute Error (MAE): 18474.76 **   
+                                                        - **Root Mean Squared Error (RMSE): 25872.16 **
+                                                        - **R² Score: 0.9791 **  
+
+                                                        **📌 Interpretation:**  
+                                                        - The **high R² (0.9791)** indicates that the model explains nearly all the variance in property prices.  
+                                                        - **Low MAE (18,474 SGD)** suggests that most predictions are close to actual values.  
+                                                        - RMSE of **25,872 SGD** means occasional larger errors, but overall predictions are reliable.  
+                                                        - The use of **Optuna for hyperparameter tuning** helped optimize performance.  
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify"}
+                                                    ),
+                                                ]
+                                            ),
+                                            dmc.Space(h="xl"),
+                                        ])
+                                    ]
+                                ),
+                            ],
+                            value="info",
+                            style={"marginBottom": "1rem", "width": "100%", "textAlign": "justify", "margin": "auto"},
+                        ),
+                    ],
                 ),
             ]
         ),
@@ -557,18 +783,20 @@ def update_map(selected_value):
         Output("line-chart-container", "style"),
         Output("bar-chart-container", "style"),
     ],
-    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value")],
+    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value"), Input("theme-store", "data")],
     State("geojson-layer", "clickData")
 )
-def update_graph(n_clicks, graph_type, clickData):
+def update_graph(n_clicks, graph_type, theme, clickData):
     if not clickData or "properties" not in clickData:
         town_name = "Ang Mo Kio"
     else:
         town_name = clickData["properties"]["PLN_AREA_N"].title()
 
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+
     # Générer les figures
-    line_chart_fig = create_line_chart_figure_history_price(town_name)
-    bar_chart_fig = create_bar_chart_figure(town_name)
+    line_chart_fig = create_line_chart_figure_history_price(town_name, template=template)
+    bar_chart_fig = create_bar_chart_figure(town_name, template=template)
 
     # Gérer l'affichage des graphiques
     if graph_type == "line-chart":
