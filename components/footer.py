@@ -35,7 +35,7 @@ def footer_component():
                     html.Div(
                         children=[
                             dmc.Anchor(
-                                href="https://www.u-bordeaux.fr/",
+                                href="https://sciences-et-technologies.u-bordeaux.fr/",
                                 target="_blank",
                                 children=[
                                     html.Img(
@@ -46,7 +46,7 @@ def footer_component():
                                 ]
                             )
                         ],
-                        style={"marginTop": "1rem", "marginBottom": "1rem", "textAlign": "center"},
+                        style={"marginTop": "1rem", "marginBottom": "1rem", "textAlign": "center", "margin": "auto"},
                     )
                 ]
             )
