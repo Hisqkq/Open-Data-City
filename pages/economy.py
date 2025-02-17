@@ -58,7 +58,7 @@ layout = dmc.Container(
                         dmc.Blockquote(
                             "The economy is the start and end of everything. You can't have successful education reform or any other reform if you don't have a strong economy.",
                             cite="- David Cameron",
-                            icon=DashIconify(icon="mdi:lightbulb-on-outline", height=20),
+                            icon=DashIconify(icon="mdi:lightbulb-on-outline", height=20, color="#228be6"),
                             color="primary",
                             radius="lg",
                             style={"textAlign": "center", "width": "100%"},
@@ -727,13 +727,15 @@ layout = dmc.Container(
                     padding="lg",
                     className="scroll-section",
                     children=[
-                        dmc.Title("Graph Interpretation", order=2),
+                        dmc.Title("Graph Interpretation", order=2, style={"textAlign": "center", "margin": "auto"}),
                         dmc.Space(h="md"),
                         dmc.Group(
                             children=[
                                 dcc.Markdown(
                                     """
-                                    Dummy text
+                        **Adjusting the Alpha Value**
+
+                        If you lower the **alpha value**, you will notice that the graph becomes **less dense** with fewer edges connecting the nodes. This reduction indicates that only the most **significant relationships** are retained, minimizing the chance of spurious connections. For example, setting a very low alpha value may reveal that the *Median Salary Index* is predominantly linked to **Alcohol & Tobacco**, **Education**, and **Food**.
                                     """,
                                     style={
                                         "lineHeight": "1.6",
@@ -745,7 +747,9 @@ layout = dmc.Container(
                                 ),
                                 dcc.Markdown(
                                     """
-                                    Dummy text
+                        **Interpreting the Graph**
+
+                        The graph also highlights the **nature of the relationships** between variables. For instance, a **negative correlation** between *Education* and *Transport* suggests that as the cost of education increases, transportation costs tend to decrease. Conversely, a **positive correlation** between *Housing & Utilities* and *Healthcare* implies that rising housing and utility prices are accompanied by increased healthcare costs.
                                     """,
                                     style={
                                         "lineHeight": "1.6",
@@ -757,7 +761,8 @@ layout = dmc.Container(
                                 ),
                             ],
                             style={"display": "flex", "justifyContent": "space-between", "gap": "2rem"}
-                        ),
+                        )
+
                     ],
                     style={"margin": "auto", "width": "90%"}
                 ),

@@ -25,6 +25,7 @@ def create_line_chart_figure_introduction():
         dataKey="Date",
         type="gradient",
         strokeWidth=5,
+        dotProps={"r": 0},
         curveType="natural",
         yAxisProps={"domain": [4500.0, 7200.0]},  # Ajusté en fonction de la plage du prix
         p="lg",

@@ -10,6 +10,13 @@ from figures.education import create_bar_chart_figure, create_line_chart_figure,
 
 dash.register_page(__name__, path="/education")
 
+with open("assets/enrolment.txt", "r") as f:
+    enrolment_results = f.read()
+
+with open("assets/intake.txt", "r") as f:
+    intake_results = f.read()
+
+
 layout = dmc.Container(
     fluid=True,
     p="xl",
@@ -57,7 +64,7 @@ layout = dmc.Container(
                         dmc.Blockquote(
                             "The wealth of a nation lies in its people – their commitment to country and community, their willingness to strive and persevere, their ability to think, achieve and excel. How we raise our young at home and teach them in school will shape our society in the next generation.",
                             cite="- Ministry of Education, Singapore",
-                            icon=DashIconify(icon="mdi:format-quote-open", height=20),
+                            icon=DashIconify(icon="mdi:format-quote-open", height=20, color="#228be6"),
                             color="primary",
                             radius="lg",
                             style={"textAlign": "left", "width": "100%"}
@@ -161,66 +168,133 @@ layout = dmc.Container(
                                 ),
                                 dmc.AccordionPanel(
                                     [
-                                        dmc.Text("Prediction Methodology:", size="lg", style={"marginBottom": "10px"}),
-                                        dmc.Text(
-                                            "To forecast future university admissions, we employed a Quantile Regression model combined with a Box-Cox transformation. "
-                                            "This approach was chosen to handle non-linear relationships and to stabilize variance in our data.",
-                                            style={"marginBottom": "10px"}
-                                        ),
-                                        dmc.Text("Box-Cox Transformation:", size="lg", style={"marginBottom": "10px"}),
-                                        dmc.Text(
-                                            "The Box-Cox transformation is a power transformation that aims to make data more normally distributed. "
-                                            "By applying this transformation to our 'intake' and 'enrolment' variables, we achieved a more linear relationship, "
-                                            "which is essential for regression analysis.",
-                                            style={"marginBottom": "10px"}
-                                        ),
-                                        dmc.Text("Quantile Regression:", size="lg", style={"marginBottom": "10px"}),
-                                        dmc.Text(
-                                            "Unlike traditional regression models that predict the mean of the dependent variable, Quantile Regression predicts specific quantiles (e.g., the median). "
-                                            "This is particularly useful for understanding the distributional effects and is robust to outliers.",
-                                            style={"marginBottom": "10px"}
-                                        ),
-                                        dmc.Text("Implementation Steps:", size="lg", style={"marginBottom": "10px"}),
-                                        dmc.List(
-                                            [
-                                                dmc.ListItem(
-                                                    dmc.Text(
-                                                        "Data Transformation: Applied the Box-Cox transformation to the 'intake' and 'enrolment' data to stabilize variance and achieve normality.",
-                                                        style={"marginBottom": "5px"}
-                                                    )
-                                                ),
-                                                dmc.ListItem(
-                                                    dmc.Text(
-                                                        "Model Training: Trained Quantile Regression models (at the 0.5 quantile) using the transformed data to capture the median relationship between the variables and time.",
-                                                        style={"marginBottom": "5px"}
-                                                    )
-                                                ),
-                                                dmc.ListItem(
-                                                    dmc.Text(
-                                                        "Prediction: Used the trained models to predict future values for 'intake' and 'enrolment' up to the year 2028.",
-                                                        style={"marginBottom": "5px"}
-                                                    )
-                                                ),
-                                                dmc.ListItem(
-                                                    dmc.Text(
-                                                        "Inverse Transformation: Applied the inverse Box-Cox transformation to the predicted values to revert them to the original scale.",
-                                                        style={"marginBottom": "5px"}
-                                                    )
-                                                ),
-                                            ],
-                                            style={"marginBottom": "10px"}
-                                        ),
-                                        dmc.Text("Rationale for Choices:", size="lg", style={"marginBottom": "10px"}),
-                                        dmc.Text(
-                                            "The combination of Box-Cox transformation and Quantile Regression allows for flexibility in modeling non-linear relationships and provides robustness against outliers. "
-                                            "This methodology ensures that our predictions are not unduly influenced by extreme values and that they capture the central tendency of the data over time.",
-                                            style={"marginBottom": "10px"}
-                                        ),
+                                         html.Div([
+    
+                                            # 📌 Titre de la section
+                                            dmc.Group(
+                                                align="center",
+                                                justify="center",
+                                                children=[
+                                                    DashIconify(icon="mdi:chart-line", height=35, color="#228be6"),
+                                                    dmc.Title("Prediction Methodology", order=2),
+                                                ],
+                                                style={"marginBottom": "1rem", "textAlign": "center"}
+                                            ),
+                                            
+                                            # 📌 Explication en deux colonnes
+                                            html.Div(
+                                                style={"display": "flex", "gap": "2rem", "justifyContent": "center"},
+                                                children=[
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🛠 How were the predictions made?
+
+                                                        - **Box-Cox Transformation:**  
+                                                        Applied to stabilize variance and normalize data.
+
+                                                        - **Quantile Regression:**  
+                                                        Used to predict the median (`q=0.5`), making it robust to outliers.
+
+                                                        - **Inverse Transformation:**  
+                                                        After prediction, values were reverted to the original scale.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🔍 Why this approach?
+
+                                                        - **Handles non-linearity:**  
+                                                        Box-Cox makes the relationship more linear.
+
+                                                        - **Robust predictions:**  
+                                                        Quantile Regression captures trends even with variability.
+
+                                                        - **Better for planning:**  
+                                                        Predicting quantiles helps policymakers analyze risks.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                ],
+                                            ),
+
+                                            dmc.Space(h="xl"),
+
+                                            # 📌 Résultats des modèles avec interprétation
+                                            dmc.Group(
+                                                align="center",
+                                                justify="center",
+                                                children=[
+                                                    DashIconify(icon="mdi:table", height=30, color="#228be6"),
+                                                    dmc.Title("Model Outputs & Interpretation", order=2),
+                                                ],
+                                                style={"marginBottom": "1rem", "textAlign": "center"}
+                                            ),
+
+                                            html.Div(
+                                                style={"display": "flex", "gap": "1rem", "justifyContent": "center"},
+                                                children=[
+                                                    dmc.Card(
+                                                        shadow="sm",
+                                                        withBorder=True,
+                                                        radius="md",
+                                                        style={"width": "48%", "padding": "1rem"},
+                                                        children=[
+                                                            dmc.Group(
+                                                                children=[
+                                                                    DashIconify(icon="mdi:school", height=25, color="#ff5722"),
+                                                                    dmc.Title("Enrolment Model", order=4),
+                                                                ]
+                                                            ),
+                                                            dmc.Space(h="sm"),
+                                                            dcc.Markdown(f"```py \n{enrolment_results}\n```"),
+                                                            dcc.Markdown( # The value is under box cox transformation so it is not the real value
+                                                                """
+                                                                **📌 Interpretation:**  
+                                                                - **High R² (0.9399):** Model explains most of the variation.  
+                                                                - **Intercept:** Large negative value, but **year has a strong positive coefficient (34.2)**.  
+                                                                - **Conclusion:** Enrolment is increasing steadily over time.
+                                                                """,
+                                                                style={"lineHeight": "1.6", "textAlign": "justify"}
+                                                            ),
+                                                        ]
+                                                    ),
+                                                    dmc.Card(
+                                                        shadow="sm",
+                                                        withBorder=True,
+                                                        radius="md",
+                                                        style={"width": "48%", "padding": "1rem"},
+                                                        children=[
+                                                            dmc.Group(
+                                                                children=[
+                                                                    DashIconify(icon="mdi:account-group", height=25, color="#228be6"),
+                                                                    dmc.Title("Intake Model", order=4),
+                                                                ]
+                                                            ),
+                                                            dmc.Space(h="sm"),
+                                                            dcc.Markdown(f"```py \n{intake_results}\n```"),
+                                                            dcc.Markdown(
+                                                                # box cox transformation is applied to the value so it is not the real value
+                                                                """
+                                                                **📌 Interpretation:**  
+                                                                - **Lower R² (0.7617):** Model captures trends but leaves some unexplained variability.  
+                                                                - **Year Coefficient (163.2):** Strong positive effect on intake.
+                                                                - **Conclusion:** Intake is growing rapidly, but with more variability.
+                                                                """,
+                                                                style={"lineHeight": "1.6", "textAlign": "justify"}
+                                                            ),
+                                                        ]
+                                                    ),
+                                                ],
+                                            ),
+
+                                            dmc.Space(h="xl"),
+                                        ])
                                     ]
                                 ),
                             ],
                             value="info",
-                            style={"marginBottom": "1rem", "width": "80%", "textAlign": "justify", "margin": "auto"},
+                            style={"marginBottom": "1rem", "width": "100%", "textAlign": "justify", "margin": "auto"},
                         ),
                     ],
                 ),

@@ -5,11 +5,14 @@ from dash_extensions import Lottie
 import plotly.express as px
 import dash_leaflet as dl
 from dash import Output, Input, dcc, State
+from dash_iconify import DashIconify
 import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction, create_line_chart_figure_history_price, create_bar_chart_figure
 from services.maps.map_immo import create_map
 from services.data.process_data_immo import process_town_street
 from models.pred_immobilier import predict_immobilier
+
+from utils.config import TOWNS
 
 dash.register_page(__name__, path="/immobilier")
 
@@ -18,48 +21,78 @@ layout = dmc.Container(
     p="xl",
     children=[
 
+         # Page Title
         html.Div(
-            dmc.Title("Real estate indicators", order=1, style={"marginBottom": "1rem", "textAlign": "center"}),
-            style={"width": "100%"},
-            className="scroll-section",
-        ),
-        
-        # ----------------------
-        # En-tête avec titre et animation Lottie
-        # ----------------------
-        dmc.Paper(
             style={
-                "display": "flex",
-                "gap": "1rem",
-                "alignItems": "top",
-                "marginBottom": "1rem"
+                "width": "100%",
+                "textAlign": "center",
+                "margin": "auto",
+                "marginTop": "1rem",
             },
             className="scroll-section",
             children=[
-                dmc.Paper(
-                    style={"width": "75%"},
+                dmc.Group(
                     children=[
-                        dmc.Title("Singapore and the Soaring Real Estate Market!", order=1, style={"color": "#f6efed"}),
-                        dmc.Text(
-                            "Since 2017, Singapore’s property prices have seen a significant increase, reflecting the complex dynamics of the real estate market in one of the world’s most densely populated cities.",
-                            size="lg",
-                            style={"color": "#f6efed"}
+                        DashIconify(icon="mdi:home", height=40, color="#228be6"),
+                        dmc.Title("Real Estate Insights", order=1),
+                    ],
+                    align="center",
+                    justify="center",
+                    style={"margin": "auto", "textAlign": "center"}
+                ),
+                dmc.Text(
+                    "Discover key trends and dynamics shaping Singapore's property market.",
+                    size="md",
+                    style={"marginTop": "0.5rem"}
+                ),
+                dmc.Space(h="xl"),
+            ],
+        ),
+
+        # Main Section: Text & Animation side-by-side
+        html.Div(
+            style={
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "gap": "1rem",
+                "marginBottom": "2rem"
+            },
+            className="scroll-section",
+            children=[
+                # Left Column: Explanatory text and blockquote
+                html.Div(
+                    style={"flex": 1, "maxWidth": "65%"},
+                    children=[
+                        dmc.Blockquote(
+                            "Real estate cannot be lost or stolen, nor can it be carried away. Purchased with common sense, paid for in full, and managed with reasonable care, it is about the safest investment in the world.",
+                            cite="- Franklin D. Roosevelt",
+                            icon=DashIconify(icon="mdi:lightbulb-on-outline", height=20, color="#228be6"),
+                            color="primary",
+                            radius="lg",
+                            style={"textAlign": "center", "width": "100%"}
                         ),
+                        dmc.Space(h="md"),
                         dmc.Text(
-                            "As the price per square meter continues to rise, the question arises: how does this trend impact housing affordability for residents?",
+                            "Singapore's property market has experienced remarkable growth in recent years. This dashboard explores key metrics including "
+                            "price per square meter, regional disparities, and market trends. Notably, central areas with high property values often have a "
+                            "lower population density, while suburban regions reveal different dynamics. Understanding these nuances is essential for gauging "
+                            "housing affordability and planning future developments.",
                             size="lg",
-                            style={"color": "#f6efed"}
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
                         ),
+                        dmc.Space(h="sm"),
                         dmc.Text(
-                            "Through this analysis, we will explore key figures, regional disparities, and future predictions to better understand the real estate challenges in Singapore.",
-                            size="lg",
-                            style={"color": "#f6efed"}
+                            "Through these insights, we aim to provide a comprehensive view of Singapore's real estate landscape, enabling informed decisions "
+                            "for investors, policymakers, and residents.",
+                            size="md",
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
                         ),
                     ]
                 ),
-
-                dmc.Paper(
-                    style={"width": "25%"},
+                # Right Column: Animation
+                html.Div(
+                    style={"flex": 1, "maxWidth": "35%", "display": "flex", "justifyContent": "center"},
                     children=[
                         Lottie(
                             options=dict(
@@ -72,7 +105,7 @@ layout = dmc.Container(
                         )
                     ]
                 ),
-            ]
+            ],
         ),
         dmc.Space(h="xl"),
         
@@ -161,47 +194,137 @@ layout = dmc.Container(
         dmc.Space(h="xl"),
 
 
-        # ---------- Section 1 :  ----------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
+        # ---------- Section 2 :  ----------
+        html.Div(
             className="scroll-section",
             children=[
                 dmc.Title("Number of homes costing more than a million dollars at resale", order=2),
                 dmc.Space(h="md"),
-                dmc.Text(
-                    """
-                    The high-end real estate market in Singapore is experiencing a meteoric rise. The number of homes resold for more than S$1 million has literally exploded in recent years. Until 2019, these transactions remained relatively rare, with less than 100 sales per year. But from 2021, the market is taking off, exceeding 200 and then 400 sales per year.
-                    """,
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify"
-                    }
-                ),
-                dmc.Space(h="md"),
-                dmc.Paper(create_table_figure_introduction(), id="immo1-table-container"),
-                dmc.Space(h="md"),
-                dmc.Text(
-                    """
-                    The evolution of the figures is striking. In 2020, only 77 properties exceeded this symbolic bar, but by 2021, this number tripled to reach 233. The trend is only increasing with 426 sales in 2023, and an impressive record of 940 in 2024!
 
-                    And what about 2025? With data only for January and February, there have already been 120 sales. That's almost twice as many as the whole of 2020! If this momentum continues, 2025 could well set a new record.
+                # --- Première ligne : Table + Mini Card ---
+                html.Div(
+                    style={"display": "flex", "gap": "2rem", "justifyContent": "center", "alignItems": "stretch"},
+                    children=[
+                        # Table avec taille réduite et scroll si nécessaire
+                        dmc.Card(
+                            shadow="sm",
+                            withBorder=True,
+                            radius="md",
+                            style={"flex": 1.5, "padding": "1rem", "maxWidth": "60%"},
+                            children=[
+                                dmc.Group(
+                                    children=[
+                                        DashIconify(icon="mdi:table-large", height=25, color="#228be6"),
+                                        dmc.Title("Sales Overview", order=4),
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                html.Div(
+                                    create_table_figure_introduction(),
+                                    style={"overflowX": "auto", "maxWidth": "100%"}  # Permet le scroll horizontal si besoin
+                                )
+                            ]
+                        ),
 
-                    🔎 What are the reasons for this surge?
-                    Several factors explain this rise in power. The growing appeal of Singapore as an economic hub, the increase in real estate prices, demand from foreign investors and a limited supply of exceptional properties are fueling this frenzy. The question now is: how far will it go?
-                    """,
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify",
-                        "marginBottom": "1rem"
-                    }
+                        # Mini Card avec du contenu supplémentaire pour équilibrer la hauteur
+                        dmc.Card(
+                            shadow="sm",
+                            withBorder=True,
+                            radius="md",
+                            style={"flex": 1, "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    children=[
+                                        DashIconify(icon="mdi:trending-up", height=25, color="#ff5722"),
+                                        dmc.Title("Explosive Growth", order=4),
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dcc.Markdown(
+                                    """
+                                    The number of **million-dollar resales** has **tripled** since 2021, reaching **940 sales in 2024**!  
+                                    This surge reflects the **rapidly rising prices** in the real estate market. 
+
+
+                                    This trend has several implications:
+                                    - This could have implications for **housing affordability** and **social inequality**.
+                                    - It could also indicate a **shift in consumer preferences** towards **luxury properties**.
+                                    - Finally, it could be a sign of **speculative behavior** in the market.
+
+                                    """,
+                                    style={"lineHeight": "1.6", "textAlign": "justify", "fontSize": "16px"}
+                                ),
+                            ]
+                        ),
+                    ]
                 ),
-            ]
+
+                dmc.Space(h="xl"),
+
+
+                # --- Deuxième ligne : Deux Cards d'Analyse ---
+                html.Div(
+                    style={"display": "flex", "gap": "2rem", "justifyContent": "center", "alignItems": "start"},
+                    children=[
+                        # Card 1 - Evolution Analysis
+                        dmc.Card(
+                            shadow="sm",
+                            withBorder=True,
+                            radius="md",
+                            style={"flex": 1, "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    children=[
+                                        DashIconify(icon="mdi:chart-line", height=25, color="#4caf50"),
+                                        dmc.Title("Market Evolution", order=4),
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dcc.Markdown(
+                                    """
+                                    - **Before 2020**: Less than 100 properties exceeded S$1M.
+                                    - **2021**: Sales tripled to **233 transactions**.
+                                    - **2023**: The number doubled again to **426**.
+                                    - **2024**: A record-breaking **940 sales**!
+                                    """,
+                                    style={"lineHeight": "1.6", "textAlign": "justify", "fontSize": "16px"}
+                                ),
+                            ]
+                        ),
+
+                        # Card 2 - Future Projections
+                        dmc.Card(
+                            shadow="sm",
+                            withBorder=True,
+                            radius="md",
+                            style={"flex": 1, "padding": "1rem"},
+                            children=[
+                                dmc.Group(
+                                    children=[
+                                        DashIconify(icon="mdi:lightbulb-on-outline", height=25, color="#ff9800"),
+                                        dmc.Title("What's Next?", order=4),
+                                    ]
+                                ),
+                                dmc.Space(h="sm"),
+                                dcc.Markdown(
+                                    """
+                                    - Already **120 sales** recorded in early 2025.
+                                    - If this trend continues, **a new record is expected**.
+                                    - Foreign investments and **rising demand** are fueling the growth.
+                                    - Can this rapid rise **sustain itself** in the long run?
+                                    """,
+                                    style={"lineHeight": "1.6", "textAlign": "justify", "fontSize": "16px"}
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+            ],
+            style={"margin": "auto", "padding": "1.5rem"}
         ),
         dmc.Space(h="xl"),
+
+
 
         # ----------------------
         # Section : Carte avec le switch
@@ -322,34 +445,7 @@ layout = dmc.Container(
                                 dmc.Select(
                                     label="Town",
                                     id="quartier-select",
-                                    data = [
-                                        {"label": "Ang Mo Kio", "value": "Ang Mo Kio"},
-                                        {"label": "Bedok", "value": "Bedok"},
-                                        {"label": "Bishan", "value": "Bishan"},
-                                        {"label": "Bukit Batok", "value": "Bukit Batok"},
-                                        {"label": "Bukit Merah", "value": "Bukit Merah"},
-                                        {"label": "Bukit Panjang", "value": "Bukit Panjang"},
-                                        {"label": "Bukit Timah", "value": "Bukit Timah"},
-                                        {"label": "Central Area", "value": "Central Area"},
-                                        {"label": "Choa Chu Kang", "value": "Choa Chu Kang"},
-                                        {"label": "Clementi", "value": "Clementi"},
-                                        {"label": "Geylang", "value": "Geylang"},
-                                        {"label": "Hougang", "value": "Hougang"},
-                                        {"label": "Jurong East", "value": "Jurong East"},
-                                        {"label": "Jurong West", "value": "Jurong West"},
-                                        {"label": "Kallang/Whampoa", "value": "Kallang/Whampoa"},
-                                        {"label": "Marine Parade", "value": "Marine Parade"},
-                                        {"label": "Pasir Ris", "value": "Pasir Ris"},
-                                        {"label": "Punggol", "value": "Punggol"},
-                                        {"label": "Queenstown", "value": "Queenstown"},
-                                        {"label": "Sembawang", "value": "Sembawang"},
-                                        {"label": "Sengkang", "value": "Sengkang"},
-                                        {"label": "Serangoon", "value": "Serangoon"},
-                                        {"label": "Tampines", "value": "Tampines"},
-                                        {"label": "Toa Payoh", "value": "Toa Payoh"},
-                                        {"label": "Woodlands", "value": "Woodlands"},
-                                        {"label": "Yishun", "value": "Yishun"},
-                                    ],
+                                    data = TOWNS,
                                     placeholder="Select a town",
                                     withScrollArea=True,
                                     mt="md",

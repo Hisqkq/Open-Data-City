@@ -20,7 +20,13 @@ layout = dmc.Container(
             ],
             style={"marginBottom": "1rem"},
         ),
-        
+        dmc.Text(
+            "Explore the datasets we used in this project. Click on a dataset to view its description and data.",
+            size="md",
+            style={"marginTop": "0.5rem", "margin" : "auto", "textAlign": "center",  "marginBottom": "0.5rem"},
+        ),
+        dmc.Space(h="md"),
+
         dmc.Select(
             id="dataset-select",
             data=get_grouped_dataset_options(),
