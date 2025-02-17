@@ -493,7 +493,7 @@ layout = dmc.Container(
                 dmc.Space(h="lg"),
                 dmc.Paper(
                     style={
-                        "height": "100vh",  # Prend toute la hauteur de la page
+                        "height": "60vh",  # Prend toute la hauteur de la page
                         "width": "100%",    # Prend toute la largeur de la page
                         "display": "flex",  # Utilise Flexbox pour organiser les éléments
                         "flexDirection": "row",  # Disposition en ligne
@@ -573,18 +573,10 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "40%",  # 50% de la largeur
-                                "height": "60%",  # 85% de la hauteur
+                                "height": "90%",  # 85% de la hauteur
                             },
                             children=[
                                 create_map(),  # Carte Leaflet
-                                dmc.Group(
-                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
-                                    children=[
-                                        dmc.Button("Estimate", id="estimate-btn", style={"marginTop": "10px"}, variant="default")
-                                    ]
-                                ),
-                                dmc.Paper(style={"marginTop": "20px"}),
-                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"}),
                             ],
                         ),
                         # ----------------------
@@ -627,6 +619,88 @@ layout = dmc.Container(
                     ],
                     className="scroll-section",
                 ),
+                dmc.Paper(
+                    style={
+                        "display": "flex",
+                        "justifyContent": "space-between",
+                        "alignItems": "flex-start",
+                        "gap": "2rem",
+                        "width": "100%",
+                        "marginTop": "20px",
+                        "padding": "20px",
+                        "border": "1px solid #ddd",
+                        "borderRadius": "10px",
+                    },
+                    children=[
+                        # Premier texte (gauche)
+                        html.Div(
+                            style={
+                                "flex": "2",
+                                "height": "100%",
+                                "paddingRight": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "Information",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Please fill in the information via the dropdown and the slider to estimate your property!\n",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                        # Deuxième texte (droite)
+                        html.Div(
+                            style={
+                                "flex": "2",
+                                "borderRight": "2px solid #ccc",
+                                "borderLeft": "2px solid #ccc",
+                                "height": "100%",
+                                "paddingLeft": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "It's time to estimate your property!",
+                                    order=4,
+                                    style={"marginBottom": "1rem", "textAlign": "center"},
+                                    fw="bold",
+                                ),
+                                dmc.Group(
+                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
+                                    children=[
+                                        dmc.Button("Estimate", id="estimate-btn", color="blue", style={"marginTop": "10px"}, size="lg"),
+                                    ]
+                                ),
+                                dmc.Paper(style={"marginTop": "20px"}),
+                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"}),
+                            ],
+                        ),
+                        html.Div(
+                            style={
+                                "flex": "2",
+                                "paddingRight": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "History of the price per square meter and overview of the real estate prices in your neighborhood",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Find here the history of the price per square meter of properties in your neighborhood since 2017.\n"
+                                    "If you click on \"Average price\", you will get an overview of the real estate prices in your neighborhood compared to the city.\n",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
                 dmc.Space(h="lg"),
                 dmc.Accordion(
                     disableChevronRotation=True,
@@ -664,15 +738,15 @@ layout = dmc.Container(
                                                         """
                                                         ### 🛠 How were the predictions made?
 
-                                                        - **Model Used: CatBoost Regressor**  
+                                                        **Model Used: CatBoost Regressor**  
                                                         CatBoost is a high-performance, gradient boosting algorithm optimized for handling categorical features efficiently.
 
-                                                        - **Data Preparation**  
+                                                        **Data Preparation**  
                                                         - Cleaned real estate transaction data, removing irrelevant columns.
                                                         - Converted date features (`month`, `year`) and processed lease duration for better predictive power.
                                                         - Identified categorical features like `town`, `flat_type`, `storey_range`, and `flat_model`.
 
-                                                        - **Training Process**  
+                                                        **Training Process**  
                                                         - **Train-test split (80-20%)** to evaluate model performance.
                                                         - Used **CatBoost's Pool** method to handle categorical features natively.
                                                         - Trained for **1500 iterations** with a learning rate of **0.09** and depth **10**.
@@ -684,18 +758,18 @@ layout = dmc.Container(
                                                         """
                                                         ### 🔍 Why this approach?
 
-                                                        - **Handling Categorical Data**  
+                                                        **Handling Categorical Data**  
                                                         CatBoost's strength lies in its ability to process categorical variables without needing manual encoding.
 
-                                                        - **Hyperparameter Optimization**  
+                                                        **Hyperparameter Optimization**  
                                                         - Used **Optuna** to fine-tune model parameters like learning rate, depth, and iterations.
                                                         - Optimized the model to balance performance and generalization.
 
-                                                        - **Model Evaluation & Feature Importance**  
-                                                        - Metrics: **RMSE: {rmse:.2f}, MAE: {mae:.2f}, R² Score: {r2:.4f}**.
+                                                        **Model Evaluation & Feature Importance**  
+                                                        - Metrics: **RMSE, MAE and R² Score**.
                                                         - Examined feature importance to understand key predictors of property prices.
 
-                                                        - **Robust Performance**  
+                                                        **Robust Performance**  
                                                         The model generalizes well across different neighborhoods, capturing key market trends effectively.
                                                         """,
                                                         style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
@@ -833,11 +907,11 @@ def update_street_dropdown(selected_town):
 )
 def estimate_price(n_clicks, flat_type, town, street_name, floor_area_sqm):
     if not n_clicks:
-        return "Your estimate coming soon!"
+        return "Your estimate coming soon! \n"
 
     # Vérifier si toutes les entrées nécessaires sont remplies
     if not all([flat_type, town, street_name, floor_area_sqm]):
-        return "Please select all required fields."
+        return "Please select all required fields. \n"
 
     # Construire la dataframe pour la prédiction
     input_data = pd.DataFrame([{
@@ -857,4 +931,4 @@ def estimate_price(n_clicks, flat_type, town, street_name, floor_area_sqm):
     predicted_price = predict_immobilier(input_data)
 
     # Retourner le résultat formaté
-    return f"Estimated Price: {predicted_price[0]:,.2f} SGD"
+    return f"Estimated Price: {predicted_price[0]:,.2f} SGD \n"
