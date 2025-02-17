@@ -5,39 +5,11 @@ from dash_extensions import Lottie
 from dash_iconify import DashIconify
 
 from utils.colors import get_node_color
+from components.colorbar import create_colorbar
 from services.data.process_economic_data import get_cpi_multiselect, compute_partial_correlation_matrix
 from figures.economy import create_unemployment_bar_chart, create_overal_unemployment_line, create_unemployment_residents_line_chart, create_cpi_salary_line_chart_mantine, create_cytoscape_graph
 
 dash.register_page(__name__, path="/economy")
-
-def create_colorbar(theme="dark"):
-    text_color = "#ffffff" if theme == "dark" else "#000000"
-    border_color = "#ffffff" if theme == "dark" else "#000000"
-
-    return html.Div(
-        children=[
-            html.Div(
-                style={
-                    "width": "200px",
-                    "height": "20px",
-                    "background": "linear-gradient(to right, #0000FF, #FFFFFF, #FF0000)",
-                    "border": f"1px solid {border_color}",
-                }
-            ),
-            html.Div(
-                style={"display": "flex", "justifyContent": "space-between", "width": "200px"},
-                children=[
-                    html.Span("-1", style={"color": text_color}),
-                    html.Span("0", style={"color": text_color}),
-                    html.Span("1", style={"color": text_color}),
-                ],
-            ),
-        ],
-        style={"display": "flex", "flexDirection": "column", "alignItems": "center"},
-    )
-
-
-
 
 layout = dmc.Container(
     fluid=True,
@@ -171,6 +143,7 @@ layout = dmc.Container(
             children=[
                 # Titre de la section
                 html.Div(
+                    className="scroll-section",
                     children=[
                         # Titre de la section
                         html.Div(
@@ -281,6 +254,7 @@ layout = dmc.Container(
                 
                 # ---------- Section 1: Overall Unemployment (text + graph side by side) ----------
                 html.Div(
+                    className="scroll-section",
                     style={
                         "display": "flex",
                         "flexWrap": "wrap",
@@ -323,6 +297,7 @@ layout = dmc.Container(
                 
                 # ---------- Section 2: Residents Unemployment Trend with Selector ----------
                 html.Div(
+                    className="scroll-section",
                     style={
                         "display": "flex",
                         "flexWrap": "wrap",
@@ -372,6 +347,7 @@ layout = dmc.Container(
                     ]
                 ),
                 html.Div(
+                    className="scroll-section",
                     style={
                         "display": "flex",
                         "flexWrap": "wrap",
@@ -512,6 +488,7 @@ layout = dmc.Container(
         # ---------- Section 3: CPI and Median Salary index Line Chart ----------
                 
                 html.Div(
+                    className="scroll-section",
                     children=[
                         html.Div(
                             dmc.Title("Consumer Price Index (CPI) and Median Salary Index", order=2, style={"textAlign": "center"}),
@@ -613,7 +590,7 @@ layout = dmc.Container(
                 ),
                 dcc.Markdown(
                     """
-                    ### Partial correlation
+                    ### Partial correlation  
 
                     The **partial correlation** between two variables *X* and *Y*, controlling for a set of variables *Z*, is defined as:
 
@@ -624,7 +601,7 @@ layout = dmc.Container(
                     where $\\theta_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix).  
                     This metric quantifies the direct relationship between *X* and *Y* after removing the effect of *Z*. 
                     It is particularly useful for identifying hidden associations between variables in a multivariate dataset.
-                                        """,
+                                            """,
                                         mathjax=True,
                                         style={
                                             "textAlign": "justify",
@@ -635,7 +612,6 @@ layout = dmc.Container(
                                     )
                                 ]
                             ),
-                            # Carte pour le code Python simplifié
                             dmc.Card(
                                 withBorder=True,
                                 shadow="sm",
@@ -743,9 +719,51 @@ layout = dmc.Container(
                     style={"margin": "auto"}
                 ),
                 dmc.Space(h="xl"),
-                dmc.Space(h="xl"),
 
-                # References
+                # card pour l'interpretation du graph avec deux blocks de text les uns a coté des autres
+                dmc.Card(
+                    shadow="sm",
+                    withBorder=True,
+                    padding="lg",
+                    className="scroll-section",
+                    children=[
+                        dmc.Title("Graph Interpretation", order=2),
+                        dmc.Space(h="md"),
+                        dmc.Group(
+                            children=[
+                                dcc.Markdown(
+                                    """
+                                    Dummy text
+                                    """,
+                                    style={
+                                        "lineHeight": "1.6",
+                                        "textAlign": "justify",
+                                        "fontSize": "16px",
+                                        "maxWidth": "45%",
+                                        "margin": "auto"
+                                    }
+                                ),
+                                dcc.Markdown(
+                                    """
+                                    Dummy text
+                                    """,
+                                    style={
+                                        "lineHeight": "1.6",
+                                        "textAlign": "justify",
+                                        "fontSize": "16px",
+                                        "maxWidth": "45%",
+                                        "margin": "auto"
+                                    }
+                                ),
+                            ],
+                            style={"display": "flex", "justifyContent": "space-between", "gap": "2rem"}
+                        ),
+                    ],
+                    style={"margin": "auto", "width": "90%"}
+                ),
+                
+
+                dmc.Space(h="xl"),
                 html.Div(
                     children=[
                         dmc.Title("References", order=3, style={"textAlign": "center", "marginBottom": "1rem"}),
