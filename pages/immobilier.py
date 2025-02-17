@@ -9,6 +9,7 @@ import pandas as pd
 from figures.immobilier_fig import create_line_chart_figure_introduction, create_table_figure_introduction, create_line_chart_figure_history_price, create_bar_chart_figure
 from services.maps.map_immo import create_map
 from services.data.process_data_immo import process_town_street
+from models.pred_immobilier import predict_immobilier
 
 dash.register_page(__name__, path="/immobilier")
 
@@ -372,7 +373,7 @@ layout = dmc.Container(
 
                                 dmc.Paper(style={"marginTop": "20px"}),
 
-                                dmc.Text("Your estimate coming soon!", id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold"}),
+                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold"}),
                             ],
                         ),
                         # ----------------------
@@ -451,19 +452,6 @@ def update_map(selected_value):
         return f.read()
     
 
-# Callback pour basculer entre les graphiques
-@dash.callback(
-    Output("graph-container", "children"),  # Mettre à jour le conteneur de graphiques
-    Input("graph-toggle", "value"),  # Valeur sélectionnée dans le SegmentedControl
-)
-def update_graph(selected_graph):
-    if selected_graph == "bar-chart":
-        return dcc.Graph(id="price-per-sqm-bar-chart")
-    elif selected_graph == "line-chart":
-        return dcc.Graph(id="price-evolution-line-chart")
-    return html.Div()  # Retourner un conteneur vide par défaut
-
-
 @dash.callback(
     [
         Output("price-trend-graph", "figure"),
@@ -510,3 +498,39 @@ def update_street_dropdown(selected_town):
         return []
     streets = process_town_street().get(selected_town, [])
     return [{"label": street, "value": street} for street in streets]
+
+@dash.callback(
+    Output("estimation-result", "children"),
+    Input("estimate-btn", "n_clicks"),
+    State("property-type", "value"),
+    State("quartier-select", "value"),
+    State("street-select", "value"),
+    State("slider-callback", "value"),
+)
+def estimate_price(n_clicks, flat_type, town, street_name, floor_area_sqm):
+    if not n_clicks:
+        return "Your estimate coming soon!"
+
+    # Vérifier si toutes les entrées nécessaires sont remplies
+    if not all([flat_type, town, street_name, floor_area_sqm]):
+        return "Please select all required fields."
+
+    # Construire la dataframe pour la prédiction
+    input_data = pd.DataFrame([{
+        "month": 1,  # Janvier par défaut
+        "year": 2025,  # Année suivante
+        "town": town,
+        "flat_type": flat_type,
+        "street_name": street_name,
+        "storey_range": "04 TO 06",  # Valeur par défaut
+        "floor_area_sqm": floor_area_sqm,
+        "flat_model": "Apartment",  # Valeur par défaut
+        "lease_commence_date": 2000,  # Valeur par défaut
+        "remaining_lease_years": 6.5  # Valeur par défaut
+    }])
+
+    # Faire la prédiction
+    predicted_price = predict_immobilier(input_data)
+
+    # Retourner le résultat formaté
+    return f"Estimated Price: {predicted_price[0]:,.2f} SGD"
