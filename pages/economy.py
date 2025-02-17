@@ -441,7 +441,13 @@ layout = dmc.Container(
             padding="lg",
             className="scroll-section",
             children=[
-                dmc.Title("Working Residents by Salary and Population", order=2),
+                dmc.Group(
+                    children=[
+                        # icone de carte
+                        DashIconify(icon="material-symbols:map-search-outline-rounded", height=40, color="#228be6"),
+                        dmc.Title("Working Residents by Salary and Population", order=2),
+                    ],
+                ),
                 dmc.Space(h="md"),
                 dmc.Text(
                     "This interactive map visualizes the distribution of working residents in Singapore, segmented by median salary and population. "
@@ -590,26 +596,28 @@ layout = dmc.Container(
                 ),
                 dcc.Markdown(
                     """
-                    ### Partial correlation  
+                    ### Partial Correlation  
 
-                    The **partial correlation** between two variables *X* and *Y*, controlling for a set of variables *Z*, is defined as:
+                    The **partial correlation** between two variables $X^{(i)}$ and $X^{(j)}$, given a set of variables $X^{(k)}$ (with $k \\neq i, j$), is defined as:
 
                     $$
-                    r_{XY\\cdot Z} = -\\frac{\\theta_{XY}}{\sqrt{\\theta_{XX}\,\\theta_{YY}}}
+                    \\rho_{ij} = -\\frac{K_{ij}}{\\sqrt{K_{ii} K_{jj}}}
                     $$
 
-                    where $\\theta_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix).  
-                    This metric quantifies the direct relationship between *X* and *Y* after removing the effect of *Z*. 
-                    It is particularly useful for identifying hidden associations between variables in a multivariate dataset.
-                                            """,
-                                        mathjax=True,
-                                        style={
-                                            "textAlign": "justify",
-                                            "lineHeight": "1.6",
-                                            "fontSize": "16px",
-                                            "marginTop": "1rem"
-                                        }
-                                    )
+                    where $K_{ij}$ are the elements of the **precision matrix** (the inverse of the covariance matrix $\Sigma$).  
+
+                    This metric quantifies the direct relationship between $X^{(i)}$ and $X^{(j)}$ after removing the effects of other variables.  
+                    It is particularly useful for identifying hidden associations in a multivariate dataset.
+                    """,
+                    mathjax=True,
+                    style={
+                        "textAlign": "justify",
+                        "lineHeight": "1.6",
+                        "fontSize": "16px",
+                        "marginTop": "1rem"
+                    }
+                )
+
                                 ]
                             ),
                             dmc.Card(
@@ -727,7 +735,15 @@ layout = dmc.Container(
                     padding="lg",
                     className="scroll-section",
                     children=[
-                        dmc.Title("Graph Interpretation", order=2, style={"textAlign": "center", "margin": "auto"}),
+                        dmc.Group(
+                            align="center",
+                            justify="center",
+                            children=[
+                                # icone avec une loupe
+                                DashIconify(icon="mdi:magnify", height=35, color="#228be6"),
+                                dmc.Title("Graph interpretation", order=3, style={"margin": "0", "textAlign": "center"})
+                            ]
+                        ),
                         dmc.Space(h="md"),
                         dmc.Group(
                             children=[
