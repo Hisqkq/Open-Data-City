@@ -490,7 +490,7 @@ layout = dmc.Container(
             className="scroll-section",
             children=[
                 dmc.Title("More information about your town and estimated price per square meter for 2025", order=2),
-                dmc.Space(h="md"),
+                dmc.Space(h="lg"),
                 dmc.Paper(
                     style={
                         "height": "100vh",  # Prend toute la hauteur de la page
@@ -505,11 +505,9 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "20%",
-                                "height": "85%",
+                                "height": "60%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
-                                "borderRight": "1px solid #ddd",
-                                "overflowY": "auto",
                             },
                             children=[
                                 html.H3("Estimate your property!", style={"marginTop": 0, "align": "center"}),
@@ -537,7 +535,7 @@ layout = dmc.Container(
                                     id="slider-callback",
                                     min=30,
                                     max=400,
-                                    value=[30, 400],
+                                    value=30,
                                     marks=[
                                         {"value": 30, "label": "30"},
                                         {"value": 100, "label": "100"},
@@ -549,9 +547,8 @@ layout = dmc.Container(
                                 ),
                                 dmc.Text(id="slider-output"),
                                 dmc.Space(h="md"),
-                                html.Label("Town :"),
                                 dmc.Select(
-                                    label="Town",
+                                    label="Town : ",
                                     id="quartier-select",
                                     data = TOWNS,
                                     placeholder="Select a town",
@@ -568,16 +565,6 @@ layout = dmc.Container(
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
-                                dmc.Group(
-                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
-                                    children=[
-                                        dmc.Button("Estimate", id="estimate-btn", style={"marginTop": "10px"}, variant="default")
-                                    ]
-                                ),
-
-                                dmc.Paper(style={"marginTop": "20px"}),
-
-                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold"}),
                             ],
                         ),
                         # ----------------------
@@ -586,10 +573,18 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "40%",  # 50% de la largeur
-                                "height": "85%",  # 85% de la hauteur
+                                "height": "60%",  # 85% de la hauteur
                             },
                             children=[
                                 create_map(),  # Carte Leaflet
+                                dmc.Group(
+                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
+                                    children=[
+                                        dmc.Button("Estimate", id="estimate-btn", style={"marginTop": "10px"}, variant="default")
+                                    ]
+                                ),
+                                dmc.Paper(style={"marginTop": "20px"}),
+                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"}),
                             ],
                         ),
                         # ----------------------
@@ -598,11 +593,9 @@ layout = dmc.Container(
                         dmc.Paper(
                             style={
                                 "width": "40%",
-                                "height": "85%",
+                                "height": "60%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
-                                "borderLeft": "1px solid #ddd",
-                                "overflowY": "auto",
                             },
                             children=[
                                 dmc.SegmentedControl(
@@ -626,13 +619,138 @@ layout = dmc.Container(
                                     style={"display": "none"},  # Caché au début
                                 ),
                                 dcc.Store(id="selected-town", data="Ang Mo Kio"),
-                                html.H3(id="town-name", children="Town : Ang Mo Kio"),
+                                html.H3(id="town-name", children="Town : Ang Mo Kio", style={"textAlign": "center"}),
                             ],
                         ),
 
                         dmc.Space(h="md"),
                     ],
                     className="scroll-section",
+                ),
+                dmc.Space(h="lg"),
+                dmc.Accordion(
+                    disableChevronRotation=True,
+                    children=[
+                        dmc.AccordionItem(
+                            [
+                                dmc.AccordionControl(
+                                    "How were the predictions made?",
+                                    icon=DashIconify(
+                                        icon="mdi:information-outline",
+                                        color=dmc.DEFAULT_THEME["colors"]["blue"][6],
+                                        width=20,
+                                    ),
+                                ),
+                                dmc.AccordionPanel(
+                                    [
+                                         html.Div([
+    
+                                            # 📌 Titre de la section
+                                            dmc.Group(
+                                                align="center",
+                                                justify="center",
+                                                children=[
+                                                    DashIconify(icon="mdi:chart-line", height=35, color="#228be6"),
+                                                    dmc.Title("Prediction Methodology", order=2),
+                                                ],
+                                                style={"marginBottom": "1rem", "textAlign": "center"}
+                                            ),
+                                            
+                                            # 📌 Explication en deux colonnes
+                                            html.Div(
+                                                style={"display": "flex", "gap": "2rem", "justifyContent": "center"},
+                                                children=[
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🛠 How were the predictions made?
+
+                                                        - **Model Used: CatBoost Regressor**  
+                                                        CatBoost is a high-performance, gradient boosting algorithm optimized for handling categorical features efficiently.
+
+                                                        - **Data Preparation**  
+                                                        - Cleaned real estate transaction data, removing irrelevant columns.
+                                                        - Converted date features (`month`, `year`) and processed lease duration for better predictive power.
+                                                        - Identified categorical features like `town`, `flat_type`, `storey_range`, and `flat_model`.
+
+                                                        - **Training Process**  
+                                                        - **Train-test split (80-20%)** to evaluate model performance.
+                                                        - Used **CatBoost's Pool** method to handle categorical features natively.
+                                                        - Trained for **1500 iterations** with a learning rate of **0.09** and depth **10**.
+                                                        - Applied **early stopping** to avoid overfitting.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                    dcc.Markdown(
+                                                        """
+                                                        ### 🔍 Why this approach?
+
+                                                        - **Handling Categorical Data**  
+                                                        CatBoost's strength lies in its ability to process categorical variables without needing manual encoding.
+
+                                                        - **Hyperparameter Optimization**  
+                                                        - Used **Optuna** to fine-tune model parameters like learning rate, depth, and iterations.
+                                                        - Optimized the model to balance performance and generalization.
+
+                                                        - **Model Evaluation & Feature Importance**  
+                                                        - Metrics: **RMSE: {rmse:.2f}, MAE: {mae:.2f}, R² Score: {r2:.4f}**.
+                                                        - Examined feature importance to understand key predictors of property prices.
+
+                                                        - **Robust Performance**  
+                                                        The model generalizes well across different neighborhoods, capturing key market trends effectively.
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
+                                                    ),
+                                                ],
+
+                                            ),
+                                            dmc.Space(h="xl"),
+                                            dmc.Card(
+                                                shadow="sm",
+                                                withBorder=True,
+                                                radius="md",
+                                                style={"width": "60%", "padding": "1rem", "margin": "auto"},
+                                                children=[
+                                                    dmc.Group(
+                                                        children=[
+                                                            DashIconify(icon="mdi:chart-line", height=25, color="#2c3e50"),
+                                                            dmc.Title("CatBoost Model Results", order=3),
+                                                        ],
+                                                        style={"marginBottom": "1rem", "textAlign": "center"}
+                                                    ),
+                                                    dmc.Space(h="sm"),
+                                                    dcc.Markdown(
+                                                        f"""
+                                                        **📊 Model Performance:**  
+                                                        - **Iterations:** 2500 (Best at {2492})  
+                                                        - **Learning Rate:** 0.0415  
+                                                        - **Depth:** 11  
+                                                        - **L2 Regularization:** 0.082  
+                                                        - **Random Strength:** 0.482  
+
+                                                        **📉 Model Metrics:**  
+                                                        - **Mean Absolute Error (MAE): 18474.76 **   
+                                                        - **Root Mean Squared Error (RMSE): 25872.16 **
+                                                        - **R² Score: 0.9791 **  
+
+                                                        **📌 Interpretation:**  
+                                                        - The **high R² (0.9791)** indicates that the model explains nearly all the variance in property prices.  
+                                                        - **Low MAE (18,474 SGD)** suggests that most predictions are close to actual values.  
+                                                        - RMSE of **25,872 SGD** means occasional larger errors, but overall predictions are reliable.  
+                                                        - The use of **Optuna for hyperparameter tuning** helped optimize performance.  
+                                                        """,
+                                                        style={"lineHeight": "1.6", "textAlign": "justify"}
+                                                    ),
+                                                ]
+                                            ),
+                                            dmc.Space(h="xl"),
+                                        ])
+                                    ]
+                                ),
+                            ],
+                            value="info",
+                            style={"marginBottom": "1rem", "width": "100%", "textAlign": "justify", "margin": "auto"},
+                        ),
+                    ],
                 ),
             ]
         ),
