@@ -108,90 +108,136 @@ layout = dmc.Container(
             ],
         ),
         dmc.Space(h="xl"),
-        
-        # ---------- Section 1 :  ----------
-        dmc.Card(
-            shadow="sm",
-            withBorder=True,
-            padding="lg",
+
+        # ---------- Section 1: Overall trend price (text + graph side by side) ----------
+        html.Div(
             className="scroll-section",
+            style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "justifyContent": "center",
+                "alignItems": "center",
+                "gap": "1rem",
+                "width": "90%",
+                "margin": "auto"
+            },
             children=[
-                dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
-                dmc.Space(h="md"),
-                dmc.Text(
-                    "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
-                    size="md",
-                    style={
-                        "lineHeight": "1.6",
-                        "textAlign": "justify"
-                    }
-                ),
-                dmc.Space(h="md"),
-                dmc.Paper(
+                # Texte explicatif à gauche
+                html.Div(
                     children=[
-                            create_line_chart_figure_introduction()
-                            ],
-                          ),
-                dmc.Space(h="md"),
-                dmc.Paper(
-                    style={
-                        "width": "75%",
-                        "margin": "left",
-                        "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
-                        "marginLeft": "5px",  # Marge à gauche
-                        "marginRight": "10px",  # Marge à droite
-                        },
-                    children=[
-                        dmc.Text(
-                            """
-                            The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
-                            """,
-                            style={"marginBottom": "10px"}
+                        dmc.Group(
+                            children=[
+                                DashIconify(icon="tabler:chart-line", height=35),
+                                dmc.Title("Price per Square Metre Over the Last 8 Years", order=3, style={"margin": "0"})
+                                ],
                         ),
+                        dmc.Space(h="xl"),
                         dmc.Text(
-                            """
-                            Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
-                            This period of stagnation seems to mark a balance between supply and demand.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
-                            in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
-                            a historic record that reflects strong pressure on the market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            """
-                            Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
-                            purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
-                            had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
-                            has led to an influx of buyers, further increasing pressure on the market.
-                            """,
-                            style={"marginBottom": "10px"}
-                        ),
-                        dmc.Text(
-                            "Will this trend continue, or are we on the verge of a market turnaround?",
-                            style={"fontWeight": "bold"}
-                        ),
+                            "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace."
+                            "While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase."
+                            "How far will this price hike go? Will we see a slowdown or correction in the years to come? ",
+                            size="md",
+                            style={"lineHeight": "1.6", "textAlign": "justify"}
+                        )
                     ],
-                    className="scroll-section",
+                    style={"flex": "2"}
                 ),
-                # dmc.Image(
-                #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
-                #     radius="md",
-                # ),
+                html.Div(
+                    children=[
+                        create_line_chart_figure_introduction()
+                    ],
+                    style={"flex": "3"},
+
+                
+                )
+
             ]
         ),
         dmc.Space(h="xl"),
+        
+        # # ---------- Section 1 :  ----------
+        # dmc.Card(
+        #     shadow="sm",
+        #     withBorder=True,
+        #     padding="lg",
+        #     className="scroll-section",
+        #     children=[
+        #         dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
+        #         dmc.Space(h="md"),
+        #         dmc.Text(
+        #             "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
+        #             size="md",
+        #             style={
+        #                 "lineHeight": "1.6",
+        #                 "textAlign": "justify"
+        #             }
+        #         ),
+        #         dmc.Space(h="md"),
+        #         dmc.Paper(
+        #             children=[
+        #                     create_line_chart_figure_introduction()
+        #                     ],
+        #                   ),
+        #         dmc.Space(h="md"),
+        #         dmc.Paper(
+        #             style={
+        #                 "width": "75%",
+        #                 "margin": "left",
+        #                 "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
+        #                 "marginLeft": "5px",  # Marge à gauche
+        #                 "marginRight": "10px",  # Marge à droite
+        #                 },
+        #             children=[
+        #                 dmc.Text(
+        #                     """
+        #                     The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
+        #                     This period of stagnation seems to mark a balance between supply and demand.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
+        #                     in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
+        #                     a historic record that reflects strong pressure on the market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     """
+        #                     Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
+        #                     purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
+        #                     had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
+        #                     has led to an influx of buyers, further increasing pressure on the market.
+        #                     """,
+        #                     style={"marginBottom": "10px"}
+        #                 ),
+        #                 dmc.Text(
+        #                     "Will this trend continue, or are we on the verge of a market turnaround?",
+        #                     style={"fontWeight": "bold"}
+        #                 ),
+        #             ],
+        #             className="scroll-section",
+        #         ),
+        #         # dmc.Image(
+        #         #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
+        #         #     radius="md",
+        #         # ),
+        #     ]
+        # ),
+        # dmc.Space(h="xl"),
 
 
         # ---------- Section 2 :  ----------
@@ -339,13 +385,15 @@ layout = dmc.Container(
                 dmc.Title("Working Residents by Salary and Price per square meter", order=2),
                 dmc.Space(h="md"),
                 dmc.Text(
-                    "This map shows the distribution of salaries with either the resale price or the price per square meter",
+                    "This interactive map visualizes the distribution of salaries with either the resale price or the price per square meter."
+                    "The map provides a comprehensive overview of the real estate market landscape, highlighting areas with the highest prices and corresponding salary levels.",
                     size="md",
                     style={
                         "lineHeight": "1.6",
                         "textAlign": "justify"
                     }
                 ),
+                dmc.Text("Select the map to display the distribution of salaries with either the resale price or the price per square meter."),
                 dmc.Space(h="md"),
                 dmc.SegmentedControl(
                             id="resale_or_pricem2",
@@ -367,6 +415,66 @@ layout = dmc.Container(
                     )
                 ),
                 dmc.Space(h="md"),
+                dmc.Paper(
+                    style={
+                        "display": "flex",
+                        "justifyContent": "space-between",
+                        "alignItems": "flex-start",
+                        "gap": "2rem",
+                        "width": "100%",
+                        "marginTop": "20px",
+                        "padding": "20px",
+                        "border": "1px solid #ddd",
+                        "borderRadius": "10px",
+                     },
+                    children=[
+                        # Premier texte (gauche)
+                        html.Div(
+                            style={
+                                "flex": "1",
+                                "borderRight": "2px solid #ccc",
+                                "paddingRight": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "🔍 Resale Observation",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Bukit Timah stands out from other neighborhoods with its highest median salary (SGD 9,000 to SGD 12,000) as well as its highest resale prices.\n"
+                                    "Bukit Timah, Queenstown and Bukit Merah are the three areas with the highest resale prices in the city at around SGD 900,000.\n"
+                                    "We notice that in the outskirts, Jurong West, Woodlands or Pasir Ris, prices are much lower, around 400,000 SGD.",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                        # Deuxième texte (droite)
+                        html.Div(
+                            style={
+                                "flex": "1",
+                                "paddingLeft": "1rem",
+                            },
+                            children=[
+                                dmc.Title(
+                                    "🔍 Price per Square Meter Observation",
+                                    order=4,
+                                    style={"marginBottom": "1rem"},
+                                    fw="bold",
+                                ),
+                                dmc.Text(
+                                    "Concerning the prices per square meter, we notice that the city center districts, namely Bukit Timah, Queenstown and Bukit Merah are those with the highest value.\n"
+                                    "Also, in the periphery the price decreases sharply. By clicking on the circles, you can have information on the number of people who work.\n"
+                                    "We can conclude that the price per square meter and resale prices are correlated. Which seems to be logical.",
+                                    size="lg",
+                                    style={"textAlign": "left", "lineHeight": "1.6"},
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
             ]
         ),
 
@@ -557,18 +665,20 @@ def update_map(selected_value):
         Output("line-chart-container", "style"),
         Output("bar-chart-container", "style"),
     ],
-    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value")],
+    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value"), Input("theme-store", "data")],
     State("geojson-layer", "clickData")
 )
-def update_graph(n_clicks, graph_type, clickData):
+def update_graph(n_clicks, graph_type, theme, clickData):
     if not clickData or "properties" not in clickData:
         town_name = "Ang Mo Kio"
     else:
         town_name = clickData["properties"]["PLN_AREA_N"].title()
 
+    template = "mantine_dark" if theme == "dark" else "mantine_light"
+
     # Générer les figures
-    line_chart_fig = create_line_chart_figure_history_price(town_name)
-    bar_chart_fig = create_bar_chart_figure(town_name)
+    line_chart_fig = create_line_chart_figure_history_price(town_name, template=template)
+    bar_chart_fig = create_bar_chart_figure(town_name, template=template)
 
     # Gérer l'affichage des graphiques
     if graph_type == "line-chart":

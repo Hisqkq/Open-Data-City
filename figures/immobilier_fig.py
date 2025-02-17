@@ -447,7 +447,7 @@ def create_folium_map_resale(geojson_path="services/data/processed/PriceWithSala
 # création de la figure de l'évolution des prix en fonction du quartier cliqué sur la map
 ##########################################
 
-def create_line_chart_figure_history_price(town = "Ang Mo Kio"):
+def create_line_chart_figure_history_price(town = "Ang Mo Kio", template = "mantine_light"):
     """
     Crée une figure Plotly Express (line chart) pour l'évolution des prix.
     """
@@ -476,11 +476,12 @@ def create_line_chart_figure_history_price(town = "Ang Mo Kio"):
         x="Date",
         y="price_m2",
         title="Price per m2 depending on the date",
+        template=template
     )
     return fig
 
 
-def create_bar_chart_figure(selected_town="Ang Mo Kio"):
+def create_bar_chart_figure(selected_town="Ang Mo Kio", template = "mantine_light"):
     df = process_data_line_history()
 
     # Filtrer les données pour 2024
@@ -493,15 +494,15 @@ def create_bar_chart_figure(selected_town="Ang Mo Kio"):
         df_2024,
         x="town",
         y="price_m2",
-        title="Prix moyen au m² en 2024",
+        title="Average price for m² in 2024",
         color="color",
-        color_discrete_map="identity",  # Utilise les couleurs définies dans la colonne
+        color_discrete_map="identity",
+        template=template
     )
 
     fig.update_layout(
-        xaxis_title="Quartier",
-        yaxis_title="Prix au m²",
-        template="plotly_white",
+        xaxis_title="Town",
+        yaxis_title="Price per m²",
         xaxis_tickangle=-45  # Incline les noms des quartiers pour la lisibilité
     )
 
