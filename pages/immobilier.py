@@ -154,91 +154,6 @@ layout = dmc.Container(
             ]
         ),
         dmc.Space(h="xl"),
-        
-        # # ---------- Section 1 :  ----------
-        # dmc.Card(
-        #     shadow="sm",
-        #     withBorder=True,
-        #     padding="lg",
-        #     className="scroll-section",
-        #     children=[
-        #         dmc.Title("Price per Square Metre Over the Last 8 Years", order=2),
-        #         dmc.Space(h="md"),
-        #         dmc.Text(
-        #             "A spectacular surge in property prices! Since mid-2020, prices per square meter have experienced a meteoric rise, accelerating at an unprecedented pace. While they seemed relatively stable before this period, the trend reversed, leading to an almost continuous increase. How far will this price hike go? Will we see a slowdown or correction in the years to come?",
-        #             size="md",
-        #             style={
-        #                 "lineHeight": "1.6",
-        #                 "textAlign": "justify"
-        #             }
-        #         ),
-        #         dmc.Space(h="md"),
-        #         dmc.Paper(
-        #             children=[
-        #                     create_line_chart_figure_introduction()
-        #                     ],
-        #                   ),
-        #         dmc.Space(h="md"),
-        #         dmc.Paper(
-        #             style={
-        #                 "width": "75%",
-        #                 "margin": "left",
-        #                 "display": "block",  # Assure que le groupe est un bloc pour centrer correctement
-        #                 "marginLeft": "5px",  # Marge à gauche
-        #                 "marginRight": "10px",  # Marge à droite
-        #                 },
-        #             children=[
-        #                 dmc.Text(
-        #                     """
-        #                     The graph illustrates the evolution of the price per square meter over the last eight years. Three distinct phases can be observed.
-        #                     """,
-        #                     style={"marginBottom": "10px"}
-        #                 ),
-        #                 dmc.Text(
-        #                     """
-        #                     Between 2017 and mid-2020, prices remained relatively stable, fluctuating between €4,500 and €4,700/m², without significant variation.
-        #                     This period of stagnation seems to mark a balance between supply and demand.
-        #                     """,
-        #                     style={"marginBottom": "10px"}
-        #                 ),
-        #                 dmc.Text(
-        #                     """
-        #                     From mid-2020 to 2021, a major turning point occurred. Prices began to rise dramatically, quickly exceeding €5,000/m²
-        #                     in just a few months. This sudden increase coincided with the end of the health crisis, marking a new dynamic in the real estate market.
-        #                     """,
-        #                     style={"marginBottom": "10px"}
-        #                 ),
-        #                 dmc.Text(
-        #                     """
-        #                     From 2022 to today, the upward trend has not slowed down. On the contrary, prices continue to accelerate, reaching more than €7,000/m² in 2025,
-        #                     a historic record that reflects strong pressure on the market.
-        #                     """,
-        #                     style={"marginBottom": "10px"}
-        #                 ),
-        #                 dmc.Text(
-        #                     """
-        #                     Several factors can explain this surge in prices. First, the post-COVID period has led to an economic recovery and changes in
-        #                     purchasing habits, with increased demand for certain types of properties. Then, inflation and rising construction costs have
-        #                     had a strong impact on the price of new projects, limiting supply and fueling price increases. Finally, the growing attractiveness of certain areas
-        #                     has led to an influx of buyers, further increasing pressure on the market.
-        #                     """,
-        #                     style={"marginBottom": "10px"}
-        #                 ),
-        #                 dmc.Text(
-        #                     "Will this trend continue, or are we on the verge of a market turnaround?",
-        #                     style={"fontWeight": "bold"}
-        #                 ),
-        #             ],
-        #             className="scroll-section",
-        #         ),
-        #         # dmc.Image(
-        #         #     src="assets/img/dollar-de-singapour.png",  # Remplacez par le chemin de votre image
-        #         #     radius="md",
-        #         # ),
-        #     ]
-        # ),
-        # dmc.Space(h="xl"),
-
 
         # ---------- Section 2 :  ----------
         html.Div(
@@ -521,7 +436,7 @@ layout = dmc.Container(
                             style={
                                 "height": "100%",
                                 "padding": "20px",
-                                "boxSizing": "border-box",
+                                # "boxSizing": "border-box",
                             },
                             children=[
                                 html.H3("Estimate your property!", style={"marginTop": 0, "align": "center"}),
@@ -624,7 +539,7 @@ layout = dmc.Container(
                             style={
                                 "height": "100%",
                                 "padding": "20px",
-                                "boxSizing": "border-box",
+                                # "boxSizing": "border-box",
                             },
                             children=[
                                 dmc.SegmentedControl(
@@ -635,12 +550,12 @@ layout = dmc.Container(
                                         {"value": "bar-chart", "label": "Average price"},
                                     ],
                                     fullWidth=True,
-                                    style={"marginBottom": "20px"},
+                                    style={"marginBottom": "5px"},
                                 ),
                                 dmc.Paper(
                                     id="line-chart-container",
                                     children=[dcc.Graph(id="price-trend-graph")],
-                                    style={"display": "block"},  # Visible par défaut
+                                    # style={"display": "block"},  # Par défaut visible
                                 ),
                                 dmc.Paper(
                                     id="bar-chart-container",
@@ -648,13 +563,11 @@ layout = dmc.Container(
                                     style={"display": "none"},   # Caché par défaut
                                 ),
                                 dcc.Store(id="selected-town", data="Ang Mo Kio"),
-                                html.H3(
-                                    id="town-name",
-                                    children="Town : Ang Mo Kio",
-                                    style={"textAlign": "center"},
-                                ),
+                                dmc.Paper(id="town-name", children="Town : Ang Mo Kio", style={"textAlign": "center"}),
                             ],
-                        )
+                        ),
+
+                        dmc.Space(h="md"),
                     ],
                 ),
             ],
@@ -997,15 +910,18 @@ def update_map(selected_value):
         Output("selected-town", "data"),
         Output("line-chart-container", "style"),
         Output("bar-chart-container", "style"),
+        Output("quartier-select", "value"),
     ],
-    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value"), Input("theme-store", "data")],
+    [Input("geojson-layer", "n_clicks"), Input("graph-toggle", "value"), Input("theme-store", "data"), Input("quartier-select", "value"),],
     State("geojson-layer", "clickData")
 )
-def update_graph(n_clicks, graph_type, theme, clickData):
-    if not clickData or "properties" not in clickData:
-        town_name = "Ang Mo Kio"
-    else:
+def update_graph(n_clicks, graph_type, theme, selected_town, clickData):
+    if clickData and "properties" in clickData:
         town_name = clickData["properties"]["PLN_AREA_N"].title()
+    elif selected_town:
+        town_name = selected_town
+    else:
+        town_name = "Ang Mo Kio" 
 
     template = "mantine_dark" if theme == "dark" else "mantine_light"
 
@@ -1020,8 +936,8 @@ def update_graph(n_clicks, graph_type, theme, clickData):
     else:
         line_chart_style = {"display": "none"}
         bar_chart_style = {"display": "block"}
-
-    return line_chart_fig, bar_chart_fig, f"Town : {town_name}", town_name, line_chart_style, bar_chart_style
+    
+    return line_chart_fig, bar_chart_fig, f"Town : {town_name}", town_name, line_chart_style, bar_chart_style, town_name
 
 @dash.callback(Output("slider-output", "children"), Input("slider-callback", "value"))
 def update_value(value):
