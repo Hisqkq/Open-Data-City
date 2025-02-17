@@ -41,3 +41,24 @@ TOWNS = [
             {"label": "Woodlands", "value": "Woodlands"},
             {"label": "Yishun", "value": "Yishun"},
         ]
+
+
+INSTITUTIONS = [
+                    {"value": "ite", "label": "ITE"},
+                    {"value": "lasalle_degree", "label": "La Salle Degree"},
+                    {"value": "lasalle_diploma", "label": "La Salle Diploma"},
+                    {"value": "nafa_degree", "label": "NAFA Degree"},
+                    {"value": "nafa_diploma", "label": "NAFA Diploma"},
+                    {"value": "nanyang_polytechnic", "label": "Nanyang Polytechnic"},
+                    {"value": "ngee_ann_polytechnic", "label": "NGEE Ann Polytechnic"},
+                    {"value": "nie", "label": "NIE"},
+                    {"value": "ntu", "label": "NTU"},
+                    {"value": "nus", "label": "NUS"},
+                    {"value": "republic_polytechnic", "label": "Republic Polytechnic"},
+                    {"value": "singapore_polytechnic", "label": "Singapore Polytechnic"},
+                    {"value": "sit", "label": "SIT"},
+                    {"value": "smu", "label": "SMU"},
+                    {"value": "suss", "label": "SUSS"},
+                    {"value": "sutd", "label": "SUTD"},
+                    {"value": "temasek_polytechnic", "label": "Temasek Polytechnic"}
+                ]
