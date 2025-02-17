@@ -48,9 +48,9 @@ clientside_callback(
         return newTheme;
     }
     """,
-    Output("theme-store", "data"),  # Mise à jour du `theme-store`
-    [Input("theme-toggle", "n_clicks")],  # Bouton du header
-    [State("theme-store", "data")],  # État actuel du thème
+    Output("theme-store", "data"),  
+    [Input("theme-toggle", "n_clicks")], 
+    [State("theme-store", "data")],  
 )
 
 server = app.server
