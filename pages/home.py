@@ -8,6 +8,7 @@ dash.register_page(__name__, path="/")
 layout = dmc.Container(
     fluid=True,
     p="xl",
+    className="scroll-section",
     children=[
 
         # 📌 Titre principal
@@ -21,10 +22,19 @@ layout = dmc.Container(
         ),
         
         dmc.Text(
-            "Explore our interactive insights on key themes in Singapore: Education, Housing, and Economy.",
+            [
+                "Explore our interactive insights on key themes in Singapore: ",
+                dmc.Text("Education", c="blue", span=True),
+                ", ",
+                dmc.Text("Housing", c="orange", span=True),
+                ", and ",
+                dmc.Text("Economy", c="green", span=True),
+                "."
+            ],
             size="lg",
             style={"marginBottom": "2rem", "textAlign": "center"}
         ),
+
 
         # 🏗️ Cartes des thèmes
         dmc.SimpleGrid(

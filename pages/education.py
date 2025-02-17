@@ -7,6 +7,7 @@ import plotly.express as px
 from dash_iconify import DashIconify
 
 from figures.education import create_bar_chart_figure, create_line_chart_figure, create_admission_trends_figure, create_institution_trends_figure, create_corr_institution_figure
+from utils.config import INSTITUTIONS
 
 dash.register_page(__name__, path="/education")
 
@@ -408,25 +409,7 @@ layout = dmc.Container(
                         dmc.MultiSelect(
                             id="institution-multiselect",
                             value=["ntu", "nus", "smu", "sutd", "suss"],
-                            data=[
-                                {"value": "ite", "label": "ITE"},
-                                {"value": "lasalle_degree", "label": "La Salle Degree"},
-                                {"value": "lasalle_diploma", "label": "La Salle Diploma"},
-                                {"value": "nafa_degree", "label": "NAFA Degree"},
-                                {"value": "nafa_diploma", "label": "NAFA Diploma"},
-                                {"value": "nanyang_polytechnic", "label": "Nanyang Polytechnic"},
-                                {"value": "ngee_ann_polytechnic", "label": "NGEE Ann Polytechnic"},
-                                {"value": "nie", "label": "NIE"},
-                                {"value": "ntu", "label": "NTU"},
-                                {"value": "nus", "label": "NUS"},
-                                {"value": "republic_polytechnic", "label": "Republic Polytechnic"},
-                                {"value": "singapore_polytechnic", "label": "Singapore Polytechnic"},
-                                {"value": "sit", "label": "SIT"},
-                                {"value": "smu", "label": "SMU"},
-                                {"value": "suss", "label": "SUSS"},
-                                {"value": "sutd", "label": "SUTD"},
-                                {"value": "temasek_polytechnic", "label": "Temasek Polytechnic"}
-                            ],
+                            data=INSTITUTIONS,
                             placeholder="Select institutions",
                             label="Institutions"
                         ),
@@ -449,8 +432,8 @@ layout = dmc.Container(
                             dmc.Text(
                                 "Observations: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. "
                                 "In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, "
-                                "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education in Singapore and offer valuable insights into how "
-                                "admission strategies evolve over the years.",
+                                "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education."
+                                "On the right, you can explore the correlation between institutions and their respective metrics. This chart allows you to identify which institutions are most closely related in terms of enrolment, intake, and intake rate.",
                                 size="md",
                                 style={
                                     "lineHeight": "1.6",
