@@ -11,7 +11,7 @@ from services.maps.map_immo import create_map
 from services.data.process_data_immo import process_town_street
 from models.pred_immobilier import predict_immobilier
 
-dash.register_page(__name__, path="/immobilier")
+dash.register_page(__name__, path="/housing")
 
 layout = dmc.Container(
     fluid=True,
