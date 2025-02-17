@@ -9,7 +9,7 @@ dash.register_page(__name__, path="/data")
 
 layout = dmc.Container(
     fluid=True,
-    p="xl",
+    p="xl", 
     children=[
         dmc.Group(
             align="center",
@@ -24,9 +24,9 @@ layout = dmc.Container(
         dmc.Select(
             id="dataset-select",
             data=get_grouped_dataset_options(),
-            placeholder="Select a dataset",
+            placeholder="Search for a dataset",
             searchable=True,
-            style={"width": "300px", "margin": "auto", "marginBottom": "1rem"}
+            style={"width": "30%", "margin": "auto", "marginBottom": "1rem"}
         ),
         
         dmc.Space(h="md"),

@@ -30,25 +30,24 @@ def footer_component():
                             )
                         ],
                         style={"textAlign": "center"}
-                    ),
-                    # Logo de l'université avec lien
-                    html.Div(
-                        children=[
-                            dmc.Anchor(
-                                href="https://sciences-et-technologies.u-bordeaux.fr/",
-                                target="_blank",
-                                children=[
-                                    html.Img(
-                                        id="footer-logo",
-                                        src="/assets/img/bordeaux_log.svg",
-                                        style={"height": "40px"}  # Taille initiale
-                                    )
-                                ]
-                            )
-                        ],
-                        style={"marginTop": "1rem", "marginBottom": "1rem", "textAlign": "center", "margin": "auto"},
                     )
                 ]
+            ),
+            html.Div(
+                children=[
+                    dmc.Anchor(
+                        href="https://sciences-et-technologies.u-bordeaux.fr/",
+                        target="_blank",
+                        children=[
+                            html.Img(
+                                id="footer-logo",
+                                src="/assets/img/bordeaux_log.svg",
+                                style={"height": "40px"}  # Taille initiale
+                            )
+                        ]
+                    )
+                ],
+                style={"marginTop": "1.5rem", "marginBottom": "1rem", "textAlign": "center", "margin": "auto"},
             )
         ],
         withBorder=False,

@@ -169,3 +169,12 @@ clientside_callback(
 )
 def change_page(value):
     return value
+
+# Callback pour mettre à jour l'icone de theme-toggle
+@callback(
+    Output("theme-toggle", "children"),
+    Input("theme-store", "data"),
+    prevent_initial_call=True
+)
+def update_theme_icon(theme):
+    return get_icon("tabler:sun", height=25) if theme == "dark" else get_icon("tabler:moon", height=25)
