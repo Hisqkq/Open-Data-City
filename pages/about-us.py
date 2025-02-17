@@ -123,7 +123,7 @@ layout = dmc.Container(
                     children=[
                         dmc.CardSection(
                             dmc.Image(
-                                src="assets/img/Baptiste.webp",  # Remplacer par l'URL de l'image
+                                src="assets/img/Baptiste.jpg",  # Remplacer par l'URL de l'image
                                 h=250,
                                 alt="Baptiste Gerbouin"
                             )
@@ -181,7 +181,7 @@ layout = dmc.Container(
                                 ),
                                 dmc.Anchor(
                                     DashIconify(icon="mdi:web", height=25),
-                                    href="https://baptistegerbouin-portfolio.example.com",  # Remplacer par le portfolio
+                                    href="https://baptistegerbouin.github.io/portfolio/",  # Remplacer par le portfolio
                                     target="_blank"
                                 ),
                                 dmc.Anchor(
