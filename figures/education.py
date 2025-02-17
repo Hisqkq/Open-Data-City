@@ -295,7 +295,7 @@ def create_corr_institution_figure(institutions=["sit", "smu", "suss", "sutd", "
         z=corr,
         x=corr.columns,
         y=corr.columns,
-        colorscale='Viridis'))
+        colorscale='RdBu'))
     
     # On force l'echelle de colorscale entre -1 et 1 pour les coorélations
     fig.update_traces(zmin=-1, zmax=1)

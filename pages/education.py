@@ -408,7 +408,7 @@ layout = dmc.Container(
                     children=[
                         dmc.MultiSelect(
                             id="institution-multiselect",
-                            value=["ntu", "nus", "smu", "sutd", "suss"],
+                            value=["ntu", "nus", "smu", "sutd", "suss", "sit"],
                             data=INSTITUTIONS,
                             placeholder="Select institutions",
                             label="Institutions"
@@ -429,16 +429,18 @@ layout = dmc.Container(
                 # Texte d'observations en dessous de la figure
                 html.Div(
                         children=[
-                            dmc.Text(
-                                "Observations: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. "
-                                "In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, "
-                                "but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education."
-                                "On the right, you can explore the correlation between institutions and their respective metrics. This chart allows you to identify which institutions are most closely related in terms of enrolment, intake, and intake rate.",
-                                size="md",
+                            dcc.Markdown(
+                                """
+                                **Observations**: Preliminary data indicates that among the institutions, NUS is the most popular, followed closely by NTU. 
+                                In general, university intake rates tend to range between 24% and 28%. Moreover, when a new institution is established, its initial admission rate is exceptionally high, 
+                                but this rate declines rapidly and stabilizes over time. These trends highlight the competitive landscape of higher education.
+                                On the right, you can explore the correlation between institutions and their respective metrics. This chart allows you to identify which institutions are most closely related in terms of enrolment, intake, and intake rate.
+                                """,
                                 style={
                                     "lineHeight": "1.6",
                                     "marginTop": "1rem",
-                                    "flex": "1"
+                                    "flex": "1", 
+                                    "textAlign": "justify"
                                 }
                             ),
                             dcc.Graph(id="corr-institution-chart", style={"marginTop": "1rem", "flex": "2"}, config={'displayModeBar': False}),

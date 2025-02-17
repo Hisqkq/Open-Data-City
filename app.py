@@ -13,13 +13,13 @@ app = dash.Dash(__name__, use_pages=True, external_stylesheets=dmc.styles.ALL)
 
 app.layout = html.Div(
     [
-        dcc.Store(id="theme-store", data="light"),  
+        dcc.Store(id="theme-store", data="dark"),  
         dcc.Store(id="sidebar-state", data=True),   
         dcc.Location(id="url"),
 
         dmc.MantineProvider(
             id="mantine-provider",
-            theme={"colorScheme": "light"},  
+            theme={"colorScheme": "dark"},  
             children=[
                 header_component(),  
                 sidebar_component(),  

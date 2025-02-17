@@ -93,7 +93,7 @@ def header_component():
                             ),
                             dmc.ActionIcon(
                                 id="theme-toggle",
-                                children=get_icon("tabler:moon", height=25),
+                                children=get_icon("tabler:sun", height=25),
                                 variant="subtle",
                                 size="lg",
                             ),
