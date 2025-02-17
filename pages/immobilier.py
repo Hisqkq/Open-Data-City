@@ -489,23 +489,37 @@ layout = dmc.Container(
             padding="lg",
             className="scroll-section",
             children=[
-                dmc.Title("More information about your town and estimated price per square meter for 2025", order=2),
+                dmc.Title("More information about your town and estimated price of your property or 2025", order=2),
                 dmc.Space(h="lg"),
-                dmc.Paper(
+                html.Div(
+    style={"width": "100%", "padding": "1rem"},
+    children=[
+        # =====================
+        #      PREMIÈRE LIGNE
+        # =====================
+        html.Div(
+            style={
+                "display": "flex",
+                "flexWrap": "nowrap",      # Permet de passer en "ligne suivante" si l'écran est trop étroit
+                "gap": "0.3rem",
+                "width": "100%",
+                "minHeight": "60vh",     # Hauteur minimale
+                "overflowX": "auto",
+            },
+            children=[
+                # -----------------------------
+                # Colonne de gauche (20%)
+                # -----------------------------
+                html.Div(
                     style={
-                        "height": "60vh",  # Prend toute la hauteur de la page
-                        "width": "100%",    # Prend toute la largeur de la page
-                        "display": "flex",  # Utilise Flexbox pour organiser les éléments
-                        "flexDirection": "row",  # Disposition en ligne
+                        "flex": "0 0 20%",     
+                        "minWidth": "250px",
+                        "boxSizing": "border-box",
                     },
                     children=[
-                        # ----------------------
-                        # Partie gauche : Choix de l'utilisateur
-                        # ----------------------
                         dmc.Paper(
                             style={
-                                "width": "20%",
-                                "height": "60%",
+                                "height": "100%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
                             },
@@ -513,6 +527,7 @@ layout = dmc.Container(
                                 html.H3("Estimate your property!", style={"marginTop": 0, "align": "center"}),
                                 dmc.Space(h="md"),
                                 html.P("Make your choices to get an estimate :"),
+
                                 dmc.Select(
                                     label="Number of rooms",
                                     id="property-type",
@@ -530,6 +545,7 @@ layout = dmc.Container(
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
+
                                 html.Label("Area (m²) :"),
                                 dmc.Slider(
                                     id="slider-callback",
@@ -547,10 +563,11 @@ layout = dmc.Container(
                                 ),
                                 dmc.Text(id="slider-output"),
                                 dmc.Space(h="md"),
+
                                 dmc.Select(
                                     label="Town : ",
                                     id="quartier-select",
-                                    data = TOWNS,
+                                    data=TOWNS,
                                     placeholder="Select a town",
                                     withScrollArea=True,
                                     mt="md",
@@ -559,33 +576,53 @@ layout = dmc.Container(
                                 dmc.Select(
                                     label="Street",
                                     id="street-select",
-                                    data=[],  # Commence avec une liste vide
+                                    data=[],  # Commence vide, mis à jour via callback
                                     placeholder="Select a street",
                                     withScrollArea=True,
                                     mt="md",
                                 ),
                                 dmc.Space(h="md"),
                             ],
-                        ),
-                        # ----------------------
-                        # Partie centrale : Carte interactive
-                        # ----------------------
+                        )
+                    ],
+                ),
+
+                # -----------------------------
+                # Colonne centrale (40%) : Carte
+                # -----------------------------
+                html.Div(
+                    style={
+                        "flex": "0 0 40%",
+                        "minWidth": "300px",
+                        "boxSizing": "border-box",
+                    },
+                    children=[
                         dmc.Paper(
                             style={
-                                "width": "40%",  # 50% de la largeur
-                                "height": "90%",  # 85% de la hauteur
+                                "height": "100%",
+                                "padding": "10px",
+                                "boxSizing": "border-box",
                             },
                             children=[
-                                create_map(),  # Carte Leaflet
+                                create_map(),  # ta carte Leaflet
                             ],
-                        ),
-                        # ----------------------
-                        # Partie droite : Graphiques avec SegmentedControl
-                        # ----------------------
+                        )
+                    ],
+                ),
+
+                # -----------------------------
+                # Colonne de droite (40%) : Graphiques
+                # -----------------------------
+                html.Div(
+                    style={
+                        "flex": "0 0 39%",
+                        "minWidth": "300px",
+                        "boxSizing": "border-box",
+                    },
+                    children=[
                         dmc.Paper(
                             style={
-                                "width": "40%",
-                                "height": "60%",
+                                "height": "100%",
                                 "padding": "20px",
                                 "boxSizing": "border-box",
                             },
@@ -603,104 +640,122 @@ layout = dmc.Container(
                                 dmc.Paper(
                                     id="line-chart-container",
                                     children=[dcc.Graph(id="price-trend-graph")],
-                                    style={"display": "block"},  # Par défaut visible
+                                    style={"display": "block"},  # Visible par défaut
                                 ),
                                 dmc.Paper(
                                     id="bar-chart-container",
                                     children=[dcc.Graph(id="price-bar-chart")],
-                                    style={"display": "none"},  # Caché au début
+                                    style={"display": "none"},   # Caché par défaut
                                 ),
                                 dcc.Store(id="selected-town", data="Ang Mo Kio"),
-                                html.H3(id="town-name", children="Town : Ang Mo Kio", style={"textAlign": "center"}),
+                                html.H3(
+                                    id="town-name",
+                                    children="Town : Ang Mo Kio",
+                                    style={"textAlign": "center"},
+                                ),
                             ],
-                        ),
-
-                        dmc.Space(h="md"),
+                        )
                     ],
-                    className="scroll-section",
                 ),
-                dmc.Paper(
+            ],
+        ),
+
+        # =====================
+        #      DEUXIÈME LIGNE
+        # =====================
+        html.Div(
+            style={
+                "display": "flex",
+                "flexWrap": "wrap",
+                "gap": "2rem",
+                "width": "100%",
+                "marginTop": "20px",
+                "padding": "20px",
+                "border": "1px solid #ddd",
+                "borderRadius": "10px",
+            },
+            children=[
+                # 1) Premier bloc (gauche)
+                html.Div(
                     style={
-                        "display": "flex",
-                        "justifyContent": "space-between",
-                        "alignItems": "flex-start",
-                        "gap": "2rem",
-                        "width": "100%",
-                        "marginTop": "20px",
-                        "padding": "20px",
-                        "border": "1px solid #ddd",
-                        "borderRadius": "10px",
+                        "flex": "1",
+                        "minWidth": "200px",
+                        "boxSizing": "border-box",
                     },
                     children=[
-                        # Premier texte (gauche)
-                        html.Div(
-                            style={
-                                "flex": "2",
-                                "height": "100%",
-                                "paddingRight": "1rem",
-                            },
-                            children=[
-                                dmc.Title(
-                                    "Information",
-                                    order=4,
-                                    style={"marginBottom": "1rem"},
-                                    fw="bold",
-                                ),
-                                dmc.Text(
-                                    "Please fill in the information via the dropdown and the slider to estimate your property!\n",
-                                    size="lg",
-                                    style={"textAlign": "left", "lineHeight": "1.6"},
-                                ),
-                            ],
+                        dmc.Title(
+                            "Information",
+                            order=4,
+                            style={"marginBottom": "1rem"},
+                            fw="bold",
                         ),
-                        # Deuxième texte (droite)
-                        html.Div(
-                            style={
-                                "flex": "2",
-                                "borderRight": "2px solid #ccc",
-                                "borderLeft": "2px solid #ccc",
-                                "height": "100%",
-                                "paddingLeft": "1rem",
-                            },
-                            children=[
-                                dmc.Title(
-                                    "It's time to estimate your property!",
-                                    order=4,
-                                    style={"marginBottom": "1rem", "textAlign": "center"},
-                                    fw="bold",
-                                ),
-                                dmc.Group(
-                                    style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
-                                    children=[
-                                        dmc.Button("Estimate", id="estimate-btn", color="blue", style={"marginTop": "10px"}, size="lg"),
-                                    ]
-                                ),
-                                dmc.Paper(style={"marginTop": "20px"}),
-                                dmc.Text( id="estimation-result", style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"}),
-                            ],
-                        ),
-                        html.Div(
-                            style={
-                                "flex": "2",
-                                "paddingRight": "1rem",
-                            },
-                            children=[
-                                dmc.Title(
-                                    "History of the price per square meter and overview of the real estate prices in your neighborhood",
-                                    order=4,
-                                    style={"marginBottom": "1rem"},
-                                    fw="bold",
-                                ),
-                                dmc.Text(
-                                    "Find here the history of the price per square meter of properties in your neighborhood since 2017.\n"
-                                    "If you click on \"Average price\", you will get an overview of the real estate prices in your neighborhood compared to the city.\n",
-                                    size="lg",
-                                    style={"textAlign": "left", "lineHeight": "1.6"},
-                                ),
-                            ],
+                        dmc.Text(
+                            "Please fill in the information via the dropdown and the slider to estimate your property!\n",
+                            size="lg",
+                            style={"textAlign": "left", "lineHeight": "1.6"},
                         ),
                     ],
                 ),
+
+                # 2) Deuxième bloc (milieu)
+                html.Div(
+                    style={
+                        "flex": "1",
+                        "minWidth": "200px",
+                        "boxSizing": "border-box",
+                        "textAlign": "center",
+                        "borderLeft": "1px solid #ddd",
+                        "borderRight": "1px solid #ddd",
+                    },
+                    children=[
+                        dmc.Title(
+                            "It's time to estimate your property!",
+                            order=4,
+                            style={"marginBottom": "1rem"},
+                            fw="bold",
+                        ),
+                        dmc.Group(
+                            style={"display": "flex", "justifyContent": "center", "marginTop": "20px"},
+                            children=[
+                                dmc.Button("Estimate", id="estimate-btn", color="blue", style={"marginTop": "10px"}, size="lg"),
+                            ]
+                        ),
+                        dmc.Paper(style={"marginTop": "20px"}),  # Séparateur ou bloc vide
+                        dmc.Text(
+                            id="estimation-result",
+                            style={"fontSize": "18px", "fontWeight": "bold", "textAlign": "center"},
+                        ),
+                    ],
+                ),
+
+                # 3) Troisième bloc (droite)
+                html.Div(
+                    style={
+                        "flex": "1",
+                        "minWidth": "200px",
+                        "boxSizing": "border-box",
+                    },
+                    children=[
+                        dmc.Title(
+                            "History of the price per square meter and overview of the real estate prices in your neighborhood",
+                            order=4,
+                            style={"marginBottom": "1rem"},
+                            fw="bold",
+                        ),
+                        dmc.Text(
+                            "Plots\n"
+                            "If you click on \"Average price\", you will get an overview of the real estate prices in your neighborhood compared to the city.\n",
+                            size="lg",
+                            style={"textAlign": "left", "lineHeight": "1.6"},
+                        ),
+                    ],
+                ),
+            ],
+        ),
+
+        dmc.Space(h="lg"),
+    ]
+),
                 dmc.Space(h="lg"),
                 dmc.Accordion(
                     disableChevronRotation=True,
