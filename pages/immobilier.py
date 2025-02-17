@@ -12,7 +12,7 @@ from services.maps.map_immo import create_map
 from services.data.process_data_immo import process_town_street
 from models.pred_immobilier import predict_immobilier
 
-from utils.config import TOWNS
+from utils.config import TOWNS, CODE_OPTUNA, CODE_TRAIN_TEST_SPLIT
 
 dash.register_page(__name__, path="/housing")
 
@@ -757,136 +757,222 @@ layout = dmc.Container(
     ]
 ),
                 dmc.Space(h="lg"),
-                dmc.Accordion(
-                    disableChevronRotation=True,
-                    children=[
-                        dmc.AccordionItem(
-                            [
-                                dmc.AccordionControl(
-                                    "How were the predictions made?",
-                                    icon=DashIconify(
-                                        icon="mdi:information-outline",
-                                        color=dmc.DEFAULT_THEME["colors"]["blue"][6],
-                                        width=20,
-                                    ),
-                                ),
-                                dmc.AccordionPanel(
-                                    [
-                                         html.Div([
-    
-                                            # 📌 Titre de la section
-                                            dmc.Group(
-                                                align="center",
-                                                justify="center",
-                                                children=[
-                                                    DashIconify(icon="mdi:chart-line", height=35, color="#228be6"),
-                                                    dmc.Title("Prediction Methodology", order=2),
-                                                ],
-                                                style={"marginBottom": "1rem", "textAlign": "center"}
-                                            ),
-                                            
-                                            # 📌 Explication en deux colonnes
-                                            html.Div(
-                                                style={"display": "flex", "gap": "2rem", "justifyContent": "center"},
-                                                children=[
-                                                    dcc.Markdown(
-                                                        """
-                                                        ### 🛠 How were the predictions made?
-
-                                                        **Model Used: CatBoost Regressor**  
-                                                        CatBoost is a high-performance, gradient boosting algorithm optimized for handling categorical features efficiently.
-
-                                                        **Data Preparation**  
-                                                        - Cleaned real estate transaction data, removing irrelevant columns.
-                                                        - Converted date features (`month`, `year`) and processed lease duration for better predictive power.
-                                                        - Identified categorical features like `town`, `flat_type`, `storey_range`, and `flat_model`.
-
-                                                        **Training Process**  
-                                                        - **Train-test split (80-20%)** to evaluate model performance.
-                                                        - Used **CatBoost's Pool** method to handle categorical features natively.
-                                                        - Trained for **1500 iterations** with a learning rate of **0.09** and depth **10**.
-                                                        - Applied **early stopping** to avoid overfitting.
-                                                        """,
-                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
-                                                    ),
-                                                    dcc.Markdown(
-                                                        """
-                                                        ### 🔍 Why this approach?
-
-                                                        **Handling Categorical Data**  
-                                                        CatBoost's strength lies in its ability to process categorical variables without needing manual encoding.
-
-                                                        **Hyperparameter Optimization**  
-                                                        - Used **Optuna** to fine-tune model parameters like learning rate, depth, and iterations.
-                                                        - Optimized the model to balance performance and generalization.
-
-                                                        **Model Evaluation & Feature Importance**  
-                                                        - Metrics: **RMSE, MAE and R² Score**.
-                                                        - Examined feature importance to understand key predictors of property prices.
-
-                                                        **Robust Performance**  
-                                                        The model generalizes well across different neighborhoods, capturing key market trends effectively.
-                                                        """,
-                                                        style={"lineHeight": "1.6", "textAlign": "justify", "width": "45%"}
-                                                    ),
-                                                ],
-
-                                            ),
-                                            dmc.Space(h="xl"),
-                                            dmc.Card(
-                                                shadow="sm",
-                                                withBorder=True,
-                                                radius="md",
-                                                style={"width": "60%", "padding": "1rem", "margin": "auto"},
-                                                children=[
-                                                    dmc.Group(
-                                                        children=[
-                                                            DashIconify(icon="mdi:chart-line", height=25, color="#2c3e50"),
-                                                            dmc.Title("CatBoost Model Results", order=3),
-                                                        ],
-                                                        style={"marginBottom": "1rem", "textAlign": "center"}
-                                                    ),
-                                                    dmc.Space(h="sm"),
-                                                    dcc.Markdown(
-                                                        f"""
-                                                        **📊 Model Performance:**  
-                                                        - **Iterations:** 2500 (Best at {2492})  
-                                                        - **Learning Rate:** 0.0415  
-                                                        - **Depth:** 11  
-                                                        - **L2 Regularization:** 0.082  
-                                                        - **Random Strength:** 0.482  
-
-                                                        **📉 Model Metrics:**  
-                                                        - **Mean Absolute Error (MAE): 18474.76 **   
-                                                        - **Root Mean Squared Error (RMSE): 25872.16 **
-                                                        - **R² Score: 0.9791 **  
-
-                                                        **📌 Interpretation:**  
-                                                        - The **high R² (0.9791)** indicates that the model explains nearly all the variance in property prices.  
-                                                        - **Low MAE (18,474 SGD)** suggests that most predictions are close to actual values.  
-                                                        - RMSE of **25,872 SGD** means occasional larger errors, but overall predictions are reliable.  
-                                                        - The use of **Optuna for hyperparameter tuning** helped optimize performance.  
-                                                        """,
-                                                        style={"lineHeight": "1.6", "textAlign": "justify"}
-                                                    ),
-                                                ]
-                                            ),
-                                            dmc.Space(h="xl"),
-                                        ])
-                                    ]
-                                ),
-                            ],
-                            value="info",
-                            style={"marginBottom": "1rem", "width": "100%", "textAlign": "justify", "margin": "auto"},
-                        ),
-                    ],
+                html.Div([
+    dmc.Accordion(
+    disableChevronRotation=True,
+    children=[
+        dmc.AccordionItem(
+            [
+                dmc.AccordionControl(
+                    "How were the predictions made?",
+                    icon=DashIconify(
+                        icon="mdi:information-outline",
+                        color=dmc.DEFAULT_THEME["colors"]["blue"][6],
+                        width=20,
+                    ),
                 ),
+                dmc.AccordionPanel(
+                    [
+                        # ----- Titre principal -----
+                        dmc.Group(
+                            align="center",
+                            justify="center",
+                            children=[
+                                DashIconify(icon="mdi:chart-line", height=35, color="#228be6"),
+                                dmc.Title("Prediction Methodology", order=2),
+                            ],
+                            style={"marginBottom": "1rem", "textAlign": "center"}
+                        ),
+                        # ----- Grille de 4 cartes -----
+                        html.Div(
+                            style={
+                                "display": "flex",
+                                "flexWrap": "wrap",
+                                "gap": "1rem",
+                                "justifyContent": "center"
+                            },
+                            children=[
+                                # Carte 1 : Model & Data Preparation
+                                dmc.Paper(
+                                    shadow="sm",
+                                    withBorder=True,
+                                    radius="md",
+                                    style={"flex": "0 0 45%", "padding": "1rem"},
+                                    children=[
+                                        dmc.Group(
+                                            align="center",
+                                            children=[
+                                                DashIconify(icon="mdi:database", height=25, color="#2c3e50"),
+                                                dmc.Text("Model & Data Preparation"),
+                                            ],
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                                            **Model Used:** CatBoost Regressor  
+                                            
+                                            The dataset was thoroughly cleaned to remove irrelevant features.  
+                                            Date features (such as month and year) were converted into numerical formats  
+                                            and the lease duration was processed to capture the effective property age.  
+                                            In addition, key categorical features like *town*, *flat_type*, *storey_range*,  
+                                            and *flat_model* were carefully selected to improve model performance.
+                                            """,
+                                            style={"lineHeight": "1.6", "fontSize": "0.9rem"}
+                                        ),
+                                    ],
+                                ),
+                                # Carte 2 : Training Process
+                                dmc.Paper(
+                                    shadow="sm",
+                                    withBorder=True,
+                                    radius="md",
+                                    style={"flex": "0 0 45%", "padding": "1rem"},
+                                    children=[
+                                        dmc.Group(
+                                            align="center",
+                                            children=[
+                                                DashIconify(icon="mdi:play-circle", height=25, color="#2c3e50"),
+                                                dmc.Text("Training Process"),
+                                            ],
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                                            **80/20 Train-Test Split:**  
+                                            
+                                            The data was split into training (80%) and validation (20%) sets to ensure robust evaluation.  
+                                            CatBoost's native Pool was used for efficiently handling categorical features during training.  
+                                            The model was trained for 1500 iterations, employing early stopping to prevent overfitting 
+                                            and to optimize the number of boosting rounds.
+                                            """,
+                                            style={"lineHeight": "1.6", "fontSize": "0.9rem"}
+                                        ),
+                                    ],
+                                ),
+                                # Carte 3 : Hyperparameter Optimization
+                                dmc.Paper(
+                                    shadow="sm",
+                                    withBorder=True,
+                                    radius="md",
+                                    style={"flex": "0 0 45%", "padding": "1rem"},
+                                    children=[
+                                        dmc.Group(
+                                            align="center",
+                                            children=[
+                                                DashIconify(icon="tdesign:setting-1", height=25, color="#2c3e50"),
+                                                dmc.Text("Hyperparameter Optimization"),
+                                            ],
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                                            **Optuna:**  
+                                            
+                                            An advanced hyperparameter tuning framework, **Optuna**, was employed to automatically search for the optimal combination of model parameters.  
+                                            During the optimization process, key parameters such as the learning rate, tree depth, number of iterations, and L2 regularization coefficient were systematically varied using functions like `trial.suggest_float` and `trial.suggest_int`.  
+                                            Optuna utilizes efficient algorithms such as the Tree-structured Parzen Estimator (TPE) to navigate the hyperparameter space, quickly converging on values that balance model complexity and predictive performance.  
+                                            This rigorous tuning process not only improved the model’s accuracy but also enhanced its ability to generalize on unseen data by effectively preventing overfitting.
+                                            """,
+                                            style={"lineHeight": "1.6", "fontSize": "0.9rem"}
+                                        ),
+                                    ],
+                                ),
+                                # Carte 4 : Performance Evaluation
+                                dmc.Paper(
+                                    shadow="sm",
+                                    withBorder=True,
+                                    radius="md",
+                                    style={"flex": "0 0 45%", "padding": "1rem"},
+                                    children=[
+                                        dmc.Group(
+                                            align="center",
+                                            children=[
+                                                DashIconify(icon="mdi:check-circle", height=25, color="#2c3e50"),
+                                                dmc.Text("Performance Evaluation"),
+                                            ],
+                                        ),
+                                        dcc.Markdown(
+                                            """
+                                            **Metrics Assessed:**  
+                                            
+                                            Model performance was evaluated using:
+                                            - **Mean Absolute Error (MAE): 18474.76 SGD**
+                                            - **Root Mean Squared Error (RMSE): 25872.16 SGD**
+                                            - **R² Score: 0.9791**
+                                            
+                                            A high R² score indicates that the model explains most of the variance in property prices,  
+                                            while low MAE and RMSE values confirm that the predictions are accurate and reliable.  
+                                            These metrics collectively validate the model's effectiveness.
+                                            """,
+                                            style={"lineHeight": "1.6", "fontSize": "0.9rem"}
+                                        ),
+
+                                    ],
+                                ),
+                            ]
+                        ),
+                        dmc.Space(h="xl"),
+                        # ----- Bouton centré en bas -----
+                        html.Div(
+                            style={"textAlign": "center"},
+                            children=[
+                                dmc.Button("Show Code Example", id="show-code-btn", color="blue")
+                            ]
+                        ),
+                        dmc.Space(h="xl"),
+                    ]
+                ),
+            ],
+            value="info",
+            style={"marginBottom": "1rem", "width": "100%", "textAlign": "justify", "margin": "auto"},
+        ),
+    ],
+),
+
+    # ----- Modal pour afficher les exemples de code -----
+    dmc.Modal(
+        id="code-modal",
+        title="Code Examples",
+        size="lg",
+        centered=True,
+        children=[
+            dmc.Tabs(
+                value="optuna",
+                children=[
+                    dmc.TabsList(
+                        [
+                            dmc.TabsTab(children=dmc.Text("Optuna Code"), value="optuna"),
+                            dmc.TabsTab(children=dmc.Text("Train Test Split Code"), value="train_test"),
+                        ]
+                    ),
+                    dmc.TabsPanel(
+                        dmc.Code(children=CODE_OPTUNA, block=True, style={"whiteSpace": "pre-wrap"}),
+                        value="optuna",
+                    ),
+                    dmc.TabsPanel(
+                        dmc.Code(children=CODE_TRAIN_TEST_SPLIT, block=True, style={"whiteSpace": "pre-wrap"}),
+                        value="train_test",
+                    ),
+                ]
+            )
+        ],
+        opened=False,
+    )
+])
+
             ]
         ),
         dmc.Space(h="xl"),
     ]
 )
 
+
+# ----- Callback pour ouvrir/fermer la modal -----
+@dash.callback(
+    Output("code-modal", "opened"),
+    Input("show-code-btn", "n_clicks"),
+    State("code-modal", "opened"),
+    prevent_initial_call=True
+)
+def toggle_modal(n_clicks, opened):
+    return not opened
 
 # Callback pour changer la carte affichée
 @dash.callback(

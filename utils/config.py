@@ -62,3 +62,40 @@ INSTITUTIONS = [
                     {"value": "sutd", "label": "SUTD"},
                     {"value": "temasek_polytechnic", "label": "Temasek Polytechnic"}
                 ]
+
+
+CODE_OPTUNA = """
+import optuna
+from catboost import CatBoostRegressor
+from sklearn.metrics import mean_absolute_error
+
+features = ['month', 'year', 'town', 'flat_type', 'street_name',
+            'storey_range', 'floor_area_sqm', 'flat_model', 'lease_commence_date',
+            'remaining_lease_years']
+
+cat_features = ['town', 'flat_type', 'street_name', 'storey_range', 'flat_model']
+
+def objective(trial):
+    params = {
+        'iterations': trial.suggest_int('iterations', 1000, 3000),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1),
+        'depth': trial.suggest_int('depth', 4, 10),
+        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1, 10)
+    }
+    model = CatBoostRegressor(**params, verbose=0)
+    model.fit(X_train, y_train, cat_features=cat_features, eval_set=(X_val, y_val), early_stopping_rounds=50)
+    preds = model.predict(X_val)
+    return mean_absolute_error(y_val, preds)
+
+study = optuna.create_study(direction='minimize')
+study.optimize(objective, n_trials=50)
+"""
+
+CODE_TRAIN_TEST_SPLIT = """
+from sklearn.model_selection import train_test_split
+
+X = df[features]
+y = df['target']
+
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+"""
