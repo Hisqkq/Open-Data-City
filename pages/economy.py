@@ -421,7 +421,7 @@ layout = dmc.Container(
                                 dmc.Space(h="sm"),
                                 dmc.Text(
                                     "Since 2012, individuals with lower qualifications tend to have lower unemployment rates. "
-                                    "However",
+                                    "However, before 2008 the trend was reversed. This shift may reflect changes in the labor market and the demand for skilled workers.",
                                     size="sm",
                                     style={"textAlign": "justify", "lineHeight": "1.5"}
                                 ),
@@ -712,7 +712,7 @@ layout = dmc.Container(
                                         html.Div(
                                             style={"flex": 2, "display": "flex", "flexDirection": "column", "alignItems": "center", "border": "1px solid #ccc", "borderRadius": "8px"},
                                             children=[
-                                                html.Div(id="cytoscape-graph", children=create_cytoscape_graph(theme="dark"), 
+                                                html.Div(id="cytoscape-graph", children=create_cytoscape_graph(theme="light"), 
                                                         style={"width": "100%"}),
                                                 html.Div(id="colorbar-container", children=create_colorbar(), 
                                                         style={"marginTop": "1rem"}),

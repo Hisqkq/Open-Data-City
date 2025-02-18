@@ -419,7 +419,6 @@ layout = dmc.Container(
                 "gap": "0.3rem",
                 "width": "100%",
                 "minHeight": "60vh",     # Hauteur minimale
-                "overflowX": "auto",
             },
             children=[
                 # -----------------------------
