@@ -986,8 +986,10 @@ def update_graph(n_clicks, graph_type, theme, selected_town, clickData):
     else:
         line_chart_style = {"display": "none"}
         bar_chart_style = {"display": "block"}
-    
+
     return line_chart_fig, bar_chart_fig, f"Town : {town_name}", town_name, line_chart_style, bar_chart_style, town_name
+
+
 
 @dash.callback(Output("slider-output", "children"), Input("slider-callback", "value"))
 def update_value(value):
